@@ -1,0 +1,40 @@
+/* スマートフォンの場合 */
+@media only screen and (max-width: 600px) {
+    html {
+        font-size: 14px;
+        /* スマートフォン用のルート要素のフォントサイズ */
+        letter-spacing: 0.11em;
+        line-height: 1.7em;
+    }
+}
+
+/* タブレットの場合 */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+    html {
+        font-size: 15px;
+        /* タブレット用のルート要素のフォントサイズ */
+        letter-spacing: 0.12em;
+        line-height: 1.8em;
+    }
+}
+
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+
+/* エラーメッセージ共通 */
+.error-message {
+    color:#F04848;margin: 1em 0 0 0;display: none;
+}
+
+.error_message {
+    color: #F04848;margin: 1em 0 0 0;
+}
+
+/* デートピッカー  日付を選択 */
+.ui-datepicker-trigger {
+    margin: 0 0 0 10px;
+}
+
+}
+

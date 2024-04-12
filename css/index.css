@@ -1,0 +1,45 @@
+
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+.btn_01 {
+    margin-top: 10px;
+    /* ボタンの上部の余白 */
+}
+
+#day_search_submit {
+    background-color: #3498db;
+    /* ボタンの背景色 */
+    color: #fff;
+    /* ボタンの文字色 */
+    padding: 10px 20px;
+    /* ボタンの内側の余白 */
+    border: none;
+    /* ボタンの枠線を消す */
+    border-radius: 5px;
+    /* ボタンの角丸 */
+    cursor: pointer;
+    /* ボタンにポインターを表示 */
+}
+
+#day_search_submit:hover {
+    background-color: #2980b9;
+    /* マウスオーバー時の背景色 */
+}
+
+/* 日付が入る　テキストボックス */
+#datepicker {
+    width: 55%;padding: 10px 15px;
+    border-radius: 3px;border: 2px solid #ddd;
+    box-sizing: border-box;
+       
+}
+
+#datepicker:focus {
+    box-shadow: 0 0 5px 0 rgba(255, 153, 0, 1);
+    border: 2px solid #FFF !important;
+    outline: 0;
+}
+/* 日付が入る　テキストボックス END */
+
+} /* ===================================== メディアクエリ END =================== */
