@@ -1,0 +1,58 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+    .body_01 {
+        background-color: #e8f5e5;
+    }
+
+    .app_name_box {
+        background: #3bb0c5;
+        padding: 0.55em 0;
+    }
+
+    .app_name {
+        text-align: center;
+        color:#fff;
+    }
+
+    .page_title {
+        border-bottom: 3px solid #017f18;
+        color: #017f18;
+    }
+
+    .top_input_box {
+        text-align: center;
+    }
+
+    /* テキストボックス */
+
+    body>div:nth-child(3)>form>div>div:nth-child(1) {
+        margin: 3em 0px 0 0;
+    }
+
+    .text_box_01 {
+                width: 55%;
+                padding: 10px 15px;
+                border-radius: 3px;
+                border: 2px solid #ddd;
+                box-sizing: border-box;
+    }
+
+    .text_box_01:focus {
+            box-shadow: 0 0 5px 0 rgba(255, 153, 0, 1);
+            border: 2px solid #FFF !important;
+            outline: 0;
+    }
+
+    /* テキストボックス END */
+    #login_btn {
+        background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2em 0 0 0;
+    }
+        
+}
