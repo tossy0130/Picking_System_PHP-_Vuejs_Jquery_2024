@@ -36,5 +36,10 @@
     margin: 0 0 0 10px;
 }
 
+/* 横線　*/
+.hr_01 {
+    border-top: 1px solid #ccc;
+}
+
 }
 

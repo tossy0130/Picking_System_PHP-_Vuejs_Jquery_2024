@@ -1,0 +1,85 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+
+    /* ========== ヘッダーエリア 01 、倉庫、運送便  ============ */
+    .head_01 {
+        display: flex;
+        margin: 0 0 1em 0;
+    }
+
+    .head_01 > div:nth-child(1) {
+                width: 60%;
+                    background: transparent;
+                    text-align: center;
+                    color: #5CBCE0;
+                    padding: 0.5em 0 0.5em 0;
+                    height: 2.5em;
+                    border: 3px solid #5CBCE0;
+                    font-size: 1.2em;
+    }
+
+    .head_01 > div:nth-child(2) {
+        width: 38%;
+            text-align: center;
+            background: transparent;
+            border: 1px solid #5CBCE0;
+            padding: 0.5em 0 0.5em 0;
+            height: 2em;
+            color: #5CBCE0;
+    }
+
+    /* ヘッドエリア 02  「並替」「全表示」ボタン */
+    .head_02 {
+            text-align: right;
+            width: 98%;
+    }
+
+    .dropdown_02 {
+            position: relative;
+            display: inline-block;
+            width: 35%;
+    }
+
+    #order_btn_box {
+        width: 100%;
+    }
+    #order_btn {
+        background: #F08A00;border: none;
+        width: 100%;color: #fff;
+        margin: 0 0 1em 0;padding: 0.8em 0;
+    }
+
+    #all_select_btn {
+        background: #82dcb8;border: none;
+        width: 35%;color: #333;padding: 0.8em 0;
+    }
+    
+    /* テーブル全体のスタイル */
+    table {
+            border-collapse: collapse;width: 100%; 
+        }
+    
+        /* テーブルのボーダー */
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            
+        }
+    
+        /* テーブルヘッダーのスタイル */
+        th {
+            background-color: #f2f2f2;
+            padding: 8px;text-align: left;
+            font-size: 0.85em !important;
+        }
+    
+        /* テーブルセルのスタイル */
+        td {
+            padding: 8px;text-align: left;
+            font-size: 13px;
+        }
+
+
+} /* ================= END ================== */

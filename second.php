@@ -32,7 +32,6 @@ if (empty($session_id)) {
     }
 }
 
-
 ?>
 
 <!DOCTYPE html>
@@ -67,13 +66,13 @@ if (empty($session_id)) {
 
                 <div class="souko_box">
                     <div>
-                        <button type="button" value="1" @click="handleButtonClick(1)" :class="{'selected_souko' : selectedValue === 1}">
+                        <button type="button" value="K倉庫" @click="handleButtonClick('K倉庫')" :class="{'selected_souko' : selectedValue === 'K倉庫'}">
                             K倉庫
                         </button>
                     </div>
 
                     <div>
-                        <button type="button" value="2" @click="handleButtonClick(2)" :class="{'selected_souko' : selectedValue === 2}">
+                        <button type="button" value="N倉庫" @click="handleButtonClick('N倉庫')" :class="{'selected_souko' : selectedValue === 'N倉庫'}">
                             N倉庫
                         </button>
                     </div>
@@ -82,13 +81,13 @@ if (empty($session_id)) {
 
                 <div class="souko_box">
                     <div>
-                        <button type="button" value="3" @click="handleButtonClick(3)" :class="{'selected_souko' : selectedValue === 3}">
+                        <button type="button" value="L倉庫" @click="handleButtonClick('L倉庫')" :class="{'selected_souko' : selectedValue === 'L倉庫'}">
                             L倉庫
                         </button>
                     </div>
 
                     <div>
-                        <button type="button" value="4" @click="handleButtonClick(4)" :class="{'selected_souko' : selectedValue === 4}">
+                        <button type="button" value="P倉庫" @click="handleButtonClick('P倉庫')" :class="{'selected_souko' : selectedValue === 'P倉庫'}">
                             P倉庫
                         </button>
                     </div>
@@ -97,13 +96,13 @@ if (empty($session_id)) {
 
                 <div class="souko_box">
                     <div>
-                        <button type="button" value="5" @click="handleButtonClick(5)" :class="{'selected_souko' : selectedValue === 5}">
+                        <button type="button" value="U倉庫" @click="handleButtonClick('U倉庫')" :class="{'selected_souko' : selectedValue === 'U倉庫'}">
                             U倉庫
                         </button>
                     </div>
 
                     <div>
-                        <button type="button" value="6" @click="handleButtonClick(6)" :class="{'selected_souko' : selectedValue === 6}">
+                        <button type="button" value="W倉庫" @click="handleButtonClick('W倉庫')" :class="{'selected_souko' : selectedValue === 'W倉庫'}">
                             W倉庫
                         </button>
                     </div>
@@ -112,7 +111,7 @@ if (empty($session_id)) {
 
                 <div class="souko_box">
                     <div>
-                        <button type="button" value="7" @click="handleButtonClick(7)" :class="{'selected_souko' : selectedValue === 7}">
+                        <button type="button" value="Q倉庫" @click="handleButtonClick('Q倉庫')" :class="{'selected_souko' : selectedValue === 'Q倉庫'}">
                             Q倉庫
                         </button>
                     </div>
@@ -156,8 +155,8 @@ if (empty($session_id)) {
                     } else {
                         this.error = false; // エラーメッセージを非表示に
                         // get送信
-                        const url = `./third.php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}`;
-                        // リダイレクト
+                        const url = `./third.
+php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}`; // リダイレクト
                         window.location.href = url;
                     }
                 }
