@@ -21,6 +21,90 @@
 /* ====== スマホ ====== */
 @media only screen and (max-width: 768px) {
 
+body {
+    font-family: system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji
+}
+
+/*=================== フッターメニュー 01  「戻る」、「更新」 ===================*/
+
+    .footer-menu {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px 0;
+            border-top: 3px solid #4b4b4b;
+    }
+
+/* メニューアイテムのスタイル */
+.footer-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.footer-menu ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.footer-menu ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    background: #4b4b4b;
+    padding: 0.6em 1.2em;
+    border-radius: 4px;
+  
+}
+
+/*=================== フッターメニュー 01  「戻る」、「更新」 END ===================*/
+
+/*=================== フッターメニュー 01  「戻る」、「確定」、「全数完了」 ===================*/
+.footer-menu_02 {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        padding: 20px 0;
+        border-top: 3px solid #4b4b4b;
+}
+
+/* メニューアイテムのスタイル */
+.footer-menu_02 ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.footer-menu_02 ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.footer-menu_02 ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    background: #4b4b4b;
+    padding: 0.6em 1.2em;
+    border-radius: 4px;
+
+}
+
+/*=================== フッターメニュー 01  「戻る」、「確定」、「全数完了」 END ===================*/
 
 /* エラーメッセージ共通 */
 .error-message {
@@ -40,6 +124,22 @@
 .hr_01 {
     border-top: 1px solid #ccc;
 }
+
+/* 太字 */
+
+.bold {
+    font-weight: bold;
+}
+
+/* テーブル 「ロケ」フォント */
+.font_tmp_01 {
+    width: 12%;
+    padding: 6px 6px;
+    font-size: 11px !important;
+    white-space: nowrap;
+}
+
+
 
 }
 

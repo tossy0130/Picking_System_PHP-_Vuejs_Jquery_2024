@@ -21,6 +21,7 @@ if (empty($session_id)) {
 } else {
 
     // ================= 通常処理 =================
+
     $day = $_GET['day'];
     $souko = $_GET['souko'];
     $company = $_GET['company'];
@@ -40,11 +41,39 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/forth.css">
     <link rel="stylesheet" href="./css/third.css">
+    <link rel="stylesheet" href="./css/common.css">
+
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング 04</title>
 </head>
 
 <body>
+
+    <div class="head_box">
+        <div class="head_content">
+            <span class="home_icon_span">
+                <a href="#"><i class="fa-solid fa-house"></i></a>
+            </span>
+
+            <span class="App_name">
+                APP ピッキングアプリ
+            </span>
+        </div>
+    </div>
+
+
+    <div class="head_box_02">
+        <div class="head_content_02">
+            <span class="home_sub_icon_span">
+                <i class="fa-solid fa-thumbtack"></i>
+            </span>
+
+            <span class="page_title">
+                ピッキング対象選択
+            </span>
+        </div>
+    </div>
 
     <div id="app">
         <div class="container">
@@ -52,11 +81,20 @@ if (empty($session_id)) {
                 <div class="head_01">
 
                     <div>
-                        <?php echo h($souko); ?>
+                        <i class="fa-solid fa-warehouse"></i>
+                        <span class="souko_icon_box">
+                            <?php echo h($souko); ?>
+                        </span>
                     </div>
 
                     <div>
-                        <?php echo h($company); ?>
+                        <span class="unsou_icon_box">
+                            <i class="fa-solid fa-truck"></i>
+                        </span>
+
+                        <span class="unsou_text_box">
+                            <?php echo h($company); ?>
+                        </span>
                     </div>
 
                 </div>
@@ -105,23 +143,23 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr style="background-color: bisque;">
-                            <td>L-1</td>
-                            <td>3 <br />
+                            <td class="font_tmp_01">L-1</td>
+                            <td class="bold">3 <br />
                                 3</td>
-                            <td>1<br />
+                            <td class="bold">1<br />
                                 1</td>
                             <td></td>
-                            <td>スチールホースリール<br />
-                                HR-L
+                            <td>スチールホースリールセット２５ｍ(ﾌﾞﾗｳﾝ)<br />
+                                ＨＲ－Ｌ２５Ｄ（ＢＲ）－ＡＺ
                             </td>
                             <td>ケース</td>
                         </tr>
 
                         <tr>
-                            <td>L-2</td>
-                            <td>12</td>
-                            <td>1</td>
-                            <td>2</td>
+                            <td class="font_tmp_01">L-2</td>
+                            <td class="bold">12</td>
+                            <td class="bold">1</td>
+                            <td class="bold">2</td>
                             <td>ステンレスポスト<br />
                                 PS-30H
                             </td>
@@ -129,10 +167,10 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr style="background-color: bisque;">
-                            <td>L-3</td>
-                            <td>1 <br />
+                            <td class="font_tmp_01">L-3</td>
+                            <td class="bold">1 <br />
                                 1</td>
-                            <td>1<br />
+                            <td class="bold">1<br />
                                 1</td>
                             <td></td>
                             <td>ジェニアス30<br />
@@ -142,12 +180,12 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr style="background-color: yellow;">
-                            <td>L-4</td>
-                            <td>4 <br />
+                            <td class="font_tmp_01">L-4</td>
+                            <td class="bold">4 <br />
                                 4</td>
-                            <td>1<br />
+                            <td class="bold">1<br />
                                 1</td>
-                            <td>1 <br />
+                            <td class="bold">1 <br />
                                 1
                             </td>
                             <td>ホースリール<br />
@@ -157,9 +195,9 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr>
-                            <td>L-5</td>
-                            <td>3</td>
-                            <td>1</td>
+                            <td class="font_tmp_01">L-5</td>
+                            <td class="bold">3</td>
+                            <td class="bold">1</td>
                             <td></td>
                             <td>コールマン<br />
                                 20000x x x x
@@ -168,9 +206,9 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr>
-                            <td>L-6</td>
-                            <td>3</td>
-                            <td>1</td>
+                            <td class="font_tmp_01">L-6</td>
+                            <td class="bold">3</td>
+                            <td class="bold">1</td>
                             <td></td>
                             <td>コールマン<br />
                                 20000x x x x
@@ -179,9 +217,9 @@ if (empty($session_id)) {
                         </tr>
 
                         <tr>
-                            <td>L-7</td>
-                            <td>3</td>
-                            <td>1</td>
+                            <td class="font_tmp_01">L-7</td>
+                            <td class="bold">3</td>
+                            <td class="bold">1</td>
                             <td></td>
                             <td>コールマン<br />
                                 20000x x x x
@@ -197,6 +235,18 @@ if (empty($session_id)) {
             </div> <!-- head_02 -->
 
         </div> <!-- ======== END container ========= -->
+
+
+
+        <!-- フッターメニュー -->
+        <footer class="footer-menu">
+            <ul>
+                <li><a href="#">戻る</a></li>
+                <li><a href="#">更新</a></li>
+            </ul>
+        </footer>
+
+
     </div> <!-- ======== END app ========= -->
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>

@@ -1,0 +1,57 @@
+@media only screen and (max-width: 768px) {
+
+    .content_detail {
+            width: 85%;
+            border: 2px solid #5CBCE0;
+            margin: 2em 0;
+            padding: 0.5em 1em;
+            position: relative;
+            top: 0;
+            left: 2.5%;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+    }
+
+    /* ロケ、　在庫数 */
+    .detail_item_01_box {
+        display: flex;
+        width: 100%;
+    }
+
+    .detail_item_01_box > p:nth-of-type(1) {
+        width: 48%;
+    }
+
+    .detail_item_01_box > p:nth-of-type(2) {
+             width: 48%;
+    }
+
+    /* 数量、ケース、バラ */
+    .detail_item_05_box {
+        display: flex;
+        width: 100%;
+        color: red;
+    }
+
+    .detail_item_05_box > p:nth-of-type(1) {
+        width: 33%;
+    }
+
+    .detail_item_05_box>p:nth-of-type(2) {
+        width: 33%;
+    }
+
+    .detail_item_05_box>p:nth-of-type(3) {
+        width: 33%;
+    }
+
+    .detail_midashi {
+        display: inline-block;
+        font-weight: bold;
+    }
+
+    .di_tmp {
+        margin-left: 4.5em;
+    }
+
+} /* ========================= END ====================== */
