@@ -1,0 +1,40 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+    .login_view {
+        border-bottom: 3px solid #ccc;
+            font-weight: 600;
+            font-size: 1.12em;
+            width: 50%;
+    }
+
+    #login_id {
+        font-size: 1.2em;display: inline-block;
+        margin: 0 0 0 0.4em;
+    }
+
+    .content_menu {
+        width: 85%;
+        border: 2px solid #4b4b4b;margin: 2em 0;
+        padding: 0.5em 1em;position: relative;
+        top: 0;left: 2.5%;
+        border-radius: 2px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+
+    }
+
+    .content_menu > div:nth-child(1) {
+        border: 2px solid #5CBCE0;
+        text-align: center;
+        padding: 2em 0;font-size: 1.2em;
+        margin: 2em 0 2em 0;
+    }
+
+    .content_menu>div:nth-child(2) {
+        border: 2px solid #5CBCE0;
+        text-align: center;
+        padding: 2em 0;
+        font-size: 1.2em;margin: 0em 0 2em 0;
+    }
+
+}

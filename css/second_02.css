@@ -1,0 +1,29 @@
+.souko_box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    /* ボタン間の間隔 */
+}
+
+.selected_souko {
+    background-color: #007bff !important;
+    /* 選択されたボタンの背景色 */
+    color: #fff;
+    /* 選択されたボタンのテキスト色 */
+}
+
+.souko_box button {
+    width: 100%;
+    /* ボタンの幅を100%に */
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.souko_box button:hover {
+    background-color: #ddd;
+}
+

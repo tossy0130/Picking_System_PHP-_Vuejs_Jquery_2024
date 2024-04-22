@@ -2,31 +2,58 @@
 
 ini_set('display_errors', 1);
 
-require(dirname(__FILE__) . "./class/function.php");
+require __DIR__ . "./conf.php";
 
 // セッションスタート
 session_start();
 
-// セッションハイジャック対策 
-session_regenerate_id(TRUE);
-// ************ 二重送信防止用トークンの発行 ************
-$token_jim = uniqid('', true);
-//トークンをセッション変数にセット
-$_SESSION['token_jim'] = $token_jim;
-
 // セッションIDを取得
 $sid = session_id();
-print("session_id:::" . $sid . "<br />");
+//print("session_id:::" . $sid . "<br />");
 
-/*
-$newid = session_create_id('myprefix-');
-print("newid:::" . $newid . "<br />");
+// === 接続準備
+$conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
 
-print("token_jim:::" . $token_jim);
-*/
+if (!$conn) {
+    $e = oci_error();
+}
+
+$sql = "SELECT ログインＩＤ, 暗証番号 FROM USRF";
+
+$stid = oci_parse($conn, $sql);
+if (!$stid) {
+    $e = oci_error($stid);
+}
+
+oci_execute($stid);
+
+//========= 結果を取得して表示
+$data = array();
+while ($row = oci_fetch_assoc($stid)) {
+    // カラム名を指定して値を取得
+    $login_id = $row['ログインＩＤ'];
+    $pass = $row['暗証番号'];
+
+    // ここで取得した値を処理する（例えば、表示する）
+    // *** コメントアウトを外したら、値がでます **** //
+    //  echo "ログインＩＤ: " . $login_id . ", 暗証番号: " . $pass . "<br/>";
+
+    // 取得した値を配列に追加
+    $user_data[] = array(
+        'ID' => $login_id,
+        'pass' => $pass
+    );
+}
+
+// print_r($user_data);
+// print($user_data[15]['ID']);
+
+// ステートメントを解放
+oci_free_statement($stid);
+// 接続を閉じる
+oci_close($conn);
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -35,144 +62,102 @@ print("token_jim:::" . $token_jim);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="./css/index.css">
+    <!-- css -->
     <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/forth.css">
+    <link rel="stylesheet" href="./css/third.css">
 
-    <!-- jQuery UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
-
-    <!-- jQuery cdn -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <title>トップ</title>
+    <title>ログイン</title>
 </head>
 
-<body>
+<body class="body_01">
 
-    <div class="container" id="app">
-        <div class="content_top">
+    <div id="app">
 
-            <h1>ピッキング</h1>
-            <h2>出荷日</h2>
+        <div class="head_box">
+            <div class="head_content">
+                <span class="home_icon_span">
+                    <a href="#"><i class="fa-solid fa-house"></i></a>
+                </span>
 
-            <!-- POST 送信処理 
-            <form name="day_search" id="day_search" method="post" action="./second.php" @submit.prevent="submitForm">
-                <input name="day_val" type="text" id="datepicker" v-model="dayval">
-
-                <div class="btn_01">
-                    <button id="day_search_submit" type="submit">開始</button>
-                </div>
-
-                <input type="hidden" name="token_jim" value="">
-
-            </form>
-            -->
-
-            <input name="day_val" type="text" id="datepicker" v-model="dayval">
-
-            <div class="btn_01">
-                <button id="day_search_submit" type="button" @click="submitForm">開始</button>
+                <span class="App_name">
+                    APP ピッキングアプリ
+                </span>
             </div>
-
-            <div class="error-message" v-show="error">日付を入力してください。</div>
-
         </div>
-    </div> <!-- ================ END container =============== -->
 
 
+        <div class="head_box_02">
+            <div class="head_content_02">
+                <span class="home_sub_icon_span">
+                    <i class="fa-solid fa-thumbtack"></i>
+                </span>
 
-    <!-- jQuery UI -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <!-- Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+                <span class="page_title">
+                    ログイン
+                </span>
+            </div>
+        </div>
 
-    <script type="text/javascript">
+        <div class="container_index">
+            <div>
+                <!--
+            <form method="post" action="./top_menu.php">        
+            -->
+                <form id="loginForm" action="./top_menu.php" method="post">
+                    <div class="top_input_box">
+                        <div>
+                            <input type="number" class="text_box_01" name="input_login_id" id="input_login_id">
+                        </div>
+
+                        <input type="hidden" name="csrf_token" id="input_login_id" value="<?php echo $_SESSION['csrf_token']; ?>">
+
+
+                        <div>
+                            <button type="submit" name="login_btn" id="login_btn">ログイン</button>
+                            <p id="error" style="color:red"></p>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div> <!-- container_index END -->
+
+    </div> <!-- END app -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
         (function($) {
-
             $(document).ready(function() {
 
-                $("#datepicker").datepicker({
-                    buttonText: "日付を選択",
-                    showOn: "both",
-                    onSelect: function(selectedDate) {
-                        app.dayval = selectedDate; // 選択された日付をVueのdataに反映
+                $('#loginForm').submit(function(e) {
+
+                    var input_login_id = $('#input_login_id').val();
+
+                    if (input_login_id === '') {
+                        $('#error').text('ログインIDを入力してください。');
+                        return false;
+                    } else {
+
+                        const inputValue = $('#input_login_id').val().trim();
+                        const userIDs = <?php echo json_encode(array_column($user_data, 'ID')); ?>;
+                        if (userIDs.includes(inputValue)) {
+                            // エラーがない場合、フォームを送信
+                            return true;
+                        } else {
+                            $('#error').text('ログインIDが不正です。');
+                            return false;
+                        }
                     }
+
                 });
 
-
-                $.datepicker.regional['ja'] = {
-                    closeText: '閉じる',
-                    prevText: '<前',
-                    nextText: '次>',
-                    currentText: '今日',
-                    monthNames: ['1月', '2月', '3月', '4月', '5月', '6月',
-                        '7月', '8月', '9月', '10月', '11月', '12月'
-                    ],
-                    monthNamesShort: ['1月', '2月', '3月', '4月', '5月', '6月',
-                        '7月', '8月', '9月', '10月', '11月', '12月'
-                    ],
-                    dayNames: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
-                    dayNamesShort: ['日', '月', '火', '水', '木', '金', '土'],
-                    dayNamesMin: ['日', '月', '火', '水', '木', '金', '土'],
-                    weekHeader: '週',
-                    dateFormat: 'yy年mm月dd日',
-                    firstDay: 0,
-                    isRTL: false,
-                    showMonthAfterYear: true,
-                    yearSuffix: '年'
-                };
-                $.datepicker.setDefaults($.datepicker.regional['ja']);
-
             });
-
-
-            $("#day_search_submit").click(function() {
-                var selectedDate = $("#datepicker").val();
-                // 日付をYYYY/MM/DD形式に整形
-                var formattedDate = selectedDate.replace(/年|月/g, '-').replace(/日/g, '');
-
-                if (selectedDate.trim() === '') {
-                    $(".error-message").show();
-                } else {
-                    $(".error-message").hide();
-                    var url = "./second.php?selected_day=" + encodeURIComponent(formattedDate);
-                    // リダイレクト
-                    window.location.href = url;
-                }
-            });
-
         })(jQuery);
     </script>
-
-    <!-- Vue.js
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                dayval: '',
-                error: false
-            },
-            methods: {
-                submitForm() {
-                    if (this.dayval.trim() === '') {
-                        console.log('空');
-                        this.error = true;
-                        return;
-                    } else {
-                        console.log(this.dayval);
-                        this.error = false;
-                        const url = `./second.php?selected_day=${encodeURIComponent(this.dayval)}`;
-                        // リダイレクト
-                        window.location.href = url;
-                    }
-
-                }
-            }
-
-        });
-    </script>
-    -->
 
 </body>
 

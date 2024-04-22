@@ -68,6 +68,40 @@ body {
   
 }
 
+/* fixed の メニュー */
+.footer-menu_fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px 0;
+    border-top: 3px solid #4b4b4b;
+}
+
+/* メニューアイテムのスタイル */
+.footer-menu_fixed ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.footer-menu_fixed ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.footer-menu_fixed ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    background: #4b4b4b;
+    padding: 0.6em 1.2em;
+    border-radius: 4px;
+
+}
+
 /*=================== フッターメニュー 01  「戻る」、「更新」 END ===================*/
 
 /*=================== フッターメニュー 01  「戻る」、「確定」、「全数完了」 ===================*/
@@ -138,6 +172,35 @@ body {
     font-size: 11px !important;
     white-space: nowrap;
 }
+
+/* ================== ボタン ==================== */
+
+.button_01 {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 2em 0 0 0;
+}
+
+
+/* ================== テキストボックス ==================== */
+.text_box_tpl_01 {
+    width: 55%;
+    padding: 10px 15px;
+    border-radius: 3px;
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+}
+
+.text_box_tpl_01:focus {
+     box-shadow: 0 0 5px 0 rgba(255, 153, 0, 1);
+     border: 2px solid #FFF !important;
+     outline: 0;
+ }
+       
 
 
 

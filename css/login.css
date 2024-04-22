@@ -2,7 +2,8 @@
 @media only screen and (max-width: 768px) {
 
     .body_01 {
-        background-color: #e8f5e5;
+        padding: 0;
+        margin: 0;
     }
 
     .app_name_box {
@@ -15,10 +16,12 @@
         color:#fff;
     }
 
+    /*
     .page_title {
         border-bottom: 3px solid #017f18;
         color: #017f18;
     }
+    */
 
     .top_input_box {
         text-align: center;
