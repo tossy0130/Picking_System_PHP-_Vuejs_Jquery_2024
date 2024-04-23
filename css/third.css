@@ -2,44 +2,102 @@
 /* スマホ */
 @media only screen and (max-width: 768px) {
 
-    /* プルダウンメニューのスタイル */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-    
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-    
-        .dropdown-content button {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            border: none;
-            background: none;
-            text-align: left;
-        }
-    
-        .dropdown-content button:hover {
-            background-color: #f1f1f1;
-        }
-    
-        .show {
-            display: block;
-        }
-    
-        /* 選択した値の表示スタイル */
-        .selected-value {
-            margin-top: 10px;
-            font-weight: bold;
-        }
+            .souko_box_v {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                    /* ボタン間の間隔 */
+                }
+            
+                .selected_souko_v {
+                    background-color: #007bff !important;
+                    /* 選択されたボタンの背景色 */
+                    color: #fff;
+                    /* 選択されたボタンのテキスト色 */
+                }
+            
+                .souko_box_v button {
+                    width: 100%;
+                    /* ボタンの幅を100%に */
+                    padding: 10px;
+                    font-size: 16px;
+                    border: none;
+                    background-color: #6d6666;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+            
+                .souko_box_v button:hover {
+                    background-color: #ddd;
+                }
+
+            /* ドロップダウンメニューのスタイル */
+                .dropdown_v {
+                    position: relative;
+                    display: inline-block;
+                    margin-right: 10px;
+                }
+            
+                .dropdown-content_v {
+                    display: none;
+                    position: absolute;
+                    background-color: #c47e7e;
+                    min-width: 160px;
+                    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+                    padding: 12px 16px;
+                    z-index: 1;
+                }
+            
+                .dropdown-content_v button {
+                    width: 100%;
+                    padding: 8px 0;
+                    text-align: left;
+                    background-color: transparent;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                }
+            
+                .dropdown-content_v button:hover {
+                    background-color: #ddd;
+                }
+            
+                /* ボタンのスタイル */
+                .dropbtn_v {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 16px;
+                    font-size: 16px;
+                    border: none;
+                    cursor: pointer;
+                }
+            
+                .dropbtn_v:hover,
+                .dropbtn_v:focus {
+                    background-color: #3e8e41;
+                }
+            
+                /* 選択した値を表示する部分のスタイル */
+                .selected-value {
+                    margin-top: 20px;
+                }
+            
+                /* 次へボタンのスタイル */
+                #sendSelectedValues {
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                }
+            
+                #sendSelectedValues:hover {
+                    background-color: #45a049;
+                }
+
+                
 
 }

@@ -156,11 +156,10 @@ if (empty($session_id)) {
 
                 <div class="souko_box">
                     <?php
-
                     // 配列内の要素をループしてボタンを生成
                     $idx = 0;
                     foreach ($arr_souko_data as $souko) {
-                        echo '<div><button type="button" value="' . $souko["souko_name"] . '" @click="handleButtonClick(\'' . $souko["souko_name"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_name"] . '\'}">' . $souko["souko_name"] . '</button></div>';
+                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_code"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_code"] . '\'}">' . $souko["souko_name"] . '</button></div>';
                     }
                     ?>
                 </div>

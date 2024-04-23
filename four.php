@@ -2,6 +2,7 @@
 
 ini_set('display_errors', 1);
 
+require __DIR__ . "./conf.php";
 require_once(dirname(__FILE__) . "./class/init_val.php");
 require(dirname(__FILE__) . "./class/function.php");
 
@@ -22,11 +23,100 @@ if (empty($session_id)) {
 
     // ================= 通常処理 =================
 
-    $day = $_GET['day'];
-    $souko = $_GET['souko'];
-    $company = $_GET['company'];
-    $k_kb = $_GET['k_kb']; // === 運送便 区分
+    $select_day = $_GET['day'];
+    $select_souko = $_GET['souko'];
+    $select_unsou_code = $_GET['unsou_code'];
+    $get_unsou_name = $_GET['unsou_name'];
+    //  $k_kb = $_GET['k_kb']; // === 運送便 区分
 
+    /*
+    print($select_day);
+    print($select_souko);
+    print($select_unsou_code);
+    */
+
+    // ============================= DB 処理 =============================
+    // === 接続準備
+    $conn = oci_connect(
+        DB_USER,
+        DB_PASSWORD,
+        DB_CONNECTION_STRING,
+        DB_CHARSET
+    );
+
+    if (!$conn) {
+        $e = oci_error();
+    }
+
+    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量
+	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+		 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+		   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+		   AND SK.倉庫Ｃ = SO.倉庫Ｃ
+		   AND SL.出荷元 = SM.出荷元Ｃ(+)
+		   AND SK.運送Ｃ = US.運送Ｃ
+		   AND SL.商品Ｃ = SH.商品Ｃ
+		   AND SJ.出荷日 = :SELECT_DATE
+           AND SK.倉庫Ｃ = :SELECT_SOUKO
+           AND SK.運送Ｃ = :SELECT_UNSOU
+         GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
+			SK.商品Ｃ,SH.品名	
+		 ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+
+    $stid = oci_parse($conn, $sql);
+    if (!$stid) {
+        $e = oci_error($stid);
+    }
+
+    oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
+    oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko);
+    oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
+
+    oci_execute($stid);
+
+    $arr_Picking_DATA = array();
+    while ($row = oci_fetch_assoc($stid)) {
+        // カラム名を指定して値を取得
+        $syuka_day = $row['出荷日'];
+        $souko_code = $row['倉庫Ｃ'];
+        $souko_name = $row['倉庫名'];
+        $Unsou_code = $row['運送Ｃ'];
+        $Unsou_name = $row['運送略称'];
+        $shipping_moto = $row['出荷元'];
+        $shipping_moto_name = $row['出荷元名'];
+        $Shouhin_code = $row['商品Ｃ'];
+        $Shouhin_name = $row['品名'];
+        $Shouhin_num = $row['数量'];
+
+        /*
+        print "出荷日：" . $syuka_day . "<br />";
+        print "倉庫Ｃ：" . $souko_code . "<br />";
+        print "倉庫名：" . $souko_name . "<br />";
+        print "運送Ｃ：" . $Unsou_code . "<br />";
+        print "運送略称：" . $Unsou_name . "<br />";
+        print "出荷元：" . $shipping_moto . "<br />";
+        print "出荷元名：" . $shipping_moto_name . "<br />";
+        print "商品Ｃ：" . $Shouhin_code . "<br />";
+        print "品名：" . $Shouhin_name . "<br />";
+        print "数量：" . $Shouhin_num . "<br />";
+        */
+
+        // 取得した値を配列に追加
+        $arr_Picking_DATA[] = array(
+            'syuka_day' => $syuka_day,
+            'souko_code' => $souko_code,
+            'souko_name' => $souko_name,
+            'Unsou_code' => $Unsou_code,
+            'Unsou_name' => $Unsou_name,
+            'shipping_moto' => $shipping_moto,
+            'shipping_moto_name' => $shipping_moto_name,
+            'Shouhin_code' => $Shouhin_code,
+            'Shouhin_name' => $Shouhin_name,
+            'Shouhin_num' => $Shouhin_num
+        );
+
+        // var_dump($arr_Picking_DATA);
+    }
 }
 
 ?>
@@ -46,6 +136,53 @@ if (empty($session_id)) {
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング 04</title>
+
+    <style>
+        .dropdown_02 {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .dropdown-content button {
+            color: black;
+            padding: 10px 12px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            width: 100%;
+            /* ボタンの幅を100%にする */
+            text-align: left;
+            /* ボタンのテキストを左寄せにする */
+        }
+
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -62,20 +199,19 @@ if (empty($session_id)) {
         </div>
     </div>
 
-
-    <div class="head_box_02">
-        <div class="head_content_02">
-            <span class="home_sub_icon_span">
-                <i class="fa-solid fa-thumbtack"></i>
-            </span>
-
-            <span class="page_title">
-                ピッキング対象選択
-            </span>
-        </div>
-    </div>
-
     <div id="app">
+        <div class="head_box_02">
+            <div class="head_content_02">
+                <span class="home_sub_icon_span">
+                    <i class="fa-solid fa-thumbtack"></i>
+                </span>
+
+                <span class="page_title">
+                    ピッキング対象選択
+                </span>
+            </div>
+        </div>
+
         <div class="container">
             <div class="content_04">
                 <div class="head_01">
@@ -83,7 +219,7 @@ if (empty($session_id)) {
                     <div>
                         <i class="fa-solid fa-warehouse"></i>
                         <span class="souko_icon_box">
-                            <?php echo h($souko); ?>
+                            <?php echo h($select_souko); ?>
                         </span>
                     </div>
 
@@ -93,14 +229,13 @@ if (empty($session_id)) {
                         </span>
 
                         <span class="unsou_text_box">
-                            <?php echo h($company); ?>
+                            <?php echo h($get_unsou_name); ?>
                         </span>
                     </div>
 
                 </div>
 
-                <div class=" head_02">
-
+                <div class="head_02">
                     <div>
 
                         <div class="dropdown_02" @click="toggleDropdown(1)">
@@ -127,7 +262,9 @@ if (empty($session_id)) {
 
             </div> <!-- head_01 END -->
 
+            <!-- ==================================================== -->
             <!-- ============== テーブルレイアウト 開始 =============== -->
+            <!-- ==================================================== -->
             <div class="head_02">
 
                 <table class="" border="1">
@@ -142,90 +279,21 @@ if (empty($session_id)) {
                             <th>特記・備考</th>
                         </tr>
 
-                        <tr style="background-color: bisque;">
-                            <td class="font_tmp_01">L-1</td>
-                            <td class="bold">3 <br />
-                                3</td>
-                            <td class="bold">1<br />
-                                1</td>
-                            <td></td>
-                            <td>スチールホースリールセット２５ｍ(ﾌﾞﾗｳﾝ)<br />
-                                ＨＲ－Ｌ２５Ｄ（ＢＲ）－ＡＺ
-                            </td>
-                            <td>ケース</td>
-                        </tr>
+                        <?php
+                        foreach ($arr_Picking_DATA as $Picking_VAL) {
+                            echo '<tr>';
+                            echo '<td></td>';
+                            echo '<td>' . $Picking_VAL['Shouhin_num'] . "</td>";
+                            echo '<td></td>';
+                            echo '<td></td>';
+                            echo '<td>' . $Picking_VAL['Shouhin_name'] . "</td>";
+                            echo '<td>' . $Picking_VAL['shipping_moto_name'] . "</td>";
+                            echo '</tr>';
+                        }
 
-                        <tr>
-                            <td class="font_tmp_01">L-2</td>
-                            <td class="bold">12</td>
-                            <td class="bold">1</td>
-                            <td class="bold">2</td>
-                            <td>ステンレスポスト<br />
-                                PS-30H
-                            </td>
-                            <td>シール</td>
-                        </tr>
 
-                        <tr style="background-color: bisque;">
-                            <td class="font_tmp_01">L-3</td>
-                            <td class="bold">1 <br />
-                                1</td>
-                            <td class="bold">1<br />
-                                1</td>
-                            <td></td>
-                            <td>ジェニアス30<br />
-                                GR30GNF
-                            </td>
-                            <td></td>
-                        </tr>
+                        ?>
 
-                        <tr style="background-color: yellow;">
-                            <td class="font_tmp_01">L-4</td>
-                            <td class="bold">4 <br />
-                                4</td>
-                            <td class="bold">1<br />
-                                1</td>
-                            <td class="bold">1 <br />
-                                1
-                            </td>
-                            <td>ホースリール<br />
-                                PRQC30
-                            </td>
-                            <td>取扱い</td>
-                        </tr>
-
-                        <tr>
-                            <td class="font_tmp_01">L-5</td>
-                            <td class="bold">3</td>
-                            <td class="bold">1</td>
-                            <td></td>
-                            <td>コールマン<br />
-                                20000x x x x
-                            </td>
-                            <td>関東</td>
-                        </tr>
-
-                        <tr>
-                            <td class="font_tmp_01">L-6</td>
-                            <td class="bold">3</td>
-                            <td class="bold">1</td>
-                            <td></td>
-                            <td>コールマン<br />
-                                20000x x x x
-                            </td>
-                            <td>近畿</td>
-                        </tr>
-
-                        <tr>
-                            <td class="font_tmp_01">L-7</td>
-                            <td class="bold">3</td>
-                            <td class="bold">1</td>
-                            <td></td>
-                            <td>コールマン<br />
-                                20000x x x x
-                            </td>
-                            <td>静岡</td>
-                        </tr>
 
                     </thead>
 
@@ -250,7 +318,6 @@ if (empty($session_id)) {
     </div> <!-- ======== END app ========= -->
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-
     <script>
         new Vue({
             el: '#app',
