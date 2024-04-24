@@ -4,6 +4,15 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . "./class/function.php";
 
+// セッションスタート
+session_start();
+
+// セッションIDを取得
+$sid = session_id();
+$_SESSION["sid"] = session_id();
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $submitted_token = $_POST['csrf_token'];

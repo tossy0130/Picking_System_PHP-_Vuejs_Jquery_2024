@@ -12,8 +12,13 @@ $top_url = Init_Val::TOP_URL;
 
 session_start();
 
-// セッションIDを取得
-$session_id = session_id();
+// セッションIDが一致しない場合はログインページにリダイレクト
+if (!isset($_SESSION["sid"])) {
+    header("Location: index.php");
+    exit;
+} else {
+    $session_id = $_SESSION['sid'];
+}
 
 // session判定
 if (empty($session_id)) {

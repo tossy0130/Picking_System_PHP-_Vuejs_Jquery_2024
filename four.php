@@ -12,8 +12,13 @@ $top_url = Init_Val::TOP_URL;
 
 session_start();
 
-// セッションIDを取得
-$session_id = session_id();
+// セッションIDが一致しない場合はログインページにリダイレクト
+if (!isset($_SESSION["sid"])) {
+    header("Location: index.php");
+    exit;
+} else {
+    $session_id = $_SESSION['sid'];
+}
 
 // session判定
 if (empty($session_id)) {
@@ -24,7 +29,7 @@ if (empty($session_id)) {
     // ================= 通常処理 =================
 
     $select_day = $_GET['day'];
-    $select_souko = $_GET['souko'];
+    $select_souko_code = $_GET['souko'];
     $select_unsou_code = $_GET['unsou_code'];
     $get_unsou_name = $_GET['unsou_name'];
     //  $k_kb = $_GET['k_kb']; // === 運送便 区分
@@ -35,14 +40,33 @@ if (empty($session_id)) {
     print($select_unsou_code);
     */
 
+    // ============================= DB 処理（テーブル存在チェック）=============================
+    // === 接続準備
+
+    $table_Flg = 0;
+    $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+    $sql = "SELECT table_name FROM user_tables WHERE table_name = 'HTPK'";
+    // $sql = "SELECT table_name FROM user_tables WHERE table_name = 'SLTR'";
+    $stmt = oci_parse($conn, $sql);
+    oci_execute($stmt);
+
+    if ($row = oci_fetch_assoc($stmt)) {
+        $table_Flg = 1;
+        //    echo "テーブルが存在します。";
+    } else {
+        $table_Flg = 0;
+        //    echo "テーブルが存在しません。";
+    }
+
+    oci_free_statement($stmt);
+    oci_close($conn);
+
+
+
     // ============================= DB 処理 =============================
     // === 接続準備
-    $conn = oci_connect(
-        DB_USER,
-        DB_PASSWORD,
-        DB_CONNECTION_STRING,
-        DB_CHARSET
-    );
+    $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
 
     if (!$conn) {
         $e = oci_error();
@@ -69,7 +93,7 @@ if (empty($session_id)) {
     }
 
     oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
-    oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko);
+    oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
     oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
 
     oci_execute($stid);
@@ -135,6 +159,9 @@ if (empty($session_id)) {
 
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
+    <!-- jQuery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     <title>ピッキング 04</title>
 
     <style>
@@ -181,6 +208,11 @@ if (empty($session_id)) {
         .show {
             display: block;
         }
+
+        /* テーブル要素　ホバー */
+        tr:hover {
+            background: gray;
+        }
     </style>
 
 </head>
@@ -219,7 +251,7 @@ if (empty($session_id)) {
                     <div>
                         <i class="fa-solid fa-warehouse"></i>
                         <span class="souko_icon_box">
-                            <?php echo h($select_souko); ?>
+                            <?php echo h($select_souko_code); ?>
                         </span>
                     </div>
 
@@ -281,7 +313,7 @@ if (empty($session_id)) {
 
                         <?php
                         foreach ($arr_Picking_DATA as $Picking_VAL) {
-                            echo '<tr>';
+                            echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '">';
                             echo '<td></td>';
                             echo '<td>' . $Picking_VAL['Shouhin_num'] . "</td>";
                             echo '<td></td>';
@@ -291,9 +323,7 @@ if (empty($session_id)) {
                             echo '</tr>';
                         }
 
-
                         ?>
-
 
                     </thead>
 
@@ -341,6 +371,35 @@ if (empty($session_id)) {
 
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('table tbody').on('click', 'tr', function() {
+                var row = $(this).closest('tr');
+                var Shouhin_num = row.find('td:eq(1)').text().trim();
+                var Shouhin_name = row.find('td:eq(4)').text().trim();
+                var shipping_moto_name = row.find('td:eq(5)').text().trim();
+
+                console.log("Shouhin_num");
+                console.log("Shouhin_name");
+                console.log("shipping_moto_name");
+
+                // 取得した値を詳細画面へ渡して遷移
+                // window.location.href = 'detail.php?Shouhin_num=' + Shouhin_num + '&Shouhin_name=' + Shouhin_name + '&shipping_moto_name=' + shipping_moto_name;
+            });
+        });
+    </script>
+
+    <script>
+        $('tr[data-href]').click(function() {
+
+            var href = $(this).data('href');
+            console.log("リンク値:::" + href);
+
+            window.location.href = href;
+        });
+    </script>
+
 
 </body>
 

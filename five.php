@@ -1,23 +1,101 @@
 <?php
 
+ini_set('display_errors', 1);
 
-$test_data = [
-    "L-4",
-    "1000",
-    "ホースリール",
-    "PRQC-30",
-    "4971715",
-    "123456",
-    "4",
-    "1",
-    "1",
-    "1",
-    "取扱注意",
-    "甲信越福山",
-    "アヤハ × 1",
-    "カインズ × 2",
-    "ムサシ × 1"
-];
+require __DIR__ . "./conf.php";
+require_once(dirname(__FILE__) . "./class/init_val.php");
+require(dirname(__FILE__) . "./class/function.php");
+
+// === 外部定数セット
+$err_url = Init_Val::ERR_URL;
+$top_url = Init_Val::TOP_URL;
+
+session_start();
+
+// セッションIDが一致しない場合はログインページにリダイレクト
+if (!isset($_SESSION["sid"])) {
+    header("Location: index.php");
+    exit;
+} else {
+    $session_id = $_SESSION['sid'];
+}
+
+// session判定
+if (empty($session_id)) {
+    // *** セッションIDがないので、リダイレクト
+    header("Location: $top_url");
+} else {
+
+    // ベタ打ち　テストデータ
+    $test_data = [
+        "L-4",
+        "1000",
+        "ホースリール",
+        "PRQC-30",
+        "4971715",
+        "123456",
+        "4",
+        "1",
+        "1",
+        "1",
+        "取扱注意",
+        "甲信越福山",
+        "アヤハ × 1",
+        "カインズ × 2",
+        "ムサシ × 1"
+    ];
+
+    // 値取得
+    if (isset($_GET['select_day'])) {
+
+        $select_day = $_GET['select_day'];
+        $souko_code = $_GET['souko_code'];
+        $unsou_code = $_GET['unsou_code'];
+        $unsou_name = $_GET['unsou_name'];
+        $shipping_moto = $_GET['shipping_moto'];
+        $shipping_moto_name = $_GET['shipping_moto_name'];
+        $Shouhin_code = $_GET['Shouhin_code'];
+        $Shouhin_name = $_GET['Shouhin_name'];
+        $Shouhin_num = $_GET['Shouhin_num'];
+
+        print($select_day . "<br />");
+        print($souko_code . "<br />");
+        print($unsou_code . "<br />");
+        print($unsou_name . "<br />");
+        print($shipping_moto . "<br />");
+        print($shipping_moto_name . "<br />");
+        print($Shouhin_code . "<br />");
+        print($Shouhin_name . "<br />");
+        print($Shouhin_num . "<br />");
+
+        // === 40バイトで分ける
+        // 商品名
+        $Shouhin_name_part1 = substr($Shouhin_name, 0, 40);
+        // 品番
+        $Shouhin_name_part2 = substr($Shouhin_name, 40);
+
+        // 取得データ
+        $Shouhin_Detail_DATA = [
+            "L-4",
+            "1000",
+            $Shouhin_name_part1,
+            $Shouhin_name_part2,
+            "4971715",      // 商品コード 01 （JAN）
+            $Shouhin_code, // 商品コード 02
+            $Shouhin_num,
+            "1",
+            "1",
+            "1",
+            $shipping_moto_name,
+            $unsou_name,
+            "アヤハ × 1",
+            "カインズ × 2",
+            "ムサシ × 1"
+        ];
+    }
+}
+
+
 
 ?>
 
@@ -36,6 +114,13 @@ $test_data = [
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング 05（詳細）</title>
+
+    <style>
+        #scan_val_box {
+            display: block;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -77,19 +162,31 @@ $test_data = [
             </div>
 
             <p class="detail_item_02">
-                <span class="detail_midashi">品名：</span><?php print $test_data[2]; ?>
+                <span class="detail_midashi">品名：</span><?php print wordwrap($Shouhin_Detail_DATA[2], 40, "<br />"); ?>
             </p>
 
             <p class="detail_item_03">
-                <span class="detail_midashi">品番：</span><?php print $test_data[3]; ?>
+                <span class="detail_midashi">品番：</span><?php print $Shouhin_Detail_DATA[3]; ?>
             </p>
 
             <p class="detail_item_04">
-                <span class="detail_midashi">JAN：</span><?php print $test_data[4]; ?> <?php print $test_data[5]; ?>
+                <span class="detail_midashi">JAN：</span>
+
+                <span id="detail_var_code"><?php print $test_data[4]; ?></span>
+                <span id="detail_data_code"><?php print $Shouhin_Detail_DATA[5]; ?></span>
+                <span id="scan_val_box">
+                    <input type="text" id="scan_val" name="scan_val">
+                </span>
+
+                <span id="result_val"></span>
+            </p>
+
+            <p>
+
             </p>
 
             <div class="detail_item_05_box">
-                <p><span class="detail_midashi">数量：</span><?php print $test_data[6]; ?></p>
+                <p><span class="detail_midashi">数量：</span><?php print $Shouhin_Detail_DATA[6]; ?></p>
                 <p><span class="detail_midashi">ケース：</span><?php print $test_data[7]; ?></p>
                 <p><span class="detail_midashi">バラ：</span><?php print $test_data[8]; ?></p>
             </div>
@@ -103,13 +200,13 @@ $test_data = [
             </p>
 
             <p class="detail_item_08">
-                <span class="detail_midashi">特記：</span><?php print $test_data[10]; ?>
+                <span class="detail_midashi">特記：</span><?php print $Shouhin_Detail_DATA[10]; ?>
             </p>
 
             <p class="detail_item_09">
                 <span class="detail_midashi">
                     運送便：
-                </span><?php print $test_data[11]; ?><br />
+                </span><?php print $Shouhin_Detail_DATA[11]; ?><br />
 
             </p>
 
@@ -131,6 +228,33 @@ $test_data = [
             <li><a href="#">全数完了</a></li>
         </ul>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // scan_val要素にフォーカスを設定する
+            $("#scan_val").focus();
+
+            // バーコード、　商品コード　取得
+            var detail_data_code = $("#detail_data_code").text();
+            var detail_var_code = $('#detail_var_code').text();
+
+            console.log(detail_data_code);
+            console.log(scan_val);
+
+            $("#scan_val").change(function() {
+
+                if ($("#scan_val").val() === detail_var_code || $("#scan_val").val() === detail_data_code) {
+                    $("#result_val").text("OK:::" + $("#scan_val").val());
+                } else {
+                    $("#result_val").text("NG:::" + $("#scan_val").val());
+                }
+
+            });
+
+        });
+    </script>
+
 
 </body>
 

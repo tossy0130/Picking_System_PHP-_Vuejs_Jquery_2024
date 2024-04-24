@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="app">
+        <button v-on:click="trigger">
+            alertを呼び出す
+        </button>
+    </div>
+
+    <script>
+        const app = {
+            methods: {
+                trigger() {
+                    alert('ボタンが押されました');
+                }
+            }
+        }
+        Vue.createApp(app).mount('#app')
+
+    </script>
+    
+</body>
+</html>

@@ -7,6 +7,12 @@ require(dirname(__FILE__) . "./class/function.php");
 // セッションスタート
 session_start();
 
+// セッションIDが一致しない場合はログインページにリダイレクト
+if (!isset($_SESSION["sid"])) {
+    header("Location: index.php");
+    exit;
+}
+
 //出荷指示日時があるかどうかの判定
 $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
@@ -25,16 +31,7 @@ $token_jim = uniqid('', true);
 //トークンをセッション変数にセット
 $_SESSION['token_jim'] = $token_jim;
 
-// セッションIDを取得
-$sid = session_id();
-// print("session_id:::" . $sid . "<br />");
 
-/*
-$newid = session_create_id('myprefix-');
-print("newid:::" . $newid . "<br />");
-
-print("token_jim:::" . $token_jim);
-*/
 
 ?>
 
@@ -86,7 +83,7 @@ print("token_jim:::" . $token_jim);
             </span>
 
             <span class="page_title">
-                ログイン
+                出荷日選択
             </span>
         </div>
     </div>

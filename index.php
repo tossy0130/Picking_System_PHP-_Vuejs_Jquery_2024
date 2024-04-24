@@ -7,9 +7,10 @@ require __DIR__ . "./conf.php";
 // セッションスタート
 session_start();
 
-// セッションIDを取得
-$sid = session_id();
-//print("session_id:::" . $sid . "<br />");
+// セッションIDを破棄してログアウトする
+session_unset(); // セッション変数をクリア
+session_destroy(); // セッションを破棄
+
 
 // === 接続準備
 $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
