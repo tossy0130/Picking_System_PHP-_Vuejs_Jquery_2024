@@ -28,10 +28,29 @@ if (empty($session_id)) {
 
     // ================= 通常処理 =================
 
-    $select_day = $_GET['day'];
-    $select_souko_code = $_GET['souko'];
-    $select_unsou_code = $_GET['unsou_code'];
-    $get_unsou_name = $_GET['unsou_name'];
+    if (isset($_GET['day'])) {
+        $select_day = $_GET['day'];
+        $select_souko_code = $_GET['souko'];
+        $get_souko_name = $_GET['get_souko_name'];
+        $select_unsou_code = $_GET['unsou_code'];
+        $get_unsou_name = $_GET['unsou_name'];
+    }
+
+    // ソート用キー取得
+    $sortKey = "";
+    if (isset($_GET['sort_key'])) {
+        $sortKey = $_GET['sort_key'];
+        print($sortKey);
+    }
+
+    if (isset($_GET['back_flg'])) {
+        $back_flg = $_GET['back_flg'];
+        print($back_flg);
+    }
+
+
+
+
     //  $k_kb = $_GET['k_kb']; // === 運送便 区分
 
     /*
@@ -52,16 +71,15 @@ if (empty($session_id)) {
     oci_execute($stmt);
 
     if ($row = oci_fetch_assoc($stmt)) {
-        $table_Flg = 1;
+        $HTPK_table_Flg = 1;
         //    echo "テーブルが存在します。";
     } else {
-        $table_Flg = 0;
+        $HTPK_table_Flg = 0;
         //    echo "テーブルが存在しません。";
     }
 
     oci_free_statement($stmt);
     oci_close($conn);
-
 
 
     // ============================= DB 処理 =============================
@@ -72,7 +90,10 @@ if (empty($session_id)) {
         $e = oci_error();
     }
 
-    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量
+    switch ($sortKey) {
+        case 'location_note':
+            $sql =
+                "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量,SJ.得意先名
 	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
 		 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
 		   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
@@ -84,62 +105,189 @@ if (empty($session_id)) {
            AND SK.倉庫Ｃ = :SELECT_SOUKO
            AND SK.運送Ｃ = :SELECT_UNSOU
          GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
-			SK.商品Ｃ,SH.品名	
-		 ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+			SK.商品Ｃ,SH.品名,SJ.得意先名
+         ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
 
-    $stid = oci_parse($conn, $sql);
-    if (!$stid) {
-        $e = oci_error($stid);
-    }
 
-    oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
-    oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
-    oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
+            $stid = oci_parse($conn, $sql);
+            if (!$stid) {
+                $e = oci_error($stid);
+            }
 
-    oci_execute($stid);
+            oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
+            oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
+            oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
 
-    $arr_Picking_DATA = array();
-    while ($row = oci_fetch_assoc($stid)) {
-        // カラム名を指定して値を取得
-        $syuka_day = $row['出荷日'];
-        $souko_code = $row['倉庫Ｃ'];
-        $souko_name = $row['倉庫名'];
-        $Unsou_code = $row['運送Ｃ'];
-        $Unsou_name = $row['運送略称'];
-        $shipping_moto = $row['出荷元'];
-        $shipping_moto_name = $row['出荷元名'];
-        $Shouhin_code = $row['商品Ｃ'];
-        $Shouhin_name = $row['品名'];
-        $Shouhin_num = $row['数量'];
+            oci_execute($stid);
 
-        /*
-        print "出荷日：" . $syuka_day . "<br />";
-        print "倉庫Ｃ：" . $souko_code . "<br />";
-        print "倉庫名：" . $souko_name . "<br />";
-        print "運送Ｃ：" . $Unsou_code . "<br />";
-        print "運送略称：" . $Unsou_name . "<br />";
-        print "出荷元：" . $shipping_moto . "<br />";
-        print "出荷元名：" . $shipping_moto_name . "<br />";
-        print "商品Ｃ：" . $Shouhin_code . "<br />";
-        print "品名：" . $Shouhin_name . "<br />";
-        print "数量：" . $Shouhin_num . "<br />";
-        */
+            $arr_Picking_DATA = array();
+            while ($row = oci_fetch_assoc($stid)) {
+                // カラム名を指定して値を取得
+                $syuka_day = $row['出荷日'];
+                $souko_code = $row['倉庫Ｃ'];
+                $souko_name = $row['倉庫名'];
+                $Unsou_code = $row['運送Ｃ'];
+                $Unsou_name = $row['運送略称'];
+                $shipping_moto = $row['出荷元'];
+                $shipping_moto_name = $row['出荷元名'];
+                $Shouhin_code = $row['商品Ｃ'];
+                $Shouhin_name = $row['品名'];
+                $Shouhin_num = $row['数量'];
+                $Tokuisaki_name = $row['得意先名'];
 
-        // 取得した値を配列に追加
-        $arr_Picking_DATA[] = array(
-            'syuka_day' => $syuka_day,
-            'souko_code' => $souko_code,
-            'souko_name' => $souko_name,
-            'Unsou_code' => $Unsou_code,
-            'Unsou_name' => $Unsou_name,
-            'shipping_moto' => $shipping_moto,
-            'shipping_moto_name' => $shipping_moto_name,
-            'Shouhin_code' => $Shouhin_code,
-            'Shouhin_name' => $Shouhin_name,
-            'Shouhin_num' => $Shouhin_num
-        );
 
-        // var_dump($arr_Picking_DATA);
+                // 取得した値を配列に追加
+                $arr_Picking_DATA[] = array(
+                    'syuka_day' => $syuka_day,
+                    'souko_code' => $souko_code,
+                    'souko_name' => $souko_name,
+                    'Unsou_code' => $Unsou_code,
+                    'Unsou_name' => $Unsou_name,
+                    'shipping_moto' => $shipping_moto,
+                    'shipping_moto_name' => $shipping_moto_name,
+                    'Shouhin_code' => $Shouhin_code,
+                    'Shouhin_name' => $Shouhin_name,
+                    'Shouhin_num' => $Shouhin_num,
+                    'Tokuisaki_name' => $Tokuisaki_name
+                );
+
+                // var_dump($arr_Picking_DATA);
+            }
+
+            break;
+
+        case 'num_note':
+
+            $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量,SJ.得意先名
+	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+		 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+		   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+		   AND SK.倉庫Ｃ = SO.倉庫Ｃ
+		   AND SL.出荷元 = SM.出荷元Ｃ(+)
+		   AND SK.運送Ｃ = US.運送Ｃ
+		   AND SL.商品Ｃ = SH.商品Ｃ
+		   AND SJ.出荷日 = :SELECT_DATE
+           AND SK.倉庫Ｃ = :SELECT_SOUKO
+           AND SK.運送Ｃ = :SELECT_UNSOU
+         GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
+			SK.商品Ｃ,SH.品名,SJ.得意先名
+         ORDER BY 数量 desc,SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+
+            $stid = oci_parse($conn, $sql);
+            if (!$stid) {
+                $e = oci_error($stid);
+            }
+
+            oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
+            oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
+            oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
+
+            print($select_day . "<br />");
+            print($select_souko_code . "<br />");
+            print($select_unsou_code . "<br />");
+
+            oci_execute($stid);
+
+            $arr_Picking_DATA = array();
+            while ($row = oci_fetch_assoc($stid)) {
+                // カラム名を指定して値を取得
+                $syuka_day = $row['出荷日'];
+                $souko_code = $row['倉庫Ｃ'];
+                $souko_name = $row['倉庫名'];
+                $Unsou_code = $row['運送Ｃ'];
+                $Unsou_name = $row['運送略称'];
+                $shipping_moto = $row['出荷元'];
+                $shipping_moto_name = $row['出荷元名'];
+                $Shouhin_code = $row['商品Ｃ'];
+                $Shouhin_name = $row['品名'];
+                $Shouhin_num = $row['数量'];
+                $Tokuisaki_name = $row['得意先名'];
+
+                // 取得した値を配列に追加
+                $arr_Picking_DATA[] = array(
+                    'syuka_day' => $syuka_day,
+                    'souko_code' => $souko_code,
+                    'souko_name' => $souko_name,
+                    'Unsou_code' => $Unsou_code,
+                    'Unsou_name' => $Unsou_name,
+                    'shipping_moto' => $shipping_moto,
+                    'shipping_moto_name' => $shipping_moto_name,
+                    'Shouhin_code' => $Shouhin_code,
+                    'Shouhin_name' => $Shouhin_name,
+                    'Shouhin_num' => $Shouhin_num,
+                    'Tokuisaki_name' => $Tokuisaki_name
+                );
+
+                // var_dump($arr_Picking_DATA);
+            }
+
+            break;
+        case 'tokki_note':
+            $sql = " ORDER BY SM.出荷元名";
+            break;
+        case 'bikou_note':
+            $sql = " ORDER BY SK.商品Ｃ";
+            break;
+        default:
+            // デフォルトの並べ替え
+            $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量, SJ.得意先名
+	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+		 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+		   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+		   AND SK.倉庫Ｃ = SO.倉庫Ｃ
+		   AND SL.出荷元 = SM.出荷元Ｃ(+)
+		   AND SK.運送Ｃ = US.運送Ｃ
+		   AND SL.商品Ｃ = SH.商品Ｃ
+		   AND SJ.出荷日 = :SELECT_DATE
+           AND SK.倉庫Ｃ = :SELECT_SOUKO
+           AND SK.運送Ｃ = :SELECT_UNSOU
+         GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
+			SK.商品Ｃ,SH.品名,SJ.得意先名
+         ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+
+            $stid = oci_parse($conn, $sql);
+            if (!$stid) {
+                $e = oci_error($stid);
+            }
+
+            oci_bind_by_name($stid, ":SELECT_DATE", $select_day);
+            oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
+            oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
+
+            oci_execute($stid);
+
+            $arr_Picking_DATA = array();
+            while ($row = oci_fetch_assoc($stid)) {
+                // カラム名を指定して値を取得
+                $syuka_day = $row['出荷日'];
+                $souko_code = $row['倉庫Ｃ'];
+                $souko_name = $row['倉庫名'];
+                $Unsou_code = $row['運送Ｃ'];
+                $Unsou_name = $row['運送略称'];
+                $shipping_moto = $row['出荷元'];
+                $shipping_moto_name = $row['出荷元名'];
+                $Shouhin_code = $row['商品Ｃ'];
+                $Shouhin_name = $row['品名'];
+                $Shouhin_num = $row['数量'];
+                $Tokuisaki_name = $row['得意先名'];
+
+                // 取得した値を配列に追加
+                $arr_Picking_DATA[] = array(
+                    'syuka_day' => $syuka_day,
+                    'souko_code' => $souko_code,
+                    'souko_name' => $souko_name,
+                    'Unsou_code' => $Unsou_code,
+                    'Unsou_name' => $Unsou_name,
+                    'shipping_moto' => $shipping_moto,
+                    'shipping_moto_name' => $shipping_moto_name,
+                    'Shouhin_code' => $Shouhin_code,
+                    'Shouhin_name' => $Shouhin_name,
+                    'Shouhin_num' => $Shouhin_num,
+                    'Tokuisaki_name' => $Tokuisaki_name
+                );
+
+                // var_dump($arr_Picking_DATA);
+            }
     }
 }
 
@@ -165,6 +313,7 @@ if (empty($session_id)) {
     <title>ピッキング 04</title>
 
     <style>
+        /* ドロップダウンリスト */
         .dropdown_02 {
             position: relative;
             display: inline-block;
@@ -187,6 +336,7 @@ if (empty($session_id)) {
             overflow: auto;
             border: 1px solid #ddd;
             z-index: 1;
+            left: -75%;
         }
 
         .dropdown-content button {
@@ -196,9 +346,7 @@ if (empty($session_id)) {
             display: block;
             cursor: pointer;
             width: 100%;
-            /* ボタンの幅を100%にする */
             text-align: left;
-            /* ボタンのテキストを左寄せにする */
         }
 
         .dropdown-content button:hover {
@@ -251,7 +399,7 @@ if (empty($session_id)) {
                     <div>
                         <i class="fa-solid fa-warehouse"></i>
                         <span class="souko_icon_box">
-                            <?php echo h($select_souko_code); ?>
+                            <?php echo h($get_souko_name); ?>
                         </span>
                     </div>
 
@@ -267,28 +415,37 @@ if (empty($session_id)) {
 
                 </div>
 
-                <div class="head_02">
+                <div class="four_flex">
                     <div>
+
+                        <p id="login_id_view">出荷日：<?= $arr_Picking_DATA[0]["syuka_day"]; ?></p>
+
+                    </div>
+                    <div class="" id="menu_btn_box">
 
                         <div class="dropdown_02" @click="toggleDropdown(1)">
                             <button class="dropbtn" id="order_btn" value="並替">並替</button>
                             <div class="dropdown-content" :class="{show: isOpen[1]}">
-                                <button type="button" @click="handleButtonClick('ロケ順')">ロケ順</button>
-                                <button type="button" @click="handleButtonClick('数量順')">数量順</button>
-                                <button type="button" @click="handleButtonClick('特記順')">特記順</button>
-                                <button type="button" @click="handleButtonClick('備考順')">備考順</button>
+                                <button type="button" @click="handleButtonClick('location_note')">ロケ順</button>
+                                <button type="button" @click="handleButtonClick('num_note')">数量順</button>
+                                <button type="button" @click="handleButtonClick('tokki_note')">特記順</button>
+                                <button type="button" @click="handleButtonClick('bikou_note')">備考順</button>
                             </div>
                         </div>
 
-                    </div>
 
-                    <div>
-                        <button type="button" id="all_select_btn">
-                            全表示
-                        </button>
-                    </div>
 
+                        <div>
+                            <button type="button" id="all_select_btn">
+                                全表示
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
+
+
+
 
                 <hr class="hr_01">
 
@@ -297,7 +454,7 @@ if (empty($session_id)) {
             <!-- ==================================================== -->
             <!-- ============== テーブルレイアウト 開始 =============== -->
             <!-- ==================================================== -->
-            <div class="head_02">
+            <div class="">
 
                 <table class="" border="1">
 
@@ -313,12 +470,16 @@ if (empty($session_id)) {
 
                         <?php
                         foreach ($arr_Picking_DATA as $Picking_VAL) {
-                            echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '">';
+
+                            $shouhin_name_part1 = mb_substr($Picking_VAL['Shouhin_name'], 0, 20);
+                            $shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20);
+
+                            echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&Tokuisaki=' . $Tokuisaki_name . '">';
                             echo '<td></td>';
                             echo '<td>' . $Picking_VAL['Shouhin_num'] . "</td>";
                             echo '<td></td>';
                             echo '<td></td>';
-                            echo '<td>' . $Picking_VAL['Shouhin_name'] . "</td>";
+                            echo '<td>' . $shouhin_name_part1 . '<br />' . $shouhin_name_part2 . "</td>";
                             echo '<td>' . $Picking_VAL['shipping_moto_name'] . "</td>";
                             echo '</tr>';
                         }
@@ -339,7 +500,9 @@ if (empty($session_id)) {
         <!-- フッターメニュー -->
         <footer class="footer-menu">
             <ul>
-                <li><a href="#">戻る</a></li>
+                <?php $back_flg = 1; ?>
+                <?php $url = "./third.php?selectedSouko=" . urlencode($select_souko_code) . "&selected_day=" . urlencode($select_day) . "&souko_name=" . urlencode($get_souko_name) . "&back_flg=" . $back_flg; ?>
+                <li><a href="<?php echo $url; ?>">戻る</a></li>
                 <li><a href="#">更新</a></li>
             </ul>
         </footer>
@@ -366,6 +529,17 @@ if (empty($session_id)) {
                 handleButtonClick(value) {
                     this.selectValue = value;
                     console.log("プルダウン:::" + this.selectValue);
+
+                    var selectedDay = '<?php echo $select_day; ?>';
+                    var select_souko_code = '<?php echo $select_souko_code; ?>';
+                    var get_unsou_name = '<?php echo $get_unsou_name; ?>';
+                    var select_unsou_code = '<?php echo $select_unsou_code; ?>';
+                    var get_souko_name = '<?php echo $get_souko_name; ?>';
+
+
+                    window.location.href = window.location.pathname + '?unsou_code=' + select_unsou_code + '&unsou_name=' + get_unsou_name + '&day=' + selectedDay + '&souko=' + select_souko_code + '&get_souko_name=' + get_souko_name + '&sort_key=' + this.selectValue;
+                    // window.location.href = window.location.pathname + '?sort_key=' + this.selectValue;
+                    // window.location.href = './four.php?sort_key=' + this.selectedValue;
                 }
             },
 
@@ -374,6 +548,7 @@ if (empty($session_id)) {
 
     <script>
         $(document).ready(function() {
+
             $('table tbody').on('click', 'tr', function() {
                 var row = $(this).closest('tr');
                 var Shouhin_num = row.find('td:eq(1)').text().trim();

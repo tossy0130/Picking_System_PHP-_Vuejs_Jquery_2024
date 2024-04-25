@@ -81,17 +81,22 @@
                 .selected-value {
                     margin-top: 20px;
                 }
-            
+                
                 /* 次へボタンのスタイル */
+
+                #sendSelectedValues_box{
+                    text-align: center;
+                }
+
                 #sendSelectedValues {
-                    margin-top: 20px;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    background-color: #4CAF50;
-                    color: white;
+                    background-color: #3498db;
+                    color: #fff;
+                    padding: 20px 50px;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin: 1.2em 0 4em 0;
+                    font-size: 1.12em;
                 }
             
                 #sendSelectedValues:hover {

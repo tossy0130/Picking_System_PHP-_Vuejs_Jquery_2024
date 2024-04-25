@@ -54,4 +54,17 @@
         margin-left: 4.5em;
     }
 
+    /* 得意先 */
+    .detail_item_10 {
+        position: relative;
+        left: 0;
+    }
+
+    body>div.container_detail>div>p.detail_item_10>span:nth-child(4) {
+        position: absolute;
+        left: 18%;
+    }
+
+
+
 } /* ========================= END ====================== */

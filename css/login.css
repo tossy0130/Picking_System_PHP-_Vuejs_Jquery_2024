@@ -41,6 +41,16 @@
                 box-sizing: border-box;
     }
 
+    .index_text_box_01 {
+                    width: 65%;
+                    padding: 25px 15px;
+                    border-radius: 3px;
+                    border: 2px solid #ddd;
+                    box-sizing: border-box;
+                    font-size: 1.2em;
+                    letter-spacing: 0.3em;
+                }
+
     .text_box_01:focus {
             box-shadow: 0 0 5px 0 rgba(255, 153, 0, 1);
             border: 2px solid #FFF !important;
@@ -48,14 +58,15 @@
     }
 
     /* テキストボックス END */
-    #login_btn {
-        background-color: #3498db;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 2em 0 0 0;
-    }
+   #login_btn {
+       background-color: #3498db;
+       color: #fff;
+       padding: 20px 50px;
+       border: none;
+       border-radius: 5px;
+       cursor: pointer;
+       margin: 2.2em 0 0 0;
+       font-size: 1.12em;
+   }
         
 }

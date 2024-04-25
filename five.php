@@ -57,6 +57,7 @@ if (empty($session_id)) {
         $Shouhin_code = $_GET['Shouhin_code'];
         $Shouhin_name = $_GET['Shouhin_name'];
         $Shouhin_num = $_GET['Shouhin_num'];
+        $Tokuisaki_name = $_GET['Tokuisaki'];
 
         print($select_day . "<br />");
         print($souko_code . "<br />");
@@ -67,12 +68,18 @@ if (empty($session_id)) {
         print($Shouhin_code . "<br />");
         print($Shouhin_name . "<br />");
         print($Shouhin_num . "<br />");
+        print($Tokuisaki_name . "<br />");
 
         // === 40バイトで分ける
         // 商品名
         $Shouhin_name_part1 = substr($Shouhin_name, 0, 40);
         // 品番
         $Shouhin_name_part2 = substr($Shouhin_name, 40);
+
+        $arr_Tokuisaki_name = [];
+        $arr_Tokuisaki_name = SplitString_FUNC($Tokuisaki_name);
+
+        print_r($arr_Tokuisaki_name);
 
         // 取得データ
         $Shouhin_Detail_DATA = [
@@ -212,9 +219,9 @@ if (empty($session_id)) {
 
             <p class="detail_item_10">
                 <span class="detail_midashi">得意先：</span>
-                <?php print $test_data[12]; ?><br />
-                <span class="di_tmp"><?php print $test_data[13]; ?></span><br />
-                <span class="di_tmp"><?php print $test_data[14]; ?></span>
+                <?php foreach ($arr_Tokuisaki_name as $arr_Tokusaki_VAL) : ?>
+                    <span><?= $arr_Tokusaki_VAL ?></span><br />
+                <?php endforeach; ?>
             </p>
 
         </div>

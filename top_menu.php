@@ -11,12 +11,9 @@ session_start();
 $sid = session_id();
 $_SESSION["sid"] = session_id();
 
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $submitted_token = $_POST['csrf_token'];
-
+    // $submitted_token = $_POST['csrf_token'];
     $input_login_id = $_POST['input_login_id'];
 } else {
     header("Location: index.php");

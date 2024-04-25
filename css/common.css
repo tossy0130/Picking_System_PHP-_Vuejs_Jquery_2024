@@ -22,6 +22,8 @@
 @media only screen and (max-width: 768px) {
 
 body {
+    margin: 0;
+    padding: 0;
     font-family: system-ui,
         -apple-system,
         Segoe UI,
@@ -188,11 +190,14 @@ body {
 
 /* ================== テキストボックス ==================== */
 .text_box_tpl_01 {
-    width: 55%;
-    padding: 10px 15px;
+    width: 65%;
+    padding: 20px 15px;
     border-radius: 3px;
     border: 2px solid #ddd;
     box-sizing: border-box;
+    font-size: 1.12em;
+    letter-spacing: 0.1em;
+    text-align: center;
 }
 
 .text_box_tpl_01:focus {
@@ -200,6 +205,94 @@ body {
      border: 2px solid #FFF !important;
      outline: 0;
  }
+
+         /* ========== ヘッダーエリア 01 、倉庫、運送便  ============ */
+    
+         /*========== ヘッダー　01 =========*/
+         .head_box {
+             background-color: #4b4b4b;
+             /*padding: 1.2em 0;margin: 0;*/
+             padding: 0.6em 0;
+             margin: 0;
+         }
+    
+         .head_content {
+             text-align: center;
+             position: relative;
+         }
+    
+         .head_01 {
+             display: flex;
+             margin: 0 0 1em 0;
+         }
+    
+         /* ホームアイコン */
+         .home_icon_span {
+             display: inline-block;
+             position: absolute;
+             left: 3%;
+         }
+    
+         .fa-house:before {
+             content: "\f015";
+             color: #fff;
+         }
+    
+         /* アプリ名 */
+         .App_name {
+             color: #fff;
+             font-weight: 800;
+             font-size: 1.2em;
+         }
+    
+         .page_title {
+             display: inline-block;
+             position: relative;
+             left: 5%;
+         }
+    
+         /*========== ヘッダー　01 END =========*/
+    
+         /*========== ヘッダー　02 =========*/
+         .head_box_02 {
+             background-color: #D4D7D7;
+             padding: 0.4em 0;
+             margin: 0 0 1em 0;
+         }
+    
+         /*========== ヘッダー　02 END =========*/
+    
+         .fa-thumbtack:before {
+             content: "\f08d";
+             color: #4b4b4b;
+         }
+    
+    
+         .page_title {
+             display: inline-block;
+         }
+    
+         /* ピン　アイコン　span */
+         .home_sub_icon_span {
+             display: inline-block;
+             position: relative;
+             left: 3%;
+         }
+    
+         .souko_icon_box {
+             display: block;
+         }
+         
+         .unsou_icon_box {
+            display: block;
+            position: relative;
+            top: 4px;
+         }
+
+         .unsou_text_box {
+             display: block;
+             position: relative;top: 4px;
+         }
        
 
 

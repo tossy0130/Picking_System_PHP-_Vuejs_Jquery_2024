@@ -111,10 +111,10 @@ oci_close($conn);
                 <form id="loginForm" action="./top_menu.php" method="post">
                     <div class="top_input_box">
                         <div>
-                            <input type="number" class="text_box_01" name="input_login_id" id="input_login_id">
+                            <input type="number" class="index_text_box_01" name="input_login_id" id="input_login_id" placeholder="ログインIDを入力。">
                         </div>
 
-                        <input type="hidden" name="csrf_token" id="input_login_id" value="<?php echo $_SESSION['csrf_token']; ?>">
+
 
 
                         <div>

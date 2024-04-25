@@ -29,6 +29,7 @@ if (empty($session_id)) {
     if (isset($_GET['selectedSouko'])) {
         $selectedSouko = $_GET['selectedSouko'];
         $selected_day = $_GET['selected_day'];
+        $get_souko_name = $_GET['souko_name'];
         // print($selected_day . "<br />");
 
         // ============================= DB 処理 =============================
@@ -38,7 +39,6 @@ if (empty($session_id)) {
         if (!$conn) {
             $e = oci_error();
         }
-
 
         $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
 	                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
@@ -51,7 +51,6 @@ if (empty($session_id)) {
                         AND SK.倉庫Ｃ = :GET_SOUKO
                     GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                     ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名";
-
 
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
@@ -162,7 +161,12 @@ if (empty($session_id)) {
         特記code: <span id="selectedToki_Code"></span><br>
         特記名: <span id="selectedToki_Name"></span>
     </div>
-    <button id="sendSelectedValues">次へ</button>
+
+    <p id="err_text" style="color:red;text-align:center;"></p>
+    <div id="sendSelectedValues_box">
+        <button id="sendSelectedValues">次へ</button>
+    </div>
+
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -204,15 +208,22 @@ if (empty($session_id)) {
 
                 });
 
-
+                // 「次へボタンを押した時の処理
                 $('#sendSelectedValues').on('click', function() {
 
                     var unsou_code = $('#selectedUnsouCode').text();
                     var unsou_name = $('#selectedUnsouName').text();
 
+                    if (unsou_code === "") {
+                        $('#err_text').text("運送便を選択してください。");
+                        return false;
+                    }
+
                     var selectedDay = '<?php echo $selected_day; ?>';
                     var selectedSouko = '<?php echo $selectedSouko; ?>';
-                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko;
+                    var get_souko_name = '<?php echo $get_souko_name; ?>';
+
+                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name;
 
                     console.log(url);
 

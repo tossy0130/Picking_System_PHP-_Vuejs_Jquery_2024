@@ -160,14 +160,14 @@ if (empty($session_id)) {
         <div class="container">
             <div class="content_02">
 
-                <p>出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
+                <p id="syuka_day">出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
 
                 <div class="souko_box">
                     <?php
                     // 配列内の要素をループしてボタンを生成
                     $idx = 0;
                     foreach ($arr_souko_data as $souko) {
-                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_code"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_code"] . '\'}">' . $souko["souko_name"] . '</button></div>';
+                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_code"] . '\', \'' . $souko["souko_name"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_code"] . '\'}">' . $souko["souko_name"] . '</button></div>';
                     }
                     ?>
                 </div>
@@ -200,17 +200,23 @@ if (empty($session_id)) {
             el: '#app',
             data: {
                 selectedValue: null, // 選択された値を保持
+                selectedName: '',
                 error: false
             },
             methods: {
                 // ボタンがクリックされたら
-                handleButtonClick(value) {
+                handleButtonClick(value, name_val) {
                     this.selectedValue = value; // 選択した値を格納
+                    this.selectedName = name_val;
+
                     console.log("選択した値:::" + this.selectedValue);
+                    console.log("選択した値:::" + this.selectedName);
                 },
                 // フォームを送信する
                 submitForm() {
                     const selectedSouko = this.selectedValue;
+                    const selectedSouko_name = this.selectedName;
+
                     const selectedDay = '<?php echo $selected_day; ?>';
                     if (selectedSouko === null) { // 倉庫が選択されていない場合
                         this.error = true; // エラーメッセージを表示
@@ -219,7 +225,7 @@ if (empty($session_id)) {
                         this.error = false; // エラーメッセージを非表示に
                         // get送信
                         const url = `./third.
-php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}`; // リダイレクト
+php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}&souko_name=${selectedSouko_name}`; // リダイレクト
                         window.location.href = url;
                     }
                 }

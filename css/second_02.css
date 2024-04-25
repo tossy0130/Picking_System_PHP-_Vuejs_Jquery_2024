@@ -27,3 +27,22 @@
     background-color: #ddd;
 }
 
+#syuka_day {
+    border-bottom: 3px solid #ccc;font-weight: 600;
+    font-size: 1.12em;width: 50%;  
+}
+
+#next_btn {
+    text-align: center;
+}
+
+#next_btn > button{
+    background-color: #3498db;
+        color: #fff;
+        padding: 20px 50px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 2.2em 0 0 0;
+        font-size: 1.12em;
+}

@@ -46,8 +46,8 @@ $_SESSION['token_jim'] = $token_jim;
     <!-- css -->
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/login.css">
-    <link rel="stylesheet" href="./css/forth.css">
     <link rel="stylesheet" href="./css/third.css">
+    <link rel="stylesheet" href="./css/first.css">
 
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
@@ -89,12 +89,12 @@ $_SESSION['token_jim'] = $token_jim;
     </div>
 
     <div class="container" id="app">
-        <div class="content_top">
+        <div class="content_top" id="first_content">
 
 
             <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01" v-model="dayval">
 
-            <div class="btn_01">
+            <div class="btn_01" id="day_search_submit_box">
                 <button id="day_search_submit" class="button_01" type="button" @click="submitForm">開始</button>
             </div>
 
