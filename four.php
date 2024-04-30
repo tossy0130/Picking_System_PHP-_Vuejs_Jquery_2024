@@ -76,22 +76,56 @@ if (empty($session_id)) {
     } else {
         $HTPK_table_Flg = 0;
         //    echo "テーブルが存在しません。";
+
+        // ============================= DB 処理 =============================
+        // === HTPK テーブル作成
+        $createSql = "CREATE TABLE HTPK (
+        処理ＳＥＱ                     NUMBER(10) NOT NULL,
+        伝票番号                       NUMBER(9) NOT NULL,
+        伝票行番号                     NUMBER(5) NOT NULL,
+        伝票行枝番                     NUMBER(9) NOT NULL,
+        入力担当                       NUMBER(4),
+        商品Ｃ                         VARCHAR2(14),
+        倉庫Ｃ                         VARCHAR2(2),
+        運送Ｃ                         NUMBER(2),
+        出荷元                         VARCHAR2(3),
+        特記事項                       VARCHAR2(20),
+        出荷予定数量                   NUMBER(10,2) DEFAULT 0,
+        ピッキング数量                 NUMBER(10,2) DEFAULT 0,
+        処理開始日時                   DATE,
+        処理終了日時                   DATE,
+        登録日                         DATE,
+        登録端末                       VARCHAR2(15),
+        処理Ｆ                         NUMBER(1) DEFAULT 0
+    )";
+
+        // テーブルを作成
+        $createStmt = oci_parse($conn, $createSql);
+        if (oci_execute($createStmt)) {
+            // テーブル作成完了
+
+        } else {
+            // テーブル作成失敗
+            $e = oci_error($createStmt);
+            echo "テーブル作成エラー: " . htmlentities($e['message'], ENT_QUOTES);
+        }
     }
 
     oci_free_statement($stmt);
     oci_close($conn);
 
 
-    // ============================= DB 処理 =============================
-    // === 接続準備
-    $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
-
-    if (!$conn) {
-        $e = oci_error();
-    }
-
     switch ($sortKey) {
         case 'location_note':
+
+            // ============================= DB 処理 =============================
+            // === 接続準備
+            $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+            if (!$conn) {
+                $e = oci_error();
+            }
+
             $sql =
                 "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量,SJ.得意先名
 	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
@@ -154,9 +188,20 @@ if (empty($session_id)) {
                 // var_dump($arr_Picking_DATA);
             }
 
+            oci_free_statement($stid);
+            oci_close($conn);
+
             break;
 
         case 'num_note':
+
+            // ============================= DB 処理 =============================
+            // === 接続準備
+            $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+            if (!$conn) {
+                $e = oci_error();
+            }
 
             $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量,SJ.得意先名
 	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
@@ -221,6 +266,9 @@ if (empty($session_id)) {
                 // var_dump($arr_Picking_DATA);
             }
 
+            oci_free_statement($stid);
+            oci_close($conn);
+
             break;
         case 'tokki_note':
             $sql = " ORDER BY SM.出荷元名";
@@ -230,20 +278,44 @@ if (empty($session_id)) {
             break;
         default:
             // デフォルトの並べ替え
-            $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名,SUM(SK.出荷数量) AS 数量, SJ.得意先名
-	  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-		 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-		   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-		   AND SK.倉庫Ｃ = SO.倉庫Ｃ
-		   AND SL.出荷元 = SM.出荷元Ｃ(+)
-		   AND SK.運送Ｃ = US.運送Ｃ
-		   AND SL.商品Ｃ = SH.商品Ｃ
-		   AND SJ.出荷日 = :SELECT_DATE
-           AND SK.倉庫Ｃ = :SELECT_SOUKO
-           AND SK.運送Ｃ = :SELECT_UNSOU
-         GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
-			SK.商品Ｃ,SH.品名,SJ.得意先名
-         ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+
+            // ============================= DB 処理 =============================
+            // === 接続準備
+            $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+            if (!$conn) {
+                $e = oci_error();
+            }
+
+            $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+      ,RZ.棚番
+      ,SH.梱包入数
+      ,SUM(SK.出荷数量) AS 数量	
+      ,SUM(PK.ピッキング数量) AS ピッキング数量
+      ,PK.処理Ｆ
+      ,SJ.得意先名
+      ,SH.ＪＡＮ
+ FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+      ,RZMF RZ
+      ,HTPK PK
+ WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+   AND SL.伝票番号   = PK.伝票番号(+)
+   AND SL.伝票行番号 = PK.伝票行番号(+)
+   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+   AND SK.倉庫Ｃ = SO.倉庫Ｃ
+   AND SL.出荷元 = SM.出荷元Ｃ(+)
+   AND SK.運送Ｃ = US.運送Ｃ
+   AND SL.商品Ｃ = SH.商品Ｃ
+   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
+   AND SK.商品Ｃ = RZ.商品Ｃ
+   AND SJ.出荷日 = :SELECT_DATE     
+   AND SK.倉庫Ｃ = :SELECT_SOUKO
+   AND SK.運送Ｃ = :SELECT_UNSOU
+   AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ
+ ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
 
             $stid = oci_parse($conn, $sql);
             if (!$stid) {
@@ -268,27 +340,77 @@ if (empty($session_id)) {
                 $shipping_moto_name = $row['出荷元名'];
                 $Shouhin_code = $row['商品Ｃ'];
                 $Shouhin_name = $row['品名'];
+                $Tana_num = $row['棚番'];
+                $Konpou_num = $row['梱包入数'];
                 $Shouhin_num = $row['数量'];
+                $Picking_num = $row['ピッキング数量'];
+                $Shori_Flg = $row['処理Ｆ'];
                 $Tokuisaki_name = $row['得意先名'];
+                $shouhin_JAN    = $row['ＪＡＮ'];
 
                 // 取得した値を配列に追加
                 $arr_Picking_DATA[] = array(
-                    'syuka_day' => $syuka_day,
-                    'souko_code' => $souko_code,
-                    'souko_name' => $souko_name,
-                    'Unsou_code' => $Unsou_code,
-                    'Unsou_name' => $Unsou_name,
-                    'shipping_moto' => $shipping_moto,
-                    'shipping_moto_name' => $shipping_moto_name,
-                    'Shouhin_code' => $Shouhin_code,
-                    'Shouhin_name' => $Shouhin_name,
-                    'Shouhin_num' => $Shouhin_num,
-                    'Tokuisaki_name' => $Tokuisaki_name
+                    'syuka_day' => $syuka_day,                  // SK.出荷日
+                    'souko_code' => $souko_code,                // SK.倉庫Ｃ
+                    'souko_name' => $souko_name,                // SO.倉庫名
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
+                    'Unsou_name' => $Unsou_name,                // US.運送略称
+                    'shipping_moto' => $shipping_moto,          // SL.出荷元
+                    'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
+                    'Shouhin_code' => $Shouhin_code,            // SK.商品Ｃ
+                    'Shouhin_name' => $Shouhin_name,            // SH.品名
+                    'Tana_num' => $Tana_num,                    // RZ.棚番
+                    'Konpou_num' => $Konpou_num,                // SH.梱包入数
+                    'Shouhin_num' => $Shouhin_num,              // SUM(SK.出荷数量) AS 数量
+                    'Picking_num' => $Picking_num,              // SUM(PK.ピッキング数量) AS ピッキング数量
+                    'Shori_Flg' => $Shori_Flg,                  // PK.処理Ｆ
+                    'Tokuisaki_name' => $Tokuisaki_name,        // SJ.得意先名
+                    'shouhin_JAN' => $shouhin_JAN               // JANコード
                 );
 
-                // var_dump($arr_Picking_DATA);
+                //   var_dump($arr_Picking_DATA);
             }
+
+            oci_free_statement($stid);
+            oci_close($conn);
+
+            break;
     }
+
+    // ============================= HTPK テーブル 処理 =============================
+    // === 接続準備
+    $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+    if (!$conn) {
+        $e = oci_error();
+    }
+
+    $sql = "SELECT 商品Ｃ,処理Ｆ FROM HTPK";
+
+    $stid = oci_parse($conn, $sql);
+    if (!$stid) {
+        $e = oci_error($stid);
+    }
+
+    oci_execute($stid);
+
+    $arr_Zumi_DATA = array();
+    while ($row = oci_fetch_assoc($stid)) {
+        // カラム名を指定して値を取得
+        $HTPK_Souhin_Code = $row['商品Ｃ'];
+        $HTPK_Sori_Flg = $row['処理Ｆ'];
+
+        // 取得した値を配列に追加
+        $arr_Zumi_DATA[] = array(
+            'HTPK_Souhin_Code' => $HTPK_Souhin_Code,
+            'HTPK_Sori_Flg' => $HTPK_Sori_Flg,
+        );
+    }
+
+    // var_dump($arr_Zumi_DATA);
+
+    oci_free_statement($stid);
+    oci_close($conn);
 }
 
 ?>
@@ -336,7 +458,7 @@ if (empty($session_id)) {
             overflow: auto;
             border: 1px solid #ddd;
             z-index: 1;
-            left: -75%;
+            left: 0%;
         }
 
         .dropdown-content button {
@@ -346,7 +468,7 @@ if (empty($session_id)) {
             display: block;
             cursor: pointer;
             width: 100%;
-            text-align: left;
+            text-align: center;
         }
 
         .dropdown-content button:hover {
@@ -415,36 +537,30 @@ if (empty($session_id)) {
 
                 </div>
 
-                <div class="four_flex">
+                <div class="" id="menu_btn_box">
+
+                    <div class="dropdown_02" @click="toggleDropdown(1)">
+                        <button class="dropbtn" id="order_btn" value="並替">並替</button>
+                        <div class="dropdown-content" :class="{show: isOpen[1]}">
+                            <button type="button" @click="handleButtonClick('location_note')">ロケ順</button>
+                            <button type="button" @click="handleButtonClick('num_note')">数量順</button>
+                            <button type="button" @click="handleButtonClick('tokki_note')">特記順</button>
+                            <button type="button" @click="handleButtonClick('bikou_note')">備考順</button>
+                        </div>
+                    </div>
+
                     <div>
-
-                        <p id="login_id_view">出荷日：<?= $arr_Picking_DATA[0]["syuka_day"]; ?></p>
-
+                        <button type="button" id="all_select_btn">
+                            全表示
+                        </button>
                     </div>
-                    <div class="" id="menu_btn_box">
 
-                        <div class="dropdown_02" @click="toggleDropdown(1)">
-                            <button class="dropbtn" id="order_btn" value="並替">並替</button>
-                            <div class="dropdown-content" :class="{show: isOpen[1]}">
-                                <button type="button" @click="handleButtonClick('location_note')">ロケ順</button>
-                                <button type="button" @click="handleButtonClick('num_note')">数量順</button>
-                                <button type="button" @click="handleButtonClick('tokki_note')">特記順</button>
-                                <button type="button" @click="handleButtonClick('bikou_note')">備考順</button>
-                            </div>
-                        </div>
-
-
-
-                        <div>
-                            <button type="button" id="all_select_btn">
-                                全表示
-                            </button>
-                        </div>
-
-                    </div>
                 </div>
 
-
+                <div>
+                    <input type="number" id="get_JAN" name="get_JAN">
+                    <p id="err_JAN" style="color:red;"></p>
+                </div>
 
 
                 <hr class="hr_01">
@@ -469,20 +585,58 @@ if (empty($session_id)) {
                         </tr>
 
                         <?php
+
+                        $Sagyou_NOW_Flg = 0;
                         foreach ($arr_Picking_DATA as $Picking_VAL) {
 
                             $shouhin_name_part1 = mb_substr($Picking_VAL['Shouhin_name'], 0, 20);
                             $shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20);
 
-                            echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&Tokuisaki=' . $Tokuisaki_name . '">';
-                            echo '<td></td>';
-                            echo '<td>' . $Picking_VAL['Shouhin_num'] . "</td>";
-                            echo '<td></td>';
-                            echo '<td></td>';
-                            echo '<td>' . $shouhin_name_part1 . '<br />' . $shouhin_name_part2 . "</td>";
+                            // print("梱包入数:::" . $Picking_VAL['Konpou_num'] . "<br />");
+
+                            foreach ($arr_Zumi_DATA as $Zumi_DATA) {
+
+                                if (strpos($Picking_VAL['Shouhin_code'], $Zumi_DATA['HTPK_Souhin_Code']) !== false) {
+                                    //  print('HIT!');
+                                    $Sagyou_NOW_Flg = 1;
+                                } else {
+                                    //  print('含まれていない');
+                                    $Sagyou_NOW_Flg = 0;
+                                }
+                            }
+
+                            // ケース数
+                            $Case_num_View = floor($Picking_VAL['Shouhin_num'] / $Picking_VAL['Konpou_num']);
+
+                            // バラ数
+                            $Case_num_View_Tmp = $Picking_VAL['Shouhin_num'] % $Picking_VAL['Konpou_num'];
+                            if ($Case_num_View_Tmp != 0) {
+                                $Bara_num_View = $Picking_VAL['Shouhin_num'] / $Case_num_View_Tmp;
+                            } else {
+                                $Bara_num_View = $Case_num_View_Tmp;
+                            }
+
+
+                            if ($Sagyou_NOW_Flg == 0) {
+                                echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&Tokuisaki=' . $Tokuisaki_name . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '">';
+                                echo '<td>' . $Picking_VAL['Tana_num'] . '</td>';
+                            } else {
+                                echo '<tr style="background: yellow;" id="sagyou_now">';
+                                echo '<td><span id="sagyou_now_text">作業中<i class="fa-regular fa-circle-stop"></i></span></td>';
+                            }
+
+                            echo '<td id="shouhin_num_box" class="shouhin_num_box">' . $Picking_VAL['Shouhin_num'] . "</td>";
+                            echo '<td>' .  $Case_num_View . '</td>';
+                            echo '<td>' . $Bara_num_View . '</td>';
+
+                            echo '<td>' . $shouhin_name_part1 . '<br />' . $shouhin_name_part2 .
+                                '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' . "</td>";
+
                             echo '<td>' . $Picking_VAL['shipping_moto_name'] . "</td>";
+
                             echo '</tr>';
                         }
+
 
                         ?>
 
@@ -549,6 +703,46 @@ if (empty($session_id)) {
     <script>
         $(document).ready(function() {
 
+            // 全角を半角に変換
+            function convertToHalfWidth(input) {
+                return input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+                    return String.fromCharCode(s.charCodeAt(0) - 65248); // 全角文字のUnicode値から半角文字に変換
+                });
+            }
+
+            // JAN のテキストにフォーカスを当てる
+            $('#get_JAN').focus();
+            $('#get_JAN').val("");
+
+            // JAN 判定
+            $('#get_JAN').change(function() {
+
+                var input_JAN = $('#get_JAN').val();
+                var convertedValue_JAN = convertToHalfWidth(input_JAN);
+                $(this).val(convertedValue_JAN);
+
+                // JAN コード判定
+                $(".shouhin_JAN").each(function() {
+                    console.log("item:::" + $(this).val());
+                    var shouhin_JAN = $(this).val();
+
+                    // 値一致
+                    if (shouhin_JAN === $('#get_JAN').val()) {
+                        var dataHref = $(this).closest('tr').data('href');
+                        console.log("値一致:::" + dataHref);
+                        dataHref += "&scan_b=bar_san";
+                        window.location.href = dataHref;
+                        // 一致する値がない
+                    } else {
+                        console.log('一致する値がありません。' + $('#get_JAN').val());
+                        $('#err_JAN').text("JAN コードに一致する商品がありません。");
+                    }
+
+                });
+
+            });
+
+
             $('table tbody').on('click', 'tr', function() {
                 var row = $(this).closest('tr');
                 var Shouhin_num = row.find('td:eq(1)').text().trim();
@@ -560,15 +754,17 @@ if (empty($session_id)) {
                 console.log("shipping_moto_name");
 
                 // 取得した値を詳細画面へ渡して遷移
-                // window.location.href = 'detail.php?Shouhin_num=' + Shouhin_num + '&Shouhin_name=' + Shouhin_name + '&shipping_moto_name=' + shipping_moto_name;
+                window.location.href = 'detail.php?Shouhin_num=' + Shouhin_num + '&Shouhin_name=' + Shouhin_name + '&shipping_moto_name=' + shipping_moto_name;
             });
+
+
         });
     </script>
 
     <script>
         $('tr[data-href]').click(function() {
-
             var href = $(this).data('href');
+
             console.log("リンク値:::" + href);
 
             window.location.href = href;

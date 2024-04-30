@@ -26,28 +26,29 @@ if (empty($session_id)) {
     header("Location: $top_url");
 } else {
 
-    // ベタ打ち　テストデータ
-    $test_data = [
-        "L-4",
-        "1000",
-        "ホースリール",
-        "PRQC-30",
-        "4971715",
-        "123456",
-        "4",
-        "1",
-        "1",
-        "1",
-        "取扱注意",
-        "甲信越福山",
-        "アヤハ × 1",
-        "カインズ × 2",
-        "ムサシ × 1"
-    ];
-
     // 値取得
     if (isset($_GET['select_day'])) {
 
+        // ベタ打ち　テストデータ
+        $test_data = [
+            "L-4",
+            "1000",
+            "ホースリール",
+            "PRQC-30",
+            "4971715",
+            "123456",
+            "4",
+            "1",
+            "1",
+            "1",
+            "取扱注意",
+            "甲信越福山",
+            "アヤハ × 1",
+            "カインズ × 2",
+            "ムサシ × 1"
+        ];
+
+        // GET urlパラメーター取得
         $select_day = $_GET['select_day'];
         $souko_code = $_GET['souko_code'];
         $unsou_code = $_GET['unsou_code'];
@@ -58,23 +59,18 @@ if (empty($session_id)) {
         $Shouhin_name = $_GET['Shouhin_name'];
         $Shouhin_num = $_GET['Shouhin_num'];
         $Tokuisaki_name = $_GET['Tokuisaki'];
-
-        print($select_day . "<br />");
-        print($souko_code . "<br />");
-        print($unsou_code . "<br />");
-        print($unsou_name . "<br />");
-        print($shipping_moto . "<br />");
-        print($shipping_moto_name . "<br />");
-        print($Shouhin_code . "<br />");
-        print($Shouhin_name . "<br />");
-        print($Shouhin_num . "<br />");
-        print($Tokuisaki_name . "<br />");
+        $Tana_num = $_GET['tana_num'];
+        $case_num = $_GET['case_num'];
+        $bara_num = $_GET['bara_num'];
 
         // === 40バイトで分ける
         // 商品名
-        $Shouhin_name_part1 = substr($Shouhin_name, 0, 40);
+        $Shouhin_name_part1 = mb_substr($Shouhin_name, 0, 40);
         // 品番
-        $Shouhin_name_part2 = substr($Shouhin_name, 40);
+        $Shouhin_name_part2 = mb_substr($Shouhin_name, 40);
+
+        print("01:::" . $Shouhin_name_part1 . "<br />");
+        print("02:::" . $Shouhin_name_part2 . "<br />");
 
         $arr_Tokuisaki_name = [];
         $arr_Tokuisaki_name = SplitString_FUNC($Tokuisaki_name);
@@ -83,15 +79,15 @@ if (empty($session_id)) {
 
         // 取得データ
         $Shouhin_Detail_DATA = [
-            "L-4",
-            "1000",
+            $Tana_num,
+            "",
             $Shouhin_name_part1,
             $Shouhin_name_part2,
             "4971715",      // 商品コード 01 （JAN）
             $Shouhin_code, // 商品コード 02
-            $Shouhin_num,
-            "1",
-            "1",
+            $Shouhin_num,  // 数量
+            $case_num,    // ケース数
+            $bara_num,    // バラ数
             "1",
             $shipping_moto_name,
             $unsou_name,
@@ -99,6 +95,60 @@ if (empty($session_id)) {
             "カインズ × 2",
             "ムサシ × 1"
         ];
+
+
+        // ============================= インサート用データ 取得 =============================
+
+        $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+        if (!$conn) {
+            $e = oci_error();
+        }
+
+        $sql = "SELECT SL.伝票番号, SL.伝票行番号, SL.伝票行枝番, SL.商品Ｃ, SL.倉庫Ｃ,SL.出荷元,SL.数量
+    FROM SLTR SL
+    WHERE SL.商品Ｃ = :syouhin_Code and SL.倉庫Ｃ = :souko_Code
+    AND ROWNUM = 1
+        ORDER BY SL.伝票番号 DESC";
+
+
+        $stid = oci_parse(
+            $conn,
+            $sql
+        );
+        if (!$stid) {
+            $e = oci_error($stid);
+        }
+
+        oci_bind_by_name($stid, ":syouhin_Code", $Shouhin_code);
+        oci_bind_by_name($stid, ":souko_Code", $souko_code);
+
+        oci_execute($stid);
+
+        $arr_Insert_Picking = array();
+        while ($row = oci_fetch_assoc($stid)) {
+            // カラム名を指定して値を取得
+            $IN_Dennpyou_num = $row['伝票番号'];
+            $IN_Dennpyou_Gyou_num = $row['伝票行番号'];
+            $IN_Dennpyou_Eda_num = $row['伝票行枝番'];
+            $IN_Syouhin_Code = $row['商品Ｃ'];
+            $IN_Souko_Code = $row['倉庫Ｃ'];
+            $IN_Syukamoto = $row['出荷元'];
+            $IN_Syuka_Yotei_num = $row['数量'];
+
+            print("伝票番号:::" . $IN_Dennpyou_num . "<br />");
+            print("伝票行番号:::" . $IN_Dennpyou_Gyou_num . "<br />");
+            print("伝票行枝番:::" . $IN_Dennpyou_Eda_num . "<br />");
+            print("商品Ｃ:::" . $IN_Syouhin_Code . "<br />");
+            print("倉庫Ｃ:::" . $IN_Souko_Code . "<br />");
+            print("出荷元:::" . $IN_Syukamoto . "<br />");
+            print("数量:::" . $IN_Syuka_Yotei_num . "<br />");
+        }
+    }
+
+    // スキャンからのGETパラメータ
+    if (isset($_['scan_b'])) {
+        $scan_b = $_GET['scan_b'];
     }
 }
 
@@ -164,8 +214,8 @@ if (empty($session_id)) {
         <div class="content_detail">
 
             <div class="detail_item_01_box">
-                <p><span class="detail_midashi">ロケ：</span><?php print $test_data[0]; ?></p>
-                <p><span class="detail_midashi">在庫数：</span><?php print $test_data[1]; ?></p>
+                <p><span class="detail_midashi">ロケ：</span><?php print $Shouhin_Detail_DATA[0]; ?></p>
+                <p><span class="detail_midashi">在庫数：</span><?php print $Shouhin_Detail_DATA[1]; ?></p>
             </div>
 
             <p class="detail_item_02">
@@ -194,12 +244,20 @@ if (empty($session_id)) {
 
             <div class="detail_item_05_box">
                 <p><span class="detail_midashi">数量：</span><?php print $Shouhin_Detail_DATA[6]; ?></p>
-                <p><span class="detail_midashi">ケース：</span><?php print $test_data[7]; ?></p>
+                <p><span class="detail_midashi">ケース：</span><?php print $Shouhin_Detail_DATA[7]; ?></p>
                 <p><span class="detail_midashi">バラ：</span><?php print $test_data[8]; ?></p>
             </div>
 
             <p class="detail_item_06_count">
-                <span class="detail_midashi">カウント：</span><?php print $test_data[9]; ?>
+                <span class="detail_midashi">カウント：</span>
+
+                <?php if (!empty($scan_b)) :  ?>
+                    <?php $count_num = 1; ?>
+                    <?php print $count_num; ?>
+                <?php else : ?>
+                    <?php $count_num = 0; ?>
+                    <?php print $count_num; ?>
+                <?php endif; ?>
             </p>
 
             <p class="detail_item_07">
