@@ -123,6 +123,8 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/second_02.css">
 
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+
     <title>ピッキング 03</title>
 
 
@@ -135,6 +137,32 @@ if (empty($session_id)) {
 </head>
 
 <body>
+
+    <div class="head_box">
+        <div class="head_content">
+            <span class="home_icon_span">
+                <a href="#"><i class="fa-solid fa-house"></i></a>
+            </span>
+
+            <span class="App_name">
+                APP ピッキングアプリ
+            </span>
+        </div>
+    </div>
+
+
+    <div class="head_box_02">
+        <div class="head_content_02">
+            <span class="home_sub_icon_span">
+                <i class="fa-solid fa-thumbtack"></i>
+            </span>
+
+            <span class="page_title">
+                運送便 選択
+            </span>
+        </div>
+    </div>
+
     <div id="app">
         <div class="souko_box_v">
             <?php
@@ -155,17 +183,26 @@ if (empty($session_id)) {
     </div>
     <!-- 選択した値を表示する部分 -->
     <div class="selected-value">
-        複数選択: <span id="multiple_val"></span><br>
         選択した運送コード: <span id="selectedUnsouCode"></span><br>
         選択した運送会社: <span id="selectedUnsouName"></span><br>
         特記code: <span id="selectedToki_Code"></span><br>
         特記名: <span id="selectedToki_Name"></span>
     </div>
 
+    <hr>
+
+    <div>
+        <span id="fukusuu_select">複数選択：</span><br />
+        <span id="fukusuu_select_option_01">複数選択（特記）：</span><br />
+        <span id="fukusuu_select_name">複数選択名：</span>
+    </div>
+
     <p id="err_text" style="color:red;text-align:center;"></p>
     <div id="sendSelectedValues_box">
         <button id="sendSelectedValues">次へ</button>
     </div>
+
+
 
     </div>
 
@@ -184,7 +221,7 @@ if (empty($session_id)) {
                     dropdownContent.toggleClass('show');
 
                     // 運送コード, 運送便名, 取得
-                    var unsouCode = $(this).find('button').data('unsou-code');;
+                    var unsouCode = $(this).find('button').data('unsou-code');
                     var unsouName = $(this).find('button').data('unsou-name');
 
                     $('#selectedUnsouCode').text(unsouCode);
@@ -192,6 +229,14 @@ if (empty($session_id)) {
 
                     console.log("運送コード:" + unsouCode);
                     console.log("運送名:" + unsouName);
+
+                    // 同じ値が存在する場合は処理を返す
+                    if ($('#fukusuu_select').text().includes(unsouCode)) {
+                        return;
+                    } else {
+                        $('#fukusuu_select').append(unsouCode + ',');
+                    }
+
 
                 });
 
@@ -205,6 +250,17 @@ if (empty($session_id)) {
 
                     $('#selectedToki_Code').text(selected_Detail_Code);
                     $('#selectedToki_Name').text(selectedUnsou_Detail_Name);
+
+                    // 運送コード
+                    var unsouCode_m = $(this).closest('.dropdown_v').find('button').data('unsou-code');
+                    var unsouName_m = $(this).closest('.dropdown_v').find('button').data('unsou-name');
+
+                    if ($('#fukusuu_select_option_01').text().includes(unsouCode_m)) {
+                        return;
+                    } else {
+                        $('#fukusuu_select_option_01').append(unsouCode_m + ":" + selected_Detail_Code + ",");
+                        $('#fukusuu_select_name').append(unsouName_m + ':' + selectedUnsou_Detail_Name + ",");
+                    }
 
                 });
 

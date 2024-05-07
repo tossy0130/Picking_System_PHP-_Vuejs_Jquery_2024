@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3"></script>
+    <title>computed GET SET</title>
+</head>
+<body>
+
+    <div id="app">
+        <p><input v-model="fullName"></p>
+        <p>性：{{ lastName }}</p>
+        <p>名：{{ firstName }}</p>
+    </div>
+
+    <script>
+        const app = {
+            data() {
+                return {
+                    firstName: 'Tossy',
+                    lastName: 'Natsume'
+                }
+            },
+            computed: {
+                fullName :{
+                    get() {
+                        return this.lastName + ' ' + this.firstName
+                    },
+                    set(value){
+                        this.lastName = value.split(' ')[0]
+                        this.firstName = value.split(' ')[1]
+                    }
+                }
+            }
+        }
+        Vue.createApp(app).mount('#app')
+    </script>
+
+    
+</body>
+</html>

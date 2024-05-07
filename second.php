@@ -35,6 +35,7 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
+        
     } else {
         // === トークンが無い場合
         header("Location: $err_url");

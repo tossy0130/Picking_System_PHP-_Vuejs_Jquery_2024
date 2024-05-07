@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mustache</title>
+</head>
+<body>
+
+    <div id="app">
+        <p>{{ fruits.reverse().join(', ') }}</p>
+    </div>
+
+    <script>
+        const app = {
+            data() {
+                return {
+                    fruits: ['バナナ', 'ぶどう','りんご', 'メロン']
+                }
+            },
+        }
+        Vue.createApp(app).mount('#app')
+    </script>    
+</body>
+</html>

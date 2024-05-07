@@ -11,8 +11,8 @@ function h($var)
 function SplitString_FUNC($inputString)
 {
     $byte   = 6;            // 分割単位: byte
-    //   $enc    = "SJIS";       // 文字コード
-    $enc    = "UTF-8";       // 文字コード
+    $enc    = "SJIS";       // 文字コード
+    //  $enc    = "UTF-8";       // 文字コード
 
     // 切り出し処理実行
     $result = mb_strcut($inputString, 0, $byte, $enc);
@@ -40,6 +40,6 @@ function SplitString_FUNC($inputString)
         );
     } else {
 
-        return array("Error: Too long string");
+        return array("Error: 文字列が長いです。");
     }
 }

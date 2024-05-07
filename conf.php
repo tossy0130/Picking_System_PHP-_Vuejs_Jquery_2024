@@ -11,7 +11,10 @@ define('DB_USER', 'GL');
 /** DBパスワード */
 define('DB_PASSWORD', 'GL');
 /** DBサーバーIPアドレス */
-define('DB_SERVER', '192.168.254.16');
+
+//define('DB_SERVER', '192.168.254.16');
+define('DB_SERVER', '192.168.254.17');
+
 /** DBサーバーポート番号 */
 define('DB_PORT', '1521');
 /** DBサービス名 */
