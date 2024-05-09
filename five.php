@@ -12,6 +12,9 @@ $top_url = Init_Val::TOP_URL;
 
 session_start();
 
+// 倉庫名
+$souko_name = $_SESSION['soko_name'];
+
 // セッションIDが一致しない場合はログインページにリダイレクト
 if (!isset($_SESSION["sid"])) {
     header("Location: index.php");
@@ -122,8 +125,22 @@ if (empty($session_id)) {
         $bara_num = $_GET['bara_num'];
         $shouhin_jan = $_GET['shouhin_jan'];
 
-        // 倉庫名
-        $souko_name = $_SESSION['soko_name'];
+        // ケース数
+        $Case_Num_Val = $case_num;
+        // バラ数
+
+        // ケース数
+        /*
+        if ($Shouhin_num != 0) {
+            $Case_Num_Val = floor($Shouhin_num / $Konpou_num);
+        }
+        // バラ数
+        if ($Konpou_num != 0) {
+            $bara_num_tmp = $Shouhin_num % $Konpou_num;
+        }
+        */
+
+        print("倉庫名:::" . $souko_name . "<br>");
 
         //    print("セッション倉庫名:::" . $souko_name . "<br />");
 
@@ -219,7 +236,8 @@ if (empty($session_id)) {
         }
 
         // データ重複　確認
-        $check_sql = "SELECT COUNT(*) AS num_duplicates FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code";
+        $check_sql = "SELECT COUNT(*) AS num_duplicates FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 
+            伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code AND 商品名 = :Syouhin_name";
 
         $check_stid = oci_parse($conn, $check_sql);
         if (!$check_stid) {
@@ -231,6 +249,7 @@ if (empty($session_id)) {
         oci_bind_by_name($check_stid, ':IN_Dennpyou_num', $IN_Dennpyou_num);
         oci_bind_by_name($check_stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
         oci_bind_by_name($check_stid, ':IN_Syouhin_Code', $IN_Syouhin_Code);
+        oci_bind_by_name($check_stid, ':Syouhin_name', $Shouhin_name);
 
         $result_check = oci_execute($check_stid);
         if (!$result_check) {
@@ -245,7 +264,8 @@ if (empty($session_id)) {
 
         // 重複がある場合は削除
         if ($num_duplicates > 0) {
-            $delete_sql = "DELETE FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code";
+            $delete_sql = "DELETE FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 伝票行番号 = :IN_Dennpyou_Gyou_num 
+                AND 商品Ｃ = :IN_Syouhin_Code AND  商品名 = :Syouhin_name";
 
             $delete_stid = oci_parse($conn, $delete_sql);
             if (!$delete_stid) {
@@ -257,6 +277,7 @@ if (empty($session_id)) {
             oci_bind_by_name($delete_stid, ':IN_Dennpyou_num', $IN_Dennpyou_num);
             oci_bind_by_name($delete_stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
             oci_bind_by_name($delete_stid, ':IN_Syouhin_Code', $IN_Syouhin_Code);
+            oci_bind_by_name($delete_stid, ':Syouhin_name', $Shouhin_name);
 
             $result_delete = oci_execute($delete_stid);
             if (!$result_delete) {
@@ -343,6 +364,64 @@ if (empty($session_id)) {
 
         oci_free_statement($stid);
         oci_close($conn);
+
+
+        //  ====================================================================================
+        // ============================= ピッキングデータ 作成部分　=============================
+        //  ====================================================================================
+
+        // === 接続準備
+        $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
+
+        if (!$conn) {
+            $e = oci_error();
+        }
+
+        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+      ,RZ.棚番
+      ,SH.梱包入数
+      ,SUM(SK.出荷数量) AS 数量	
+      ,SUM(PK.ピッキング数量) AS ピッキング数量
+      ,PK.処理Ｆ
+      ,SJ.得意先名
+      ,SH.ＪＡＮ
+ FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+      ,RZMF RZ
+      ,HTPK PK
+ WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+   AND SL.伝票番号   = PK.伝票番号(+)
+   AND SL.伝票行番号 = PK.伝票行番号(+)
+   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+   AND SK.倉庫Ｃ = SO.倉庫Ｃ
+   AND SL.出荷元 = SM.出荷元Ｃ(+)
+   AND SK.運送Ｃ = US.運送Ｃ
+   AND SL.商品Ｃ = SH.商品Ｃ
+   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
+   AND SK.商品Ｃ = RZ.商品Ｃ
+   AND SJ.出荷日 = :SELECT_DATE
+   AND SK.倉庫Ｃ = :SELECT_SOUKO
+   AND SK.運送Ｃ = :SELECT_UNSOU
+   AND SH.ＪＡＮ = :SELECT_JAN
+   AND SK.商品Ｃ = :SELECT_SHOUHIN_CODE
+   AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
+ --  AND SH.品名 = 'アルミベンチ型宅配ボックス レシーボ     ＴＲＡ－６４（ＴＧＹ）'
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ
+ ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+
+        $stid = oci_parse($conn, $sql);
+        if (!$stid) {
+            $e = oci_error($stid);
+        }
+
+        oci_bind_by_name($stid, ":SELECT_DATE",  $select_day);
+        oci_bind_by_name($stid, ":SELECT_SOUKO", $souko_code);
+        oci_bind_by_name($stid, ":SELECT_UNSOU", $unsou_code);
+        oci_bind_by_name($stid, ":SELECT_JAN", $shouhin_jan);
+        oci_bind_by_name($stid, ":SELECT_SHOUHIN_CODE", $shouhin_jan);
+
+        oci_execute($stid);
     } // ======================================= END isset($_GET['select_day']
 
 
@@ -416,7 +495,7 @@ if (empty($session_id)) {
             </div>
 
             <p class="detail_item_02">
-                <span class="detail_midashi">品名：</span><?php print wordwrap($Shouhin_Detail_DATA[2], 40, "<br />"); ?>
+                <span class="detail_midashi">品名：</span><?php print wordwrap($Shouhin_Detail_DATA[2]); ?>
             </p>
 
             <p class="detail_item_03">
@@ -440,9 +519,9 @@ if (empty($session_id)) {
             </p>
 
             <div class="detail_item_05_box">
-                <p><span class="detail_midashi">数量：</span><?php print $Shouhin_Detail_DATA[6]; ?></p>
+                <p><span class="detail_midashi" id="detail_num_box">数量：</span><span id="suuryou_num"><?php print $Shouhin_Detail_DATA[6]; ?></span></p>
                 <p><span class="detail_midashi">ケース：</span><?php print $Shouhin_Detail_DATA[7]; ?></p>
-                <p><span class="detail_midashi">バラ：</span><?php print $test_data[8]; ?></p>
+                <p><span class="detail_midashi">バラ：</span><?php print $Shouhin_Detail_DATA[8]; ?></p>
             </div>
 
             <p class="detail_item_06_count">
@@ -450,11 +529,11 @@ if (empty($session_id)) {
 
                 <?php if (!empty($scan_b)) :  ?>
                     <?php $count_num = 1; ?>
-                    <?php print $count_num; ?>
                 <?php else : ?>
                     <?php $count_num = 0; ?>
-                    <?php print $count_num; ?>
                 <?php endif; ?>
+
+                <input type="number" name="count_num" id="count_num" value="<?php print $count_num; ?>">
             </p>
 
             <p class="detail_item_07">
@@ -487,7 +566,31 @@ if (empty($session_id)) {
         <ul>
             <?php $url = "./four.php?unsou_code=" . urlencode($unsou_code) . '&unsou_name=' . urlencode($unsou_name) . '&day=' . urlencode($select_day) . '&souko=' . urlencode($souko_code) . '&get_souko_name=' . urlencode($souko_name) . '&shouhin_code=' . urlencode($Shouhin_code) . '&shouhin_name=' . urlencode($Shouhin_name) . '&denpyou_num=' . $IN_Dennpyou_num . '&denpyou_Gyou_num=' . $IN_Dennpyou_Gyou_num . '&five_back=111' ?>
             <li><a href="<?php echo $url; ?>" id="five_back_btn">戻る</a></li>
-            <li><a href="#">確定</a></li>
+
+            <li>
+
+                <form action="./four.php" method="GET" name="kakutei_btn_post" id="kakutei_btn_post">
+
+                    <input type="hidden" name="select_day" value="<?php print $select_day; ?>">
+                    <input type="hidden" name="souko_code" value="<?php print $souko_code; ?>">
+                    <input type="hidden" name="unsou_code" value="<?php print $unsou_code; ?>">
+                    <input type="hidden" name="unsou_name" value="<?php print $unsou_name; ?>">
+                    <input type="hidden" name="souko_name" value="<?php print $_SESSION['soko_name']; ?>">
+                    <input type="hidden" name="shouhin_jan" value="<?php print $Shouhin_Detail_DATA[4]; ?>">
+                    <input type="hidden" name="shouhin_code" value="<?php print $Shouhin_Detail_DATA[5]; ?>">
+                    <input type="hidden" name="shouhin_name" value="<?php print $Shouhin_name; ?>">
+
+                    <input type="hidden" name="Kakutei_Btn_Flg" id="Kakutei_Btn_Flg" value="">
+
+                    <button type="submit" name="kakutei_btn" id="kakutei_btn">確定</button>
+                </form>
+
+                <!-- 
+                <a href="./four.php?test=1">確定</a>
+                -->
+
+            </li>
+
             <li><a href="#">全数完了</a></li>
         </ul>
     </footer>
@@ -542,6 +645,30 @@ if (empty($session_id)) {
                 window.location.href = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + select_day + '&souko=' + souko_code + '&get_souko_name=' + souko_name;
             });
             */
+
+            // ********* 「確定ボタン」処理 *********
+            $('#kakutei_btn').on('click', function() {
+
+                // event.preventDefault();
+
+                var suuryou_num = $('#suuryou_num').text();
+                var count_num = $('#count_num').val();
+
+                console.log("数量:" + suuryou_num);
+                console.log("カウント:" + count_num);
+
+                // === 「数量」「カウント」比較　100 => 残 ,200 => 通常処理
+                if (suuryou_num > count_num) {
+                    console.log("残");
+                    $('#Kakutei_Btn_Flg').val(100);
+                    $('#kakutei_btn').submit();
+                } else {
+                    console.log("NO-残");
+                    $('#Kakutei_Btn_Flg').val(200);
+                    $('#kakutei_btn').submit();
+                }
+
+            });
 
         });
     </script>

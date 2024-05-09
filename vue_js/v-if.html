@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <title>v-if</title>
+</head>
+<body>
+
+    <div id="app">
+        <div v-if="isUserLoggedIn">ハロー ログインOK</div>
+        <div v-else>末ログイン</div>
+    </div>
+
+    <script>
+
+        const app = {
+            data() {
+                return {
+                 //   isUserLoggedIn: true
+                  isUserLoggedIn: false
+                }
+            }
+        }
+        Vue.createApp(app).mount('#app');
+    </script>
+    
+</body>
+</html>

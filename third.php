@@ -25,6 +25,7 @@ if (empty($session_id)) {
     // *** セッションIDがないので、リダイレクト
     header("Location: $top_url");
 } else {
+
     // ========= 通常処理 =========
     if (isset($_GET['selectedSouko'])) {
         $selectedSouko = $_GET['selectedSouko'];
@@ -192,19 +193,25 @@ if (empty($session_id)) {
     <hr>
 
     <div>
-        <span id="fukusuu_select">複数選択：</span><br />
-        <span id="fukusuu_select_option_01">複数選択（特記）：</span><br />
-        <span id="fukusuu_select_name">複数選択名：</span>
+        <span id="op_01">複数選択</span><span id="fukusuu_select">：</span><br />
+        <span id="op_02">複数選択（特記）</span><span id="fukusuu_select_option_01">：</span><br />
+        <span id="op_03">複数選択名</span><span id="fukusuu_select_name">：</span><br /><br />
+
+        <span id="op_04">複数選択 持っていく値:::</span><span id="f_select"></span>
     </div>
 
     <p id="err_text" style="color:red;text-align:center;"></p>
-    <div id="sendSelectedValues_box">
-        <button id="sendSelectedValues">次へ</button>
+
+    <div class="third_btn_flex_box">
+        <div id="sendSelectedValues_box">
+            <button id="sendSelectedValues">次へ</button>
+        </div>
+
+        <div id="sendSelectedValues_box">
+            <button id="sendSelectedValues_multiple">複数選択</button>
+        </div>
     </div>
 
-
-
-    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -284,6 +291,55 @@ if (empty($session_id)) {
                     console.log(url);
 
                     window.location.href = url;
+                });
+
+                // 「複数選択　ボタン」
+                $('#sendSelectedValues_multiple').on('click', function() {
+
+                    var fukusuu_select_name = $('#fukusuu_select').text();
+                    console.log(fukusuu_select_name)
+
+                    // ********* 運送便　複数 *********
+                    // 運送コードのみ 分割
+                    var fukusuu_select_array = fukusuu_select_name.split(',').filter(Boolean);
+                    console.log(fukusuu_select_array);
+
+                    // 運送コード & オプション
+                    var fukusuu_select_option_01 = $('#fukusuu_select_option_01').text();
+                    var arr_fukusuu_select = fukusuu_select_option_01.split(',').filter(Boolean);
+                    console.log(arr_fukusuu_select);
+
+                    // 重複削除　後の値を入れる配列
+                    var new_fukusuu_select_array = [];
+
+                    arr_fukusuu_select.forEach(function(item) {
+                        var pair = item.split(':');
+                        var key = pair[0].trim();
+                        var value = pair[1].trim();
+
+                        console.log("key:::" + key + "\n");
+                        console.log("value:::" + value + "\n");
+
+                        fukusuu_select_array = fukusuu_select_array.filter(function(el) {
+                            if (el === key) {
+                                // 値削除
+                                console.log("HIT:::", el);
+
+                            } else {
+                                // 値削除しない
+                                console.log("NO:::", el);
+                                new_fukusuu_select_array.push(el)
+                            }
+                        });
+                    });
+
+                    console.log("削除後のnew_fukusuu_select_array:", new_fukusuu_select_array);
+
+                    var combinedText = arr_fukusuu_select.join(',') + ',' + new_fukusuu_select_array.join(',');
+                    $("#f_select").text(combinedText);
+
+                    // window.location.href = './four.php?' + queryParams;
+
                 });
 
             })

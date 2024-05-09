@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <title>axios テスト index.html</title>
+</head>
+<body>
+
+    <div class="container">
+        <h1>CRUD App</h1>
+        <div id="message"></div>
+        <form id="crudForm">
+            <input type="text" id="name" placeholder="名前" required>
+            <input type="text" id="email" placeholder="メール" required>
+            <button type="submit" id="addBtn">追加</button>
+        </form>
+        
+        <table id="data">
+            <thead>
+                <tr>
+                    <th>名前</th>
+                    <th>メール</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="dataBody"></tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+    
+
+
+
+</body>
+</html>
