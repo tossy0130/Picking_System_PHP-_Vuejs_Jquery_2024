@@ -110,4 +110,20 @@
             padding: 5px 1px;border-radius: 2px;
         }
 
+        /*　特記 一覧 */
+        .toki_list {
+            margin: 0;padding: 0;
+            position: relative;top: -5px;
+            display: block;
+        }
+
+        /* 備考　一覧 */
+        .bikou_list {
+            margin: 0;padding: 0;
+            display: inline-block;position: relative;
+            top: 10px;
+        }
+
+
+
 } /* ================= END ================== */

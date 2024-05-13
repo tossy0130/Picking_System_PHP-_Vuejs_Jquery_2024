@@ -371,6 +371,8 @@ if (empty($session_id)) {
         //  ====================================================================================
 
         // === 接続準備
+
+
         $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
 
         if (!$conn) {
@@ -426,6 +428,8 @@ if (empty($session_id)) {
 
 
 
+
+
 }
 
 
@@ -457,8 +461,6 @@ if (empty($session_id)) {
 </head>
 
 <body>
-
-
 
     <div class="head_box">
         <div class="head_content">
@@ -559,18 +561,57 @@ if (empty($session_id)) {
             </p>
 
         </div>
+
     </div> <!-- ===============  container_detail END =============== -->
+
+    <!-- モーダル 「確定 用」 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p style="font-size: 1.2em;">数量が足りていません。</p>
+            <div class="modal_div">
+                <div>
+                    <button id="send_kakutei">確定する</button>
+                </div>
+
+                <div>
+                    <button id="cancel_kakutei">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル 「確定 用」 -->
+    <div id="myModal_02" class="modal_02">
+        <div class="modal-content_02">
+            <span class="close_02">&times;</span>
+            <p style="font-size: 1.2em;">カウントが 0 です。前の画面へ戻りますか？</p>
+            <div class="modal_div_02">
+                <div>
+                    <button id="send_back">戻る</button>
+                </div>
+
+                <div>
+                    <button id="cancel_back">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- フッターメニュー -->
     <footer class="footer-menu_02">
         <ul>
             <?php $url = "./four.php?unsou_code=" . urlencode($unsou_code) . '&unsou_name=' . urlencode($unsou_name) . '&day=' . urlencode($select_day) . '&souko=' . urlencode($souko_code) . '&get_souko_name=' . urlencode($souko_name) . '&shouhin_code=' . urlencode($Shouhin_code) . '&shouhin_name=' . urlencode($Shouhin_name) . '&denpyou_num=' . $IN_Dennpyou_num . '&denpyou_Gyou_num=' . $IN_Dennpyou_Gyou_num . '&five_back=111' ?>
-            <li><a href="<?php echo $url; ?>" id="five_back_btn">戻る</a></li>
+            <li><a href="" id="five_back_btn">戻る</a></li>
 
             <li>
 
+
                 <form action="./four.php" method="GET" name="kakutei_btn_post" id="kakutei_btn_post">
 
+                    <!--
+                <form method="GET" name="kakutei_btn_post" id="kakutei_btn_post">
+            -->
                     <input type="hidden" name="select_day" value="<?php print $select_day; ?>">
                     <input type="hidden" name="souko_code" value="<?php print $souko_code; ?>">
                     <input type="hidden" name="unsou_code" value="<?php print $unsou_code; ?>">
@@ -580,9 +621,18 @@ if (empty($session_id)) {
                     <input type="hidden" name="shouhin_code" value="<?php print $Shouhin_Detail_DATA[5]; ?>">
                     <input type="hidden" name="shouhin_name" value="<?php print $Shouhin_name; ?>">
 
+                    <!-- 伝票番号 -->
+                    <input type="hidden" name="Dennpyou_num" value="<?php print $IN_Dennpyou_num; ?>">
+                    <!-- 伝票行番号 -->
+                    <input type="hidden" name="Dennpyou_Gyou_num" value="<?php print $IN_Dennpyou_Gyou_num; ?>">
+
+                    <!-- カウントの値 -->
+                    <input type="hidden" name="count_num_val" id="count_num_val" value="">
+
                     <input type="hidden" name="Kakutei_Btn_Flg" id="Kakutei_Btn_Flg" value="">
 
                     <button type="submit" name="kakutei_btn" id="kakutei_btn">確定</button>
+
                 </form>
 
                 <!-- 
@@ -598,6 +648,26 @@ if (empty($session_id)) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+
+            // ========= モーダル処理 表示　「確定」
+            function showModal() {
+                $('#myModal').css('display', 'block');
+            }
+
+            // ========= モーダル処理 表示　「確定」
+            function hideModal() {
+                $('#myModal').css('display', 'none');
+            }
+
+            // ========= モーダル処理 表示　「確定」
+            function showModal_back() {
+                $('#myModal_02').css('display', 'block');
+            }
+
+            // ========= モーダル処理 表示　「確定」
+            function hideModal_back() {
+                $('#myModal_02').css('display', 'none');
+            }
 
             // ====================== ハンディー処理
             // scan_val要素にフォーカスを設定する
@@ -646,7 +716,64 @@ if (empty($session_id)) {
             });
             */
 
+            //====================== start ============================
+            // ******** [戻る ボタン] **********
+            $('#five_back_btn').on('click', function() {
+
+                var suuryou_num = $('#suuryou_num').text();
+                var count_num = $('#count_num').val();
+
+                if (parseInt(count_num) === 0) {
+                    event.preventDefault();
+                    showModal_back();
+                } else {
+                    var back_url = "./four.php?" +
+                        "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
+                        "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
+                        "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
+                        "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
+                        "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
+                        "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
+                        "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
+                        "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
+                        "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
+                        "&five_back=111";
+
+                    window.location.href = back_url;
+                }
+
+            });
+
+            // モーダル　「戻る」
+            $('#send_back').on('click', function() {
+
+                var back_url = "./four.php?" +
+                    "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
+                    "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
+                    "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
+                    "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
+                    "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
+                    "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
+                    "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
+                    "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
+                    "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
+                    "&five_back=111";
+
+                window.location.href = back_url;
+
+            });
+
+            $('#cancel_back').on('click', function() {
+                hideModal_back();
+            });
+
+
+            // ******** [戻る ボタン] ********** 
+            //====================== END ============================
+
+
             // ********* 「確定ボタン」処理 *********
+
             $('#kakutei_btn').on('click', function() {
 
                 // event.preventDefault();
@@ -661,14 +788,67 @@ if (empty($session_id)) {
                 if (suuryou_num > count_num) {
                     console.log("残");
                     $('#Kakutei_Btn_Flg').val(100);
+                    $('#count_num_val').val(count_num);
+
+                    //   showModal();
+                    //   return false;
+                    //   $('#kakutei_btn').submit();
+                    //    $('#kakutei_btn').submit();
+
                     $('#kakutei_btn').submit();
+
                 } else {
                     console.log("NO-残");
                     $('#Kakutei_Btn_Flg').val(200);
+                    $('#count_num_val').val(count_num);
+
                     $('#kakutei_btn').submit();
                 }
 
             });
+
+            // === モーダル「確定」
+            $('#send_kakutei').on('click', function() {
+
+                hideModal();
+
+                var count_num = $('#count_num').val();
+                $('#count_num_val').val(count_num);
+
+                $('#Kakutei_Btn_Flg').val(100);
+                $('#count_num_val').val(count_num);
+
+
+                $("#kakutei_btn").click(function() {
+                    $("#kakutei_btn_post").submit();
+                });
+
+
+                $('#kakutei_btn').submit();
+
+                $("#kakutei_btn_post").submit(function() {
+                    console.log("submit");
+                });
+
+
+                $('#kakutei_btn_post').submit();
+            });
+
+
+            // === モーダル「確定」キャンセル
+            /*
+            $('#cancel_kakutei').on('click', function() {
+                hideModal();
+            });
+            */
+
+            // === モーダル閉じる
+            /*
+            $('.close').on('click', function() {
+                hideModal();
+            });
+            */
+
 
         });
     </script>

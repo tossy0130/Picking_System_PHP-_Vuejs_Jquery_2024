@@ -41,6 +41,8 @@ if (empty($session_id)) {
             $e = oci_error();
         }
 
+        // 特記なし
+        /*
         $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
 	                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
 	                WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -52,6 +54,21 @@ if (empty($session_id)) {
                         AND SK.倉庫Ｃ = :GET_SOUKO
                     GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                     ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名";
+        */
+
+        // 特記あり
+        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
+                    SM.出荷元名,SK.特記事項
+	                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
+	                WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                        AND SK.倉庫Ｃ = SO.倉庫Ｃ
+                        AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                        AND SL.出荷元 = SM.出荷元Ｃ(+)
+	                    AND SK.運送Ｃ = US.運送Ｃ
+	                    AND SJ.出荷日 = :GET_DATE
+                        AND SK.倉庫Ｃ = :GET_SOUKO
+                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
+                    ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
@@ -74,6 +91,7 @@ if (empty($session_id)) {
             $Unsou_name = $row['運送略称'];
             $shipping_moto = $row['出荷元'];
             $shipping_moto_name = $row['出荷元名'];
+            $tokki_zikou = $row['特記事項'];
 
             // ユニークなキーを作成
             $key = $Unsou_code . '_' . $Unsou_name . '_' . $syuka_day . '_' . $souko_code . '_' . $souko_name;
@@ -89,22 +107,25 @@ if (empty($session_id)) {
             // 重複をチェックして詳細情報を追加
             $isDuplicate = false;
             foreach ($arr_Unsou_data[$key]['details'] as $detail) {
-                if ($detail['shipping_moto'] == $shipping_moto && $detail['shipping_moto_name'] == $shipping_moto_name) {
+
+                if (
+                    $detail['shipping_moto'] == $shipping_moto && $detail['shipping_moto_name'] == $shipping_moto_name
+                    && $detail['tokki_zikou'] == $tokki_zikou
+                ) {
                     $isDuplicate = true;
                     break;
                 }
             }
 
             if (!$isDuplicate) {
+
                 $arr_Unsou_data[$key]['details'][] = array(
                     'shipping_moto' => $shipping_moto,
-                    'shipping_moto_name' => $shipping_moto_name
+                    'shipping_moto_name' => $shipping_moto_name,
+                    'tokki_zikou' => $tokki_zikou
                 );
             }
         }
-
-        //  var_dump($arr_Unsou_data);
-        // print("配列個数:::" . count($arr_Unsou_data, 1));
     } else {
     }
 }
@@ -173,7 +194,16 @@ if (empty($session_id)) {
                 echo '<button class="dropbtn_v" value="' . $row["Unsou_code"] . '" data-unsou-code="' . $row["Unsou_code"] . '" data-unsou-name="' . $row["Unsou_name"] . '">' . $row["Unsou_name"] . '</button>';
                 echo '<div class="dropdown-content_v" data-menuid="' . $idx . '">';
                 foreach ($row["details"] as $detail) {
+                    if ($detail["shipping_moto_name"] == null) {
+                        $detail["shipping_moto_name"] = "-";
+                        $detail["shipping_moto"] = "-";
+                    }
+
                     echo '<button type="button" data-company="' . $detail["shipping_moto_name"] . '" data-value="' . $detail["shipping_moto"] . '">' . $detail["shipping_moto_name"] . '</button>';
+
+                    if ($detail["tokki_zikou"] != null) {
+                        echo '<button type="button" data-company="' . $detail["tokki_zikou"] . '" data-value="' . $detail["tokki_zikou"] . '">' . $detail["tokki_zikou"] . '</button>';
+                    }
                 }
                 echo '</div></div>';
                 $idx++;
@@ -200,6 +230,11 @@ if (empty($session_id)) {
         <span id="op_04">複数選択 持っていく値:::</span><span id="f_select"></span>
     </div>
 
+    <!-- 複数選択 -->
+    <div id="selectedValues_set_next_val">
+        <span style="display:inline-block;">■次ページへ持っていく値（特記あり）</span>
+    </div>
+
     <p id="err_text" style="color:red;text-align:center;"></p>
 
     <div class="third_btn_flex_box">
@@ -214,6 +249,7 @@ if (empty($session_id)) {
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script>
         (function($) {
             $(document).ready(function() {
@@ -248,12 +284,30 @@ if (empty($session_id)) {
                 });
 
                 // プルダウンメニューのボタンがクリックされたときの処理
+                var selectedValues = [];
+
                 $('.dropdown-content_v button').on('click', function() {
+
+                    var data_value = $(this).attr("data-value");
+
+                    // 詳細データ取得
                     selected_Detail_Code = $(this).data('value');
                     selectedUnsou_Detail_Name = $(this).data('company');
 
                     console.log("詳細データ01 コード:::" + selected_Detail_Code);
                     console.log("詳細データ02 名前:::" + selectedUnsou_Detail_Name);
+
+                    // 親要素の、運送コード, 運送名を取得
+                    var unsouCode_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-code');
+                    var unsouName_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-name');
+
+                    console.log("タブメニュー 親要素 運送コード:::" + unsouCode_m);
+                    console.log("タブメニュー 親要素 運送名:::" + unsouName_m);
+
+                    if (selectedValues.indexOf(data_value) === -1) {
+                        selectedValues.push(data_value);
+                        $("#selectedValues_set_next_val").append('<div>' + unsouCode_m + ':::' + unsouName_m + ',' + selected_Detail_Code + ': ' + selectedUnsou_Detail_Name + '</div>');
+                    }
 
                     $('#selectedToki_Code').text(selected_Detail_Code);
                     $('#selectedToki_Name').text(selectedUnsou_Detail_Name);

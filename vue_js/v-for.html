@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3"></script>
+    <title>v-for</title>
+</head>
+<body>
+
+    <div id="app">
+        <div v-for="(item, index) in items">
+           {{index}} - {{ item.message }}
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            data() {
+                return {
+                    items:[
+                    {
+                        message: 'おはよう'
+                    },
+                    {
+                        message: 'こんにちは'
+                    },
+                    {
+                        message: 'こんばんは'
+                    }
+                    ]
+                }
+            }
+        }
+        Vue.createApp(app).mount('#app');
+    </script>
+
+    
+</body>
+</html>
