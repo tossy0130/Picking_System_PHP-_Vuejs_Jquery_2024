@@ -194,16 +194,20 @@ if (empty($session_id)) {
                 echo '<button class="dropbtn_v" value="' . $row["Unsou_code"] . '" data-unsou-code="' . $row["Unsou_code"] . '" data-unsou-name="' . $row["Unsou_name"] . '">' . $row["Unsou_name"] . '</button>';
                 echo '<div class="dropdown-content_v" data-menuid="' . $idx . '">';
                 foreach ($row["details"] as $detail) {
+                    // 備考が空の場合
                     if ($detail["shipping_moto_name"] == null) {
                         $detail["shipping_moto_name"] = "-";
                         $detail["shipping_moto"] = "-";
                     }
 
-                    echo '<button type="button" data-company="' . $detail["shipping_moto_name"] . '" data-value="' . $detail["shipping_moto"] . '">' . $detail["shipping_moto_name"] . '</button>';
-
-                    if ($detail["tokki_zikou"] != null) {
-                        echo '<button type="button" data-company="' . $detail["tokki_zikou"] . '" data-value="' . $detail["tokki_zikou"] . '">' . $detail["tokki_zikou"] . '</button>';
+                    // 特記事項が空の場合
+                    if ($detail["tokki_zikou"] == null) {
+                        $detail["tokki_zikou"] = "---";
                     }
+
+
+                    echo '<button type="button" data-company="' . $detail["shipping_moto_name"] .
+                        '" data-value="' . $detail["shipping_moto"] . '" data-tokki="' . $detail["tokki_zikou"] . '">' . $detail["shipping_moto_name"]  .  ' ' . $detail["tokki_zikou"] . '</button>';
                 }
                 echo '</div></div>';
                 $idx++;
@@ -216,8 +220,8 @@ if (empty($session_id)) {
     <div class="selected-value">
         選択した運送コード: <span id="selectedUnsouCode"></span><br>
         選択した運送会社: <span id="selectedUnsouName"></span><br>
-        特記code: <span id="selectedToki_Code"></span><br>
-        特記名: <span id="selectedToki_Name"></span>
+        特記・備考: <span id="selectedToki_Code"></span><br>
+
     </div>
 
     <hr>
@@ -270,16 +274,13 @@ if (empty($session_id)) {
                     $('#selectedUnsouCode').text(unsouCode);
                     $('#selectedUnsouName').text(unsouName);
 
-                    console.log("運送コード:" + unsouCode);
-                    console.log("運送名:" + unsouName);
-
                     // 同じ値が存在する場合は処理を返す
+                    // 運送コード表示
                     if ($('#fukusuu_select').text().includes(unsouCode)) {
                         return;
                     } else {
                         $('#fukusuu_select').append(unsouCode + ',');
                     }
-
 
                 });
 
@@ -289,38 +290,38 @@ if (empty($session_id)) {
                 $('.dropdown-content_v button').on('click', function() {
 
                     var data_value = $(this).attr("data-value");
+                    var data_tokki = $(this).attr("data-tokki");
 
                     // 詳細データ取得
                     selected_Detail_Code = $(this).data('value');
                     selectedUnsou_Detail_Name = $(this).data('company');
-
-                    console.log("詳細データ01 コード:::" + selected_Detail_Code);
-                    console.log("詳細データ02 名前:::" + selectedUnsou_Detail_Name);
+                    // 特記事項　取得
+                    selectedUnsou_Detail_tokki = $(this).data('tokki');
 
                     // 親要素の、運送コード, 運送名を取得
                     var unsouCode_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-code');
                     var unsouName_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-name');
 
-                    console.log("タブメニュー 親要素 運送コード:::" + unsouCode_m);
-                    console.log("タブメニュー 親要素 運送名:::" + unsouName_m);
+                    console.log("詳細コード:", selected_Detail_Code);
+                    console.log("詳細名:", selectedUnsou_Detail_Name);
+                    console.log("特記事項:", selectedUnsou_Detail_tokki);
+                    console.log("運送コード:", unsouCode_m);
+                    console.log("運送名:", unsouName_m);
 
-                    if (selectedValues.indexOf(data_value) === -1) {
-                        selectedValues.push(data_value);
-                        $("#selectedValues_set_next_val").append('<div>' + unsouCode_m + ':::' + unsouName_m + ',' + selected_Detail_Code + ': ' + selectedUnsou_Detail_Name + '</div>');
-                    }
 
-                    $('#selectedToki_Code').text(selected_Detail_Code);
-                    $('#selectedToki_Name').text(selectedUnsou_Detail_Name);
+                    $('#selectedToki_Code').text(unsouName_m + ":" + unsouCode_m + ":" +
+                        selected_Detail_Code + ":" + selectedUnsou_Detail_tokki);
 
-                    // 運送コード
-                    var unsouCode_m = $(this).closest('.dropdown_v').find('button').data('unsou-code');
-                    var unsouName_m = $(this).closest('.dropdown_v').find('button').data('unsou-name');
 
-                    if ($('#fukusuu_select_option_01').text().includes(unsouCode_m)) {
-                        return;
+                    // 要素を追加
+                    if (selectedValues.indexOf(data_value) === -1 && selectedValues.indexOf(unsouCode_m) === -1) {
+                        selectedValues.push(unsouCode_m + data_value);
+                        console.log("selectedValuesに追加:", data_value);
+                        $("#selectedValues_set_next_val").append('<div class="set_next_val">' + unsouCode_m + ':' +
+                            unsouName_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_Name + ':' +
+                            selectedUnsou_Detail_tokki + '</div>');
                     } else {
-                        $('#fukusuu_select_option_01').append(unsouCode_m + ":" + selected_Detail_Code + ",");
-                        $('#fukusuu_select_name').append(unsouName_m + ':' + selectedUnsou_Detail_Name + ",");
+                        console.log("selectedValuesに既に存在:", data_value);
                     }
 
                 });
@@ -331,6 +332,7 @@ if (empty($session_id)) {
                     var unsou_code = $('#selectedUnsouCode').text();
                     var unsou_name = $('#selectedUnsouName').text();
 
+                    // エラー処理
                     if (unsou_code === "") {
                         $('#err_text').text("運送便を選択してください。");
                         return false;
@@ -340,9 +342,25 @@ if (empty($session_id)) {
                     var selectedSouko = '<?php echo $selectedSouko; ?>';
                     var get_souko_name = '<?php echo $get_souko_name; ?>';
 
-                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name;
+                    var tokiCode = $('#selectedToki_Code').text();
 
-                    console.log(url);
+                    if (tokiCode === "") {
+
+                        var url = './four.php?unsou_code=' + encodeURIComponent(unsou_code) +
+                            '&unsou_name=' + encodeURIComponent(unsou_name) +
+                            '&day=' + encodeURIComponent(selectedDay) +
+                            '&souko=' + encodeURIComponent(selectedSouko) +
+                            '&get_souko_name=' + encodeURIComponent(get_souko_name);
+                    } else {
+                        // 特記・備考　あり
+                        var url = './four.php?unsou_code=' + encodeURIComponent(unsou_code) +
+                            '&unsou_name=' + encodeURIComponent(unsou_name) +
+                            '&day=' + encodeURIComponent(selectedDay) +
+                            '&souko=' + encodeURIComponent(selectedSouko) +
+                            '&get_souko_name=' + encodeURIComponent(get_souko_name) +
+                            '&selectedToki_Code=' + encodeURIComponent(tokiCode);
+
+                    }
 
                     window.location.href = url;
                 });
@@ -350,49 +368,52 @@ if (empty($session_id)) {
                 // 「複数選択　ボタン」
                 $('#sendSelectedValues_multiple').on('click', function() {
 
+                    var unsou_code = $('#selectedUnsouCode').text();
+                    var unsou_name = $('#selectedUnsouName').text();
+
+                    // === エラー処理
+                    if (unsou_code === "") {
+                        $('#err_text').text("運送便を選択してください。");
+                        return false;
+                    }
+
                     var fukusuu_select_name = $('#fukusuu_select').text();
                     console.log(fukusuu_select_name)
 
-                    // ********* 運送便　複数 *********
-                    // 運送コードのみ 分割
-                    var fukusuu_select_array = fukusuu_select_name.split(',').filter(Boolean);
-                    console.log(fukusuu_select_array);
 
-                    // 運送コード & オプション
-                    var fukusuu_select_option_01 = $('#fukusuu_select_option_01').text();
-                    var arr_fukusuu_select = fukusuu_select_option_01.split(',').filter(Boolean);
-                    console.log(arr_fukusuu_select);
+                    var arr_set_next_val = [];
+                    // === 選択した値を取得
+                    $('#selectedValues_set_next_val > div.set_next_val').each(function() {
+                        var set_next_val = $(this).text();
 
-                    // 重複削除　後の値を入れる配列
-                    var new_fukusuu_select_array = [];
-
-                    arr_fukusuu_select.forEach(function(item) {
-                        var pair = item.split(':');
-                        var key = pair[0].trim();
-                        var value = pair[1].trim();
-
-                        console.log("key:::" + key + "\n");
-                        console.log("value:::" + value + "\n");
-
-                        fukusuu_select_array = fukusuu_select_array.filter(function(el) {
-                            if (el === key) {
-                                // 値削除
-                                console.log("HIT:::", el);
-
-                            } else {
-                                // 値削除しない
-                                console.log("NO:::", el);
-                                new_fukusuu_select_array.push(el)
-                            }
-                        });
+                        // 配列へ値を追加
+                        arr_set_next_val.push(set_next_val);
                     });
 
-                    console.log("削除後のnew_fukusuu_select_array:", new_fukusuu_select_array);
+                    // URLに追加するパラメータの値をエンコード
+                    var encodedValues = arr_set_next_val.map(function(value) {
+                        return encodeURIComponent(value);
+                    }).join('-');
 
-                    var combinedText = arr_fukusuu_select.join(',') + ',' + new_fukusuu_select_array.join(',');
-                    $("#f_select").text(combinedText);
+                    console.log("encodedValues:::" + encodedValues);
 
-                    // window.location.href = './four.php?' + queryParams;
+
+                    // === 画面遷移　
+                    var selectedDay = '<?php echo $selected_day; ?>';
+                    var selectedSouko = '<?php echo $selectedSouko; ?>';
+                    var get_souko_name = '<?php echo $get_souko_name; ?>';
+
+                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name + '&fukusuu_unsouo_num=' + fukusuu_select_name + '&fukusuu_select=' + '200';
+
+                    if (encodedValues === "") {
+                        url += '&fukusuu_select_val=' + encodedValues; // 修正
+                        window.location.href = url;
+
+                    } else {
+                        url_val = $('#fukusuu_select').text();
+                        url += '&fukusuu_select_val=' + encodeURIComponent(url_val); // 修正
+                        window.location.href = url;
+                    }
 
                 });
 
