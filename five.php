@@ -29,6 +29,19 @@ if (empty($session_id)) {
     header("Location: $top_url");
 } else {
 
+    if (isset($_SESSION['soko_name'])) {
+        $get_souko_name = $_SESSION['soko_name'];
+        $_SESSION['soko_name'] = $get_souko_name;
+    } else {
+        $_SESSION['soko_name'] = $souko_name;
+    }
+
+    // === ２回目以降の処理
+    if (isset($_GET['Denpyou_SEQ'])) {
+        $Denpyou_SEQ = $_GET['Denpyou_SEQ'];
+        print("伝票SEQ:::" . $Denpyou_SEQ);
+    }
+
     $table_Flg = 0;
     $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
 
@@ -125,24 +138,59 @@ if (empty($session_id)) {
         $bara_num = $_GET['bara_num'];
         $shouhin_jan = $_GET['shouhin_jan'];
 
+        print("GETデータ出力:::" . "<br>");
+        print("select_day:::" . $select_day . "<br>");
+        print("souko_code:::" . $souko_code . "<br>");
+        print("unsou_code:::" . $unsou_code . "<br>");
+        print("unsou_name:::" . $unsou_name . "<br>");
+        print("shipping_moto:::" . $shipping_moto . "<br>");
+        print("shipping_moto_name:::" . $select_day . "<br>");
+        print("Shouhin_code:::" . $Shouhin_code . "<br>");
+        print("Shouhin_name:::" . $Shouhin_name . "<br>");
+        print("Shouhin_num:::" . $Shouhin_num . "<br>");
+        print("Tokuisaki_name:::" . $Tokuisaki_name . "<br>");
+        print("Tana_num:::" . $Tana_num . "<br>");
+        print("case_num:::" . $case_num . "<br>");
+        print("bara_num:::" . $bara_num . "<br>");
+        print("shouhin_jan:::" . $shouhin_jan . "<br>");
+
+        // 特記
+        if (isset($_GET['Toki_Zikou'])) {
+            $Toki_Zikou = $_GET['Toki_Zikou'];
+        } else {
+            $Toki_Zikou = "IS NULL";
+        }
+
+        // 特記
+        if (isset($_GET['tokki_zikou'])) {
+            $Toki_Zikou = $_GET['tokki_zikou'];
+            print("特記:::" . $Toki_Zikou . "<br>");
+        } else {
+            $Toki_Zikou = "IS NULL";
+            print("特記:::" . $Toki_Zikou . "<br>");
+        }
+
+        // === 備考
+        if ($shipping_moto == "") {
+            $shipping_moto = "";
+        }
+
         // ケース数
         $Case_Num_Val = $case_num;
         // バラ数
 
-        // ケース数
         /*
-        if ($Shouhin_num != 0) {
+        // ケース数
+        if (($Shouhin_num != 0) && ($Konpou_num != 0)) {
             $Case_Num_Val = floor($Shouhin_num / $Konpou_num);
         }
         // バラ数
-        if ($Konpou_num != 0) {
+        if (($Konpou_num != 0) && ($Shouhin_num != 0)) {
             $bara_num_tmp = $Shouhin_num % $Konpou_num;
         }
         */
 
-        print("倉庫名:::" . $souko_name . "<br>");
-
-        //    print("セッション倉庫名:::" . $souko_name . "<br />");
+        // print("倉庫名:::" . $souko_name . "<br>");
 
         // === 40バイトで分ける
         // 商品名
@@ -150,8 +198,10 @@ if (empty($session_id)) {
         // 品番
         $Shouhin_name_part2 = mb_substr($Shouhin_name, 20);
 
+        /*
         print("01:::" . $Shouhin_name_part1 . "<br />");
         print("02:::" . $Shouhin_name_part2 . "<br />");
+        */
 
         $arr_Tokuisaki_name = [];
         $arr_Tokuisaki_name = SplitString_FUNC($Tokuisaki_name);
@@ -162,8 +212,8 @@ if (empty($session_id)) {
         $Shouhin_Detail_DATA = [
             $Tana_num,
             "",
-            $Shouhin_name_part1,
-            $Shouhin_name_part2,
+            $Shouhin_name_part1, // 商品名
+            $Shouhin_name_part2, // 商品コード
             $shouhin_jan,      // 商品コード 01 （JAN）
             $Shouhin_code, // 商品コード 02
             $Shouhin_num,  // 数量
@@ -177,6 +227,8 @@ if (empty($session_id)) {
             "ムサシ × 1"
         ];
 
+        //      print_r($Shouhin_Detail_DATA);
+
 
         // ============================= インサート用データ 取得 =============================
 
@@ -186,24 +238,166 @@ if (empty($session_id)) {
             $e = oci_error();
         }
 
-        $sql = " SELECT SL.伝票番号, SL.伝票行番号, SL.伝票行枝番, SL.商品Ｃ, SL.倉庫Ｃ,SL.出荷元,SL.数量
+        /*
+        $sql = " SELECT SL.伝票ＳＥＱ,SL.伝票番号, SL.伝票行番号, SL.伝票行枝番, SL.商品Ｃ, SL.倉庫Ｃ,SL.出荷元,SL.数量
     FROM SLTR SL
-    WHERE SL.商品Ｃ = :syouhin_Code and SL.倉庫Ｃ = :souko_Code
+    WHERE SL.商品Ｃ = :syouhin_Code and SL.倉庫Ｃ = :souko_Code and 
    ORDER BY SL.伝票ＳＥＱ DESC
     FETCH FIRST 1 ROW ONLY";
+    */
 
-        $stid = oci_parse(
-            $conn,
-            $sql
-        );
-        if (!$stid) {
-            $e = oci_error($stid);
+        if (isset($_GET['now_sql_multiple'])) {
+
+            print("複数");
+
+            $sql = " SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名 ,RZ.棚番 
+,SH.梱包入数 ,SUM(SK.出荷数量) AS 数量 ,SUM(PK.ピッキング数量) AS ピッキング数量 
+,PK.処理Ｆ ,SJ.得意先名 ,SH.ＪＡＮ ,SK.特記事項,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH ,RZMF RZ ,HTPK PK 
+WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ AND SL.伝票番号 = PK.伝票番号(+) AND
+SL.伝票行番号 = PK.伝票行番号(+) AND SL.伝票行枝番 = PK.伝票行枝番(+) AND SK.倉庫Ｃ = SO.倉庫Ｃ AND
+SL.出荷元 = SM.出荷元Ｃ(+) AND SK.運送Ｃ = US.運送Ｃ AND SL.商品Ｃ = SH.商品Ｃ 
+AND SK.倉庫Ｃ = RZ.倉庫Ｃ 
+AND SK.商品Ｃ = RZ.商品Ｃ 
+AND SJ.出荷日 = :select_day
+AND SK.倉庫Ｃ = :souko_Code 
+AND SK.運送Ｃ = :unsou_code 
+AND SL.商品Ｃ = :syouhin_Code";
+
+            // === 特記
+            if ($Toki_Zikou == "") {
+                $sql .= " AND SK.特記事項 IS NULL";
+            } else {
+                $sql .= " AND SK.特記事項 = :tokki";
+            }
+
+            // === 備考
+            if ($shipping_moto == "") {
+                $sql .= " AND SL.出荷元 IS NULL";
+            } else {
+                $sql .= " AND SL.出荷元 = :bikou";
+            }
+
+            $sql .= " GROUP BY SK.出荷日, SK.倉庫Ｃ, SO.倉庫名, SK.運送Ｃ, US.運送略称, SL.出荷元, 
+SM.出荷元名, SK.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SJ.得意先名, SH.ＪＡＮ, SK.特記事項 ,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+ORDER BY SK.倉庫Ｃ, SK.運送Ｃ, SM.出荷元名, SK.商品Ｃ, SL.出荷元, SK.特記事項";
+
+            $stid = oci_parse($conn, $sql);
+            if (!$stid) {
+                $e = oci_error($stid);
+                echo htmlentities($e['message']);
+                exit;
+            }
+
+            oci_bind_by_name($stid, ":select_day", $select_day);
+            oci_bind_by_name($stid, ":souko_Code", $souko_code);
+            oci_bind_by_name($stid, ":unsou_code", $unsou_code);
+            oci_bind_by_name($stid, ":syouhin_Code", $Shouhin_code);
+
+            if ($Toki_Zikou != "") {
+                oci_bind_by_name($stid, ":tokki", $Toki_Zikou);
+            }
+
+            if ($shipping_moto != "") {
+                oci_bind_by_name($stid, ":bikou", $shipping_moto);
+            }
+
+            oci_execute($stid);
+
+            print($sql);
+        } else if (isset($_GET['now_sql'])) {
+
+            // === 運送便（単数）,備考・特記 あり
+            $sql = " SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名 ,RZ.棚番 
+,SH.梱包入数 ,SUM(SK.出荷数量) AS 数量 ,SUM(PK.ピッキング数量) AS ピッキング数量 
+,PK.処理Ｆ ,SJ.得意先名 ,SH.ＪＡＮ ,SK.特記事項,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH ,RZMF RZ ,HTPK PK 
+WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ AND SL.伝票番号 = PK.伝票番号(+) AND
+SL.伝票行番号 = PK.伝票行番号(+) AND SL.伝票行枝番 = PK.伝票行枝番(+) AND SK.倉庫Ｃ = SO.倉庫Ｃ AND
+SL.出荷元 = SM.出荷元Ｃ(+) AND SK.運送Ｃ = US.運送Ｃ AND SL.商品Ｃ = SH.商品Ｃ 
+AND SK.倉庫Ｃ = RZ.倉庫Ｃ 
+AND SK.商品Ｃ = RZ.商品Ｃ 
+AND SJ.出荷日 = :select_day
+AND SK.倉庫Ｃ = :souko_Code 
+AND SK.運送Ｃ = :unsou_code 
+AND SL.商品Ｃ = :syouhin_Code";
+
+            // === 特記
+            if ($Toki_Zikou == "") {
+                $sql .= " AND SK.特記事項 IS NULL";
+            } else {
+                $sql .= " AND SK.特記事項 = :tokki";
+            }
+
+            // === 備考
+            if ($shipping_moto == "") {
+                $sql .= " AND SL.出荷元 IS NULL";
+            } else {
+                $sql .= " AND SL.出荷元 = :bikou";
+            }
+
+            $sql .= " GROUP BY SK.出荷日, SK.倉庫Ｃ, SO.倉庫名, SK.運送Ｃ, US.運送略称, SL.出荷元, 
+SM.出荷元名, SK.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SJ.得意先名, SH.ＪＡＮ, SK.特記事項 ,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+ORDER BY SK.倉庫Ｃ, SK.運送Ｃ, SM.出荷元名, SK.商品Ｃ, SL.出荷元, SK.特記事項";
+
+            $stid = oci_parse($conn, $sql);
+            if (!$stid) {
+                $e = oci_error($stid);
+                echo htmlentities($e['message']);
+                exit;
+            }
+
+            oci_bind_by_name($stid, ":select_day", $select_day);
+            oci_bind_by_name($stid, ":souko_Code", $souko_code);
+            oci_bind_by_name($stid, ":unsou_code", $unsou_code);
+            oci_bind_by_name($stid, ":syouhin_Code", $Shouhin_code);
+
+            if ($Toki_Zikou != "") {
+                oci_bind_by_name($stid, ":tokki", $Toki_Zikou);
+            }
+
+            if ($shipping_moto != "") {
+                oci_bind_by_name($stid, ":bikou", $shipping_moto);
+            }
+
+            oci_execute($stid);
+        } else {
+
+            // === 運送便（単数）
+            $sql = " SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名 ,RZ.棚番 
+,SH.梱包入数 ,SUM(SK.出荷数量) AS 数量 ,SUM(PK.ピッキング数量) AS ピッキング数量 
+,PK.処理Ｆ ,SJ.得意先名 ,SH.ＪＡＮ ,SK.特記事項,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH ,RZMF RZ ,HTPK PK 
+WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ AND SL.伝票番号 = PK.伝票番号(+) AND
+SL.伝票行番号 = PK.伝票行番号(+) AND SL.伝票行枝番 = PK.伝票行枝番(+) AND SK.倉庫Ｃ = SO.倉庫Ｃ AND
+SL.出荷元 = SM.出荷元Ｃ(+) AND SK.運送Ｃ = US.運送Ｃ AND SL.商品Ｃ = SH.商品Ｃ 
+AND SK.倉庫Ｃ = RZ.倉庫Ｃ 
+AND SK.商品Ｃ = RZ.商品Ｃ 
+AND SJ.出荷日 = :select_day
+AND SK.倉庫Ｃ = :souko_Code 
+AND SK.運送Ｃ = :unsou_code 
+AND SL.商品Ｃ = :syouhin_Code
+GROUP BY SK.出荷日, SK.倉庫Ｃ, SO.倉庫名, SK.運送Ｃ, US.運送略称, SL.出荷元, 
+SM.出荷元名, SK.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SJ.得意先名, SH.ＪＡＮ, SK.特記事項 ,SJ.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番 
+ORDER BY SK.倉庫Ｃ, SK.運送Ｃ, SM.出荷元名, SK.商品Ｃ, SL.出荷元, SK.特記事項";
+
+            $stid = oci_parse(
+                $conn,
+                $sql
+            );
+            if (!$stid) {
+                $e = oci_error($stid);
+            }
+
+            oci_bind_by_name($stid, ":select_day", $select_day);
+            oci_bind_by_name($stid, ":souko_Code", $souko_code);
+            oci_bind_by_name($stid, ":unsou_code", $unsou_code);
+            oci_bind_by_name($stid, ":syouhin_Code", $Shouhin_code);
+
+            oci_execute($stid);
         }
 
-        oci_bind_by_name($stid, ":syouhin_Code", $Shouhin_code);
-        oci_bind_by_name($stid, ":souko_Code", $souko_code);
 
-        oci_execute($stid);
 
         $arr_Insert_Picking = array();
         while ($row = oci_fetch_assoc($stid)) {
@@ -215,6 +409,9 @@ if (empty($session_id)) {
             $IN_Souko_Code = $row['倉庫Ｃ'];
             $IN_Syukamoto = $row['出荷元'];
             $IN_Syuka_Yotei_num = $row['数量'];
+            $IN_Tokki_zikou = $row['特記事項'];
+            $IN_Denpyou_SEQ = $row['伝票ＳＥＱ'];
+            $IN_Shouhin_JAN = $row['ＪＡＮ'];
 
             print("伝票番号:::" . $IN_Dennpyou_num . "<br />");
             print("伝票行番号:::" . $IN_Dennpyou_Gyou_num . "<br />");
@@ -223,6 +420,9 @@ if (empty($session_id)) {
             print("倉庫Ｃ:::" . $IN_Souko_Code . "<br />");
             print("出荷元:::" . $IN_Syukamoto . "<br />");
             print("数量:::" . $IN_Syuka_Yotei_num . "<br />");
+            print("特記事項:::" . $IN_Tokki_zikou . "<br />");
+            print("伝票ＳＥＱ:::" . $IN_Denpyou_SEQ  . "<br />");
+            print("ＪＡＮ:::" . $IN_Shouhin_JAN  . "<br />");
         }
 
         oci_free_statement($stid);
@@ -230,14 +430,47 @@ if (empty($session_id)) {
 
 
         // ========================== HTPK テーブル重複処理
+
         $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
         if (!$conn) {
             $e = oci_error();
         }
 
+
+        // ========================== 処理ＳＥＱ プラス 1 処理
+        $select_max = " SELECT MAX(処理ＳＥＱ) AS max_seq FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num 
+        AND 伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code 
+        AND 商品名 = :IN_Syouhin_Name AND 伝票ＳＥＱ = :Denpyou_SEQ";
+
+        $select_seq_stid = oci_parse($conn, $select_max);
+        if (!$select_seq_stid) {
+            $e = oci_error($conn);
+        }
+
+        oci_bind_by_name($select_seq_stid, ':IN_Dennpyou_num', $IN_Dennpyou_num);
+        oci_bind_by_name($select_seq_stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
+        oci_bind_by_name($select_seq_stid, ':IN_Syouhin_Code', $IN_Syouhin_Code);
+        oci_bind_by_name($select_seq_stid, ':IN_Syouhin_Name', $Shouhin_name);
+        oci_bind_by_name($select_seq_stid, ':Denpyou_SEQ', $IN_Denpyou_SEQ);
+
+
+        $result_select_seq = oci_execute($select_seq_stid);
+        if (!$result_select_seq) {
+            $e = oci_error($select_seq_stid);
+        }
+
+        $row = oci_fetch_assoc($select_seq_stid);
+        $max_seq = $row['MAX_SEQ'];
+
+        $new_seq = $max_seq + 1;
+
+        oci_free_statement($select_seq_stid);
+
+
         // データ重複　確認
         $check_sql = "SELECT COUNT(*) AS num_duplicates FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 
-            伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code AND 商品名 = :Syouhin_name";
+            伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code AND 商品名 = :Syouhin_name
+            AND 伝票ＳＥＱ = :Denpyou_SEQ";
 
         $check_stid = oci_parse($conn, $check_sql);
         if (!$check_stid) {
@@ -250,6 +483,8 @@ if (empty($session_id)) {
         oci_bind_by_name($check_stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
         oci_bind_by_name($check_stid, ':IN_Syouhin_Code', $IN_Syouhin_Code);
         oci_bind_by_name($check_stid, ':Syouhin_name', $Shouhin_name);
+        oci_bind_by_name($check_stid, ':Denpyou_SEQ', $IN_Denpyou_SEQ);
+
 
         $result_check = oci_execute($check_stid);
         if (!$result_check) {
@@ -290,46 +525,29 @@ if (empty($session_id)) {
 
         oci_free_statement($check_stid);
 
-        // ========================== 処理ＳＥＱ プラス 1 処理
-        $select_max = " SELECT MAX(処理ＳＥＱ) AS max_seq FROM HTPK WHERE 伝票番号 = :IN_Dennpyou_num AND 伝票行番号 = :IN_Dennpyou_Gyou_num AND 商品Ｃ = :IN_Syouhin_Code AND 商品名 = :IN_Syouhin_Name";
-
-        $select_seq_stid = oci_parse($conn, $select_max);
-        if (!$select_seq_stid) {
-            $e = oci_error($conn);
-        }
-
-        oci_bind_by_name($select_seq_stid, ':IN_Dennpyou_num', $IN_Dennpyou_num);
-        oci_bind_by_name($select_seq_stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
-        oci_bind_by_name($select_seq_stid, ':IN_Syouhin_Code', $IN_Syouhin_Code);
-        oci_bind_by_name($select_seq_stid, ':IN_Syouhin_Name', $Shouhin_name);
 
 
-        $result_select_seq = oci_execute($select_seq_stid);
-        if (!$result_select_seq) {
-            $e = oci_error($select_seq_stid);
-        }
-
-        $row = oci_fetch_assoc($select_seq_stid);
-        $max_seq = $row['MAX_SEQ'];
-
-        $new_seq = $max_seq + 1;
-
-        oci_free_statement($select_seq_stid);
 
         // ========================== 処理 F 「作業中処理」
         $sql = "INSERT INTO HTPK (処理ＳＥＱ, 伝票番号, 伝票行番号, 伝票行枝番,
                                             入力担当, 商品Ｃ, 倉庫Ｃ, 運送Ｃ, 出荷元,
                                             特記事項,出荷予定数量, ピッキング数量,
-                                            処理開始日時,登録日,登録端末,処理Ｆ,商品名)
+                                            処理開始日時,登録日,登録端末,処理Ｆ,商品名,伝票ＳＥＱ)
                             VALUES(:NEW_SEQ, :IN_Dennpyou_num, :IN_Dennpyou_Gyou_num, :IN_Dennpyou_Eda_num, 
                             1111, :IN_Syouhin_Code ,:IN_Souko_Code, :unsoucode,
-                                    :shippingmoto, 0,:IN_Syuka_Yotei_num,:shouhinnum, :start_time,
-                                    :selectday,:touroku_sikibetu,2, :Shouhin_name)";
+                                    :shippingmoto, :tokki_zikou,:IN_Syuka_Yotei_num,:shouhinnum, 
+                                    TO_DATE(:start_time, 'YYYY-MM-DD HH24:MI:SS'),
+                                    TO_DATE(:touroku_date, 'YYYY-MM-DD HH24:MI:SS'),
+                                    :touroku_sikibetu,2, :Shouhin_name,:Denpyou_SEQ)";
 
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
             $e = oci_error($conn);
         }
+
+
+        // 処理開始日時
+        $syori_start_datetime = date('Y-m-d H:i:s');
 
         // 処理開始日時
         $start_time = date('Y-m-d');
@@ -339,7 +557,7 @@ if (empty($session_id)) {
         $touroku_sikibetu = '1111_' . $start_time_day;
 
         // パラメータをバインド
-        oci_bind_by_name($stid, ':NEW_SEQ', $new_seq);
+        oci_bind_by_name($stid, ':NEW_SEQ', $new_seq); // 処理 SEQ
         oci_bind_by_name($stid, ':IN_Dennpyou_num', $IN_Dennpyou_num);
         oci_bind_by_name($stid, ':IN_Dennpyou_Gyou_num', $IN_Dennpyou_Gyou_num);
         oci_bind_by_name($stid, ':IN_Dennpyou_Eda_num', $IN_Dennpyou_Eda_num);
@@ -348,13 +566,15 @@ if (empty($session_id)) {
         oci_bind_by_name($stid, ':IN_Souko_Code', $IN_Souko_Code);
         oci_bind_by_name($stid, ':unsoucode', $unsou_code);
         oci_bind_by_name($stid, ':shippingmoto', $shipping_moto);
+        oci_bind_by_name($stid, ':tokki_zikou', $IN_Tokki_zikou);
 
         oci_bind_by_name($stid, ':IN_Syuka_Yotei_num', $IN_Syuka_Yotei_num);
         oci_bind_by_name($stid, ':shouhinnum', $Shouhin_num);
-        oci_bind_by_name($stid, ':start_time', $start_time);
-        oci_bind_by_name($stid, ':selectday', $select_day);
-        oci_bind_by_name($stid, ':touroku_sikibetu', $touroku_sikibetu);
-        oci_bind_by_name($stid, ':Shouhin_name', $Shouhin_name);
+        oci_bind_by_name($stid, ':start_time', $syori_start_datetime); // 処理開始日時
+        oci_bind_by_name($stid, ':touroku_date', $start_time_day);  // 登録日
+        oci_bind_by_name($stid, ':touroku_sikibetu', $touroku_sikibetu); // 登録端末
+        oci_bind_by_name($stid, ':Shouhin_name', $Shouhin_name); // 商品名
+        oci_bind_by_name($stid, ':Denpyou_SEQ', $IN_Denpyou_SEQ);   //伝票SEQ
 
         $result_insert = oci_execute($stid);
         if (!$result_insert) {
@@ -366,69 +586,19 @@ if (empty($session_id)) {
         oci_close($conn);
 
 
-        //  ====================================================================================
-        // ============================= ピッキングデータ 作成部分　=============================
-        //  ====================================================================================
-
-        // === 接続準備
-
-
-        $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
-
-        if (!$conn) {
-            $e = oci_error();
+        // *******************************
+        // === 可変の SQL 取得
+        // *******************************
+        if (isset($_GET['now_sql'])) {
+            $one_condition = getCondition($_GET['now_sql']);
+            print($one_condition);
+        } else if (isset($_GET['now_sql_multiple'])) {
+            $now_sql_multiple = getCondition_Multiple($_GET['now_sql_multiple']);
+            print($now_sql_multiple);
+        } else {
+            $one_condition = "";
         }
-
-        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
-      ,RZ.棚番
-      ,SH.梱包入数
-      ,SUM(SK.出荷数量) AS 数量	
-      ,SUM(PK.ピッキング数量) AS ピッキング数量
-      ,PK.処理Ｆ
-      ,SJ.得意先名
-      ,SH.ＪＡＮ
- FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-      ,RZMF RZ
-      ,HTPK PK
- WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-   AND SL.伝票番号   = PK.伝票番号(+)
-   AND SL.伝票行番号 = PK.伝票行番号(+)
-   AND SL.伝票行枝番 = PK.伝票行枝番(+)
-   AND SK.倉庫Ｃ = SO.倉庫Ｃ
-   AND SL.出荷元 = SM.出荷元Ｃ(+)
-   AND SK.運送Ｃ = US.運送Ｃ
-   AND SL.商品Ｃ = SH.商品Ｃ
-   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
-   AND SK.商品Ｃ = RZ.商品Ｃ
-   AND SJ.出荷日 = :SELECT_DATE
-   AND SK.倉庫Ｃ = :SELECT_SOUKO
-   AND SK.運送Ｃ = :SELECT_UNSOU
-   AND SH.ＪＡＮ = :SELECT_JAN
-   AND SK.商品Ｃ = :SELECT_SHOUHIN_CODE
-   AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
- --  AND SH.品名 = 'アルミベンチ型宅配ボックス レシーボ     ＴＲＡ－６４（ＴＧＹ）'
- GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ
- ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
-
-        $stid = oci_parse($conn, $sql);
-        if (!$stid) {
-            $e = oci_error($stid);
-        }
-
-        oci_bind_by_name($stid, ":SELECT_DATE",  $select_day);
-        oci_bind_by_name($stid, ":SELECT_SOUKO", $souko_code);
-        oci_bind_by_name($stid, ":SELECT_UNSOU", $unsou_code);
-        oci_bind_by_name($stid, ":SELECT_JAN", $shouhin_jan);
-        oci_bind_by_name($stid, ":SELECT_SHOUHIN_CODE", $shouhin_jan);
-
-        oci_execute($stid);
     } // ======================================= END isset($_GET['select_day']
-
-
-
-
 
 }
 
@@ -509,11 +679,13 @@ if (empty($session_id)) {
 
                 <span id="detail_var_code"><?php print $Shouhin_Detail_DATA[4]; ?></span>
                 <span id="detail_data_code"><?php print $Shouhin_Detail_DATA[5]; ?></span>
-                <span id="scan_val_box">
-                    <input type="text" id="scan_val" name="scan_val">
-                </span>
+            <div class="cp_iptxt_02">
+                <label class="ef_02">
+                    <input type="text" id="scan_val" name="scan_val" placeholder="Scan JAN">
+                </label>
+            </div>
 
-                <span id="result_val"></span>
+            <span id="result_val"></span>
             </p>
 
             <p>
@@ -526,8 +698,10 @@ if (empty($session_id)) {
                 <p><span class="detail_midashi">バラ：</span><?php print $Shouhin_Detail_DATA[8]; ?></p>
             </div>
 
-            <p class="detail_item_06_count">
+            <div class="cp_iptxt">
+                <!-- 
                 <span class="detail_midashi">カウント：</span>
+    -->
 
                 <?php if (!empty($scan_b)) :  ?>
                     <?php $count_num = 1; ?>
@@ -535,8 +709,10 @@ if (empty($session_id)) {
                     <?php $count_num = 0; ?>
                 <?php endif; ?>
 
-                <input type="number" name="count_num" id="count_num" value="<?php print $count_num; ?>">
-            </p>
+                <input type="number" class="ef" name=" count_num" id="count_num" value="<?php print $count_num; ?>">
+                <label>カウント</label>
+                <span class="focus_line"></span>
+            </div>
 
             <p class="detail_item_07">
                 <span class="detail_midashi">備考：</span>
@@ -601,7 +777,23 @@ if (empty($session_id)) {
     <!-- フッターメニュー -->
     <footer class="footer-menu_02">
         <ul>
-            <?php $url = "./four.php?unsou_code=" . urlencode($unsou_code) . '&unsou_name=' . urlencode($unsou_name) . '&day=' . urlencode($select_day) . '&souko=' . urlencode($souko_code) . '&get_souko_name=' . urlencode($souko_name) . '&shouhin_code=' . urlencode($Shouhin_code) . '&shouhin_name=' . urlencode($Shouhin_name) . '&denpyou_num=' . $IN_Dennpyou_num . '&denpyou_Gyou_num=' . $IN_Dennpyou_Gyou_num . '&five_back=111' ?>
+            <?php
+            if (isset($one_condition) && $one_condition != "") {
+                $url = "./four.php?unsou_code=" . urlencode($unsou_code) . '&unsou_name=' . urlencode($unsou_name) . '&day=' . urlencode($select_day) . '&souko=' . urlencode($souko_code) . '&get_souko_name=' . urlencode($souko_name) . '&shouhin_code=' . urlencode($Shouhin_code) . '&shouhin_name=' . urlencode($Shouhin_name) . '&denpyou_num=' . $IN_Dennpyou_num . '&denpyou_Gyou_num=' . $IN_Dennpyou_Gyou_num . '&five_back=111' . '&=back_one_condition' . $one_condition;
+            } else {
+                $url = "./four.php?unsou_code=" . urlencode($unsou_code) . '&unsou_name=' . urlencode($unsou_name) . '&day=' . urlencode($select_day) . '&souko=' . urlencode($souko_code) . '&get_souko_name=' . urlencode($souko_name) . '&shouhin_code=' . urlencode($Shouhin_code) . '&shouhin_name=' . urlencode($Shouhin_name) . '&denpyou_num=' . $IN_Dennpyou_num . '&denpyou_Gyou_num=' . $IN_Dennpyou_Gyou_num . '&five_back=111';
+            }
+            ?>
+
+            <?php if (isset($one_condition) &&  $one_condition != "") : ?>
+                <input type="hidden" name="back_sql_one_tokki" id="back_sql_one_tokki" value="<?php print $one_condition; ?>">
+            <?php endif; ?>
+
+            <?php if (isset($_GET['now_sql_multiple']) && $_GET['now_sql_multiple'] != "") : ?>
+                <input type="hidden" name="back_now_sql_multiple" id="back_now_sql_multiple" value="<?php print $_GET['now_sql_multiple']; ?>">
+            <?php endif; ?>
+
+
             <li><a href="" id="five_back_btn">戻る</a></li>
 
             <li>
@@ -629,7 +821,20 @@ if (empty($session_id)) {
                     <!-- カウントの値 -->
                     <input type="hidden" name="count_num_val" id="count_num_val" value="">
 
+                    <!-- 伝票 SEQ -->
+                    <input type="hidden" name="IN_Denpyou_SEQ" id="IN_Denpyou_SEQ" value="<?php print $IN_Denpyou_SEQ ?>">
+
                     <input type="hidden" name="Kakutei_Btn_Flg" id="Kakutei_Btn_Flg" value="">
+
+                    <!-- 備考・特記 , & 複数処理 -->
+                    <?php if (isset($_GET['now_sql'])) : ?>
+                        <input type="hidden" name="one_now_sql_kakutei" id="one_now_sql_kakutei" value="<?php print($_GET['now_sql']); ?>">
+                    <?php endif; ?>
+
+                    <!-- 運送便 複数 , 特記・備考 （複数） -->
+                    <?php if (isset($_GET['now_sql_multiple'])) : ?>
+                        <input type="hidden" name="now_sql_multiple_kakutei" id="now_sql_multiple_kakutei" value="<?php print($_GET['now_sql_multiple']); ?>">
+                    <?php endif; ?>
 
                     <button type="submit" name="kakutei_btn" id="kakutei_btn">確定</button>
 
@@ -641,7 +846,33 @@ if (empty($session_id)) {
 
             </li>
 
-            <li><a href="#">全数完了</a></li>
+            <li>
+                <!-- 
+                <a href="#">全数完了</a>
+                -->
+                <form action="./four.php" method="GET" name="all_completed_post" id="all_completed_post">
+                    <input type="hidden" name="Unsou_code" value="<?php print $unsou_code; ?>">
+                    <input type="hidden" name="unsou_name" value="<?php print $unsou_name; ?>">
+                    <input type="hidden" name="day" value="<?php print $select_day; ?>">
+                    <input type="hidden" name="souko" value="<?php print $souko_code; ?>">
+                    <input type="hidden" name="shouhin_code" value="<?php print $Shouhin_code; ?>">
+                    <input type="hidden" name="shouhin_name" value="<?php print $Shouhin_name; ?>">
+                    <input type="hidden" name="shouhin_num" value="<?php print $Shouhin_num; ?>">
+                    <input type="hidden" name="shipping_moto_name" value="<?php print $shipping_moto_name; ?>">
+                    <input type="hidden" name="get_souko_name" value="<?php print $get_souko_name; ?>">
+
+                    <!-- 備考・特記 , & 複数処理 -->
+                    <?php if (isset($_GET['now_sql'])) : ?>
+                        <input type="hidden" name="one_now_sql_zensuu" id="one_now_sql_zensuu" value="<?php print($_GET['now_sql']); ?>">
+                    <?php endif; ?>
+
+                    <input type="hidden" name="ZEN_SUU_VAL" id="ZEN_SUU_VAL" value="">
+
+                    <button type="submit" name="all_completed_button" id="all_completed_button">全数完了</button>
+                </form>
+
+
+            </li>
         </ul>
     </footer>
 
@@ -727,6 +958,51 @@ if (empty($session_id)) {
                     event.preventDefault();
                     showModal_back();
                 } else {
+
+                    if ($("#back_sql_one_tokki").val() === "") {
+
+                        var back_url = "./four.php?" +
+                            "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
+                            "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
+                            "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
+                            "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
+                            "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
+                            "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
+                            "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
+                            "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
+                            "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
+                            "&five_back=111";
+
+                        window.location.href = back_url;
+                    } else {
+
+                        var back_url = "./four.php?" +
+                            "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
+                            "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
+                            "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
+                            "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
+                            "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
+                            "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
+                            "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
+                            "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
+                            "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
+                            "&five_back=111" +
+                            "&back_one_condition=" + encodeURIComponent(<?php echo json_encode($one_condition); ?>);
+
+                        window.location.href = back_url;
+
+                    }
+                }
+
+            });
+
+            // モーダル　「戻る」
+            $('#send_back').on('click', function() {
+
+                // === 運送便 単数 , 備考・特記
+
+                if ($("#back_sql_one_tokki").val() === "") {
+
                     var back_url = "./four.php?" +
                         "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
                         "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
@@ -740,30 +1016,33 @@ if (empty($session_id)) {
                         "&five_back=111";
 
                     window.location.href = back_url;
+
+                } else {
+
+                    var back_url = "./four.php?" +
+                        "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
+                        "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
+                        "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
+                        "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
+                        "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
+                        "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
+                        "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
+                        "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
+                        "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
+                        "&five_back=111" +
+                        "&back_one_condition=" + encodeURIComponent(<?php echo json_encode($one_condition); ?>);
+
+                    window.location.href = back_url;
+
                 }
 
             });
 
-            // モーダル　「戻る」
-            $('#send_back').on('click', function() {
-
-                var back_url = "./four.php?" +
-                    "unsou_code=" + encodeURIComponent(<?php echo json_encode($unsou_code); ?>) +
-                    "&unsou_name=" + encodeURIComponent(<?php echo json_encode($unsou_name); ?>) +
-                    "&day=" + encodeURIComponent(<?php echo json_encode($select_day); ?>) +
-                    "&souko=" + encodeURIComponent(<?php echo json_encode($souko_code); ?>) +
-                    "&get_souko_name=" + encodeURIComponent(<?php echo json_encode($souko_name); ?>) +
-                    "&shouhin_code=" + encodeURIComponent(<?php echo json_encode($Shouhin_code); ?>) +
-                    "&shouhin_name=" + encodeURIComponent(<?php echo json_encode($Shouhin_name); ?>) +
-                    "&denpyou_num=<?php echo $IN_Dennpyou_num; ?>" +
-                    "&denpyou_Gyou_num=<?php echo $IN_Dennpyou_Gyou_num; ?>" +
-                    "&five_back=111";
-
-                window.location.href = back_url;
-
+            $('#cancel_back').on('click', function() {
+                hideModal_back();
             });
 
-            $('#cancel_back').on('click', function() {
+            $('.close_02').on('click', function() {
                 hideModal_back();
             });
 
@@ -773,10 +1052,7 @@ if (empty($session_id)) {
 
 
             // ********* 「確定ボタン」処理 *********
-
             $('#kakutei_btn').on('click', function() {
-
-                // event.preventDefault();
 
                 var suuryou_num = $('#suuryou_num').text();
                 var count_num = $('#count_num').val();
@@ -789,11 +1065,6 @@ if (empty($session_id)) {
                     console.log("残");
                     $('#Kakutei_Btn_Flg').val(100);
                     $('#count_num_val').val(count_num);
-
-                    //   showModal();
-                    //   return false;
-                    //   $('#kakutei_btn').submit();
-                    //    $('#kakutei_btn').submit();
 
                     $('#kakutei_btn').submit();
 
@@ -833,6 +1104,31 @@ if (empty($session_id)) {
 
                 $('#kakutei_btn_post').submit();
             });
+
+            // ********* 「全数完了ボタン」処理 *********
+            $('#all_completed_button').on('click', function() {
+                //$("#count_num").focus();
+
+                //  event.preventDefault();
+
+                var suuryou_num = $('#suuryou_num').text();
+                var tmp = $("#count_num").val();
+                var count_num = tmp;
+
+                $('#ZEN_SUU_VAL').val(suuryou_num);
+
+
+
+                //count_num =suuryou_num;
+                console.log(tmp);
+                console.log("数量:" + suuryou_num);
+                console.log("カウント:" + count_num);
+                console.log("出力:値:" + $('#ZEN_SUU_VAL').val());
+                //  return false;
+                $('#ZEN_SUU_VAL').submit();
+
+            });
+
 
 
             // === モーダル「確定」キャンセル

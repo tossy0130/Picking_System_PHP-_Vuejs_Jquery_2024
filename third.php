@@ -33,6 +33,8 @@ if (empty($session_id)) {
         $get_souko_name = $_GET['souko_name'];
         // print($selected_day . "<br />");
 
+        $_SESSION['soko_name'] = $get_souko_name;
+
         // ============================= DB 処理 =============================
         // === 接続準備
         $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
@@ -317,9 +319,8 @@ if (empty($session_id)) {
                     if (selectedValues.indexOf(data_value) === -1 && selectedValues.indexOf(unsouCode_m) === -1) {
                         selectedValues.push(unsouCode_m + data_value);
                         console.log("selectedValuesに追加:", data_value);
-                        $("#selectedValues_set_next_val").append('<div class="set_next_val">' + unsouCode_m + ':' +
-                            unsouName_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_Name + ':' +
-                            selectedUnsou_Detail_tokki + '</div>');
+                        $("#selectedValues_set_next_val").append('<div class="set_next_val">' + unsouName_m + ':' +
+                            unsouCode_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_tokki + ',' + '</div>');
                     } else {
                         console.log("selectedValuesに既に存在:", data_value);
                     }
@@ -373,13 +374,12 @@ if (empty($session_id)) {
 
                     // === エラー処理
                     if (unsou_code === "") {
-                        $('#err_text').text("運送便を選択してください。");
+                        $('#err_text').text("選択してください。");
                         return false;
                     }
 
                     var fukusuu_select_name = $('#fukusuu_select').text();
-                    console.log(fukusuu_select_name)
-
+                    console.log("fukusuu_select_name:::" + fukusuu_select_name)
 
                     var arr_set_next_val = [];
                     // === 選択した値を取得
@@ -405,12 +405,12 @@ if (empty($session_id)) {
 
                     var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name + '&fukusuu_unsouo_num=' + fukusuu_select_name + '&fukusuu_select=' + '200';
 
-                    if (encodedValues === "") {
+                    if (encodedValues != "") {
                         url += '&fukusuu_select_val=' + encodedValues; // 修正
                         window.location.href = url;
 
                     } else {
-                        url_val = $('#fukusuu_select').text();
+                        url_val = "";
                         url += '&fukusuu_select_val=' + encodeURIComponent(url_val); // 修正
                         window.location.href = url;
                     }

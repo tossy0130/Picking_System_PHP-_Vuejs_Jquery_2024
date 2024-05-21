@@ -110,6 +110,16 @@
             padding: 5px 1px;border-radius: 2px;
         }
 
+        /* 作業完了 */
+        #sagyou_now_text_ok {
+            color: #333;
+            background: aquamarine;
+            padding: 5px 1px;
+            border-radius: 2px;
+        }
+
+
+
         /*　特記 一覧 */
         .toki_list {
             margin: 0;padding: 0;
@@ -123,6 +133,98 @@
             display: inline-block;position: relative;
             top: 10px;
         }
+
+        /*========== END ========*/
+
+        /* スキャンした JAN */
+                .cp_iptxt_03 {
+                    position: relative;
+                    width: 80%;
+                    margin: 20px 3%;
+                }
+        
+                .cp_iptxt_03 input[type='number'] {
+                    font: 15px/24px sans-serif;
+                    box-sizing: border-box;
+                    width: 50%;
+                    padding: 0.3em;
+                    transition: 0.3s;
+                    letter-spacing: 1px;
+                    color: #aaaaaa;
+                    border: none;
+                    border-bottom: 1px solid #dedede;
+                    background: transparent;
+                }
+        
+                .ef_03 input[type='number']:focus {
+                    border-bottom: 2px solid #da3c41;
+                    outline: none;
+                }
+
+        /* === スキャンした JAN === END */
+
+                 /* ドロップダウンリスト */
+                 .dropdown_02 {
+                     position: relative;
+                     display: inline-block;
+                 }
+        
+                 .dropbtn {
+                     background-color: #4CAF50;
+                     color: white;
+                     padding: 10px;
+                     font-size: 16px;
+                     border: none;
+                     cursor: pointer;
+                 }
+        
+                 .dropdown-content {
+                     display: none;
+                     position: absolute;
+                     background-color: #f9f9f9;
+                     min-width: 160px;
+                     overflow: auto;
+                     border: 1px solid #ddd;
+                     z-index: 1;
+                     left: 0%;
+                 }
+        
+                 .dropdown-content button {
+                     color: black;
+                     padding: 10px 12px;
+                     text-decoration: none;
+                     display: block;
+                     cursor: pointer;
+                     width: 100%;
+                     text-align: center;
+                 }
+        
+                 .dropdown-content button:hover {
+                     background-color: #f1f1f1;
+                 }
+        
+                 .show {
+                     display: block;
+                 }
+        
+                 /* テーブル要素　ホバー */
+                 tr:hover {
+                     background: gray;
+                 }
+        
+                 /* 全表示 */
+                 .picking-row1 {
+                     background-color: tomato;
+                     /* pointer-events: none; */
+        
+                 }
+        
+                 /*  作業中 */
+                 .picking-row2 {
+                     background-color: tomato;
+                     /* pointer-events: none; */
+                     display: none;
+                 }
 
 
 

@@ -221,5 +221,117 @@
                       font-size: 1.12em;
                   }
 
+                  /* 全数完了ボタン */
+                  #all_completed_button {
+                    color: #fff;text-decoration: none;
+                    font-size: 16px;background: #4b4b4b;
+                    padding: 0.6em 1.2em;border-radius: 4px;
+                    box-shadow: none;border: none;
+                  }
+
+                  /* === カウント　テキストボックス　=== */
+                                  .cp_iptxt {
+                                      position: relative;
+                                      width: 80%;
+                                      margin: 40px 3%;
+                                  }
+                
+                                  .cp_iptxt input[type='text'] {
+                                      font: 15px/24px sans-serif;
+                                      box-sizing: border-box;
+                                      width: 100%;
+                                      letter-spacing: 1px;
+                                      padding-left: 4em;
+                                  }
+                
+                                  .cp_iptxt input[type='text']:focus {
+                                      outline: none;
+                                  }
+                
+                                  .ef {
+                                    padding: 8px 10px;text-align: center;
+                                      font-size: 1.4em;border: 0;
+                                      border-bottom: 1px solid #aaa;
+                                      background-color: transparent;
+                                  }
+                
+                                  .ef~.focus_line {
+                                      position: absolute;
+                                      z-index: 99;
+                                      bottom: 0;
+                                      left: 0;
+                                      width: 100%;
+                                      height: 2px;
+                                  }
+                
+                                  .ef~.focus_line:before,
+                                  .ef~.focus_line:after {
+                                      position: absolute;
+                                      bottom: 0;
+                                      left: 0;
+                                      width: 0;
+                                      height: 100%;
+                                      content: '';
+                                      transition: 0.4s;
+                                      background-color: #da3c41;
+                                  }
+                
+                                  .ef~.focus_line:after {
+                                      right: 0;
+                                      left: auto;
+                                  }
+                
+                                  .ef:focus~.focus_line:before,
+                                  .ef:focus~.focus_line:after,
+                                  .cp_iptxt.ef~.focus_line:before,
+                                  .cp_iptxt.ef~.focus_line:after {
+                                      width: 50%;
+                                      transition: 0.4s;
+                                  }
+                
+                                  .ef~label {
+                                      position: absolute;
+                                      z-index: -1;
+                                      top: 4px;
+                                      left: 0;
+                                      width: 100%;
+                                      transition: 0.3s;
+                                      letter-spacing: 0.5px;
+                                      color: #333;
+                                  }
+                
+                                  .ef:focus~label,
+                                  .cp_iptxt.ef~label {
+                                      font-size: 16px;
+                                      top: -33px;
+                                      transition: 0.3s;
+                                      color: #da3c41;
+                                  }
+
+                                /* ====== スキャンした JAN の値  ======= */
+                                .cp_iptxt_02 {
+                                    position: relative;
+                                    width: 80%;
+                                    margin: 20px 3%;
+                                }
+                
+                                .cp_iptxt_02 input[type='text'] {
+                                    font: 15px / 24px sans-serif;
+                                    box-sizing: border-box;
+                                    width: 60%;
+                                    padding: 0.3em;
+                                    transition: 0.3s;
+                                    letter-spacing: 1px;
+                                    color: #aaaaaa;
+                                    border: none;
+                                    border-bottom: 0.5px solid #dedede;
+                                    background: transparent;
+                                }
+                
+                                .ef_02 input[type='text']:focus {
+                                    border-bottom: 2px solid #da3c41;
+                                    outline: none;
+                                }
+
 
 } /* ========================= END ====================== */
