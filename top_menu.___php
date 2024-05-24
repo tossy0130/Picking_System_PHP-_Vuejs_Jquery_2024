@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 
-require_once __DIR__ . "\class/function.php";
+require_once __DIR__ . "./class/function.php";
 
 // セッションスタート
 session_start();
@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // $submitted_token = $_POST['csrf_token'];
     $input_login_id = $_POST['input_login_id'];
-    $_SESSION['input_login_id'] = $input_login_id;
 } else {
     header("Location: index.php");
     exit; // リダイレクト後にスクリプトの実行を終了するために必要
@@ -85,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div>
-                <a href="./six.php">ピッキング実績照会</a>
+                <a href="#">ピッキング実績照会</a>
             </div>
 
 

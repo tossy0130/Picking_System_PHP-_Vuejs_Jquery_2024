@@ -115,8 +115,6 @@ oci_close($conn);
                         </div>
 
 
-
-
                         <div>
                             <button type="submit" name="login_btn" id="login_btn">ログイン</button>
                             <p id="error" style="color:red"></p>

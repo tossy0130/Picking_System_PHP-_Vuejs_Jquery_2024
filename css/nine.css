@@ -1,0 +1,149 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+    
+    /* ========== ヘッダーエリア 01 、倉庫、運送便  ============ */
+
+    /*========== ヘッダー　01 =========*/
+    .head_box {
+        background-color: #4b4b4b;
+        /*padding: 1.2em 0;margin: 0;*/
+        padding: 0.6em 0;margin: 0;
+    }
+
+    .head_content {
+        text-align: center;
+        position: relative;
+    }
+
+    .head_01 {
+        display: flex;
+        margin: 0 0 1em 0;
+    }
+
+    /* ホームアイコン */
+    .home_icon_span {
+        display: inline-block;
+        position: absolute;
+        left: 3%;
+    }
+  
+        .fa-house:before {
+            content: "\f015";
+            color: #fff;
+        }
+    
+    /* アプリ名 */
+    .App_name {
+        color: #fff;font-weight: 800;
+        font-size: 1.2em;
+    }
+
+    .page_title {
+        display: inline-block;
+        position: relative;
+        left: 5%;
+    }
+
+/*========== ヘッダー　01 END =========*/
+
+/*========== ヘッダー　02 =========*/
+.head_box_02 {
+    background-color: #D4D7D7;
+    padding: 0.4em 0;margin: 0 0 1em 0;
+}
+
+/*========== ヘッダー　02 END =========*/
+
+.fa-thumbtack:before {
+    content: "\f08d";
+    color: #4b4b4b;
+}
+
+
+.page_title {
+    display: inline-block;
+}
+
+/* ピン　アイコン　span */
+.home_sub_icon_span {
+    display: inline-block;
+    position: relative;
+    left: 3%;
+}
+        
+.souko_icon_box {
+    display: block;
+}
+
+.unsou_text_box {
+    display: block;
+}
+
+    
+    .head_01 > div:nth-child(1) {
+                width: 60%;
+                    background: transparent;
+                    text-align: center;
+                    color: #5CBCE0;
+                    padding: 0.5em 0 0.5em 0;
+                    height: 3.0em;
+                    border: 3px solid #5CBCE0;
+                    font-size: 1.2em;
+    }
+
+    .head_01 > div:nth-child(2) {
+        width: 38%;text-align: center;
+        background: #5CBCE0;padding: 0.5em 0 0.5em 0;
+        height: 3.2em;color: #fff;
+    }
+
+    /* ヘッドエリア 02  「並替」「全表示」ボタン */
+    .head_02 {
+            text-align: right;
+            width: 100%;
+    }
+
+    .dropdown_02 {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+    }
+    
+    #order_btn {
+        background: #F08A00;border: none;
+        width: 100%;color: #fff;
+        margin: 0 0 1em 0;padding: 0.8em 0;
+    }
+    
+    /* テーブル全体のスタイル */
+    table {
+            border-collapse: collapse;width: 100%; 
+            border-color: #4b4b4b;
+            border: 1px soild;
+        }
+    
+    /* テーブルのボーダー */
+    /* td {
+        border-bottom: 1px solid grey;
+    } */
+    tr {
+        border: 1px solid;
+    }
+    
+    /* テーブルセルのスタイル */
+    td {
+        /* padding: 20px 10px; */
+        padding: 8px;text-align: left;
+        font-size: 0.65em;
+        /* border: 1px solid; */
+    }
+
+    .highlight {
+        background-color: yellow; /* ハイライトの背景色 */
+        color: black; /* ハイライト内のテキスト色 */
+        font-weight: bold; /* テキストの太字化など、目立たせるための追加のスタイル */
+    }
+    
+
+} /* ================= END ================== */

@@ -1,0 +1,28 @@
+
+/* スマホ */
+@media only screen and (max-width: 768px) {
+
+    .unsou_box {
+        display: flex;
+        width: 95%;
+    }
+
+    .unsou_box > div:nth-child(1) {
+                    width: 45%;
+    }
+
+    .unsou_box > div:nth-child(2) {
+        width: 45%;
+    }
+
+    .unsou_box>div:nth-child(1) > button {
+        width: 95%;height: 5em;margin: 0 0 20px 0;
+    }
+
+    .unsou_box>div:nth-child(2) > button {
+        width: 95%;height: 5em;margin: 0 0 20px 0;
+    }
+
+
+
+}

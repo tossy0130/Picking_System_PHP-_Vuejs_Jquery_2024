@@ -2,10 +2,10 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "./conf.php";
+require __DIR__ . "\conf.php";
 
-require_once(dirname(__FILE__) . "./class/init_val.php");
-require(dirname(__FILE__) . "./class/function.php");
+require_once(dirname(__FILE__) . "\class/init_val.php");
+require(dirname(__FILE__) . "\class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -35,10 +35,14 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
+        // === 運送便
+        $selected_shippingname = $_GET['selected_shippingname'];
+        $selected_shippingcode = $_GET['selected_shippingcode'];
     } else {
         // === トークンが無い場合
         header("Location: $err_url");
     }
+
 
     // ============================= DB 処理 =============================
     // === 接続準備
@@ -49,11 +53,14 @@ if (empty($session_id)) {
     }
 
     $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-	            FROM SJTR SJ,SKTR SK,SOMF SO
-	               WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
-	               AND SJ.出荷日 = :POST_DATE
-	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
+            FROM SJTR SJ, SKTR SK, SOMF SO, USMF US
+            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                AND SK.倉庫Ｃ = SO.倉庫Ｃ
+                AND SK.運送Ｃ = US.運送Ｃ
+                AND SK.出荷日 = :POST_DATE
+                AND SK.運送Ｃ = :POST_CODE
+            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
+            ORDER BY SK.倉庫Ｃ,SO.倉庫名";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {
@@ -61,6 +68,7 @@ if (empty($session_id)) {
     }
 
     oci_bind_by_name($stid, ":POST_DATE", $selected_day);
+    oci_bind_by_name($stid, ":POST_CODE", $selected_shippingcode);
 
     oci_execute($stid);
 
@@ -96,9 +104,6 @@ if (empty($session_id)) {
     }
 
 
-
-
-
     // ============================= DB 処理 END =============================
 }
 
@@ -123,7 +128,7 @@ if (empty($session_id)) {
 
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
-    <title>ピッキング 2</title>
+    <title>ピッキング実績照会倉庫選択</title>
 
 </head>
 
@@ -150,7 +155,7 @@ if (empty($session_id)) {
             </span>
 
             <span class="page_title">
-                ピッキング倉庫
+                倉庫
             </span>
         </div>
     </div>
@@ -159,14 +164,15 @@ if (empty($session_id)) {
         <div class="container">
             <div class="content_02">
 
-                <p id="syuka_day">出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
-
+                <p>出荷日：<?= $selected_day; ?></p>
+                <p>運送便：<?= $selected_shippingname; ?></p>
+                <p>運送コード：<?= $selected_shippingcode; ?></p>
                 <div class="souko_box">
                     <?php
                     // 配列内の要素をループしてボタンを生成
                     $idx = 0;
                     foreach ($arr_souko_data as $souko) {
-                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_code"] . '\', \'' . $souko["souko_name"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_code"] . '\'}">' . $souko["souko_name"] . '</button></div>';
+                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_name"] . '\', \'' . $souko["souko_code"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_name"] . '\'}">' . $souko["souko_name"] . '</button></div>';
                     }
                     ?>
                 </div>
@@ -199,32 +205,31 @@ if (empty($session_id)) {
             el: '#app',
             data: {
                 selectedValue: null, // 選択された値を保持
-                selectedName: '',
+                selectedCode: null,
                 error: false
             },
             methods: {
                 // ボタンがクリックされたら
-                handleButtonClick(value, name_val) {
+                handleButtonClick(value, code_val) {
                     this.selectedValue = value; // 選択した値を格納
-                    this.selectedName = name_val;
-
+                    this.selectedCode =code_val;
                     console.log("選択した値:::" + this.selectedValue);
-                    console.log("選択した値:::" + this.selectedName);
+                    console.log("選択した値:::" + this.selectedCode);
                 },
                 // フォームを送信する
                 submitForm() {
-                    const selectedSouko = this.selectedValue;
-                    const selectedSouko_name = this.selectedName;
-
+                    const selectedSoukoName = this.selectedValue;
+                    const selectedSoukoCode = this.selectedCode;
                     const selectedDay = '<?php echo $selected_day; ?>';
-                    if (selectedSouko === null) { // 倉庫が選択されていない場合
+                    const selectedShippingName = '<?php echo $selected_shippingname; ?>';
+                    const selectedShippingCode = '<?php echo $selected_shippingcode; ?>';
+                    if (selectedSoukoName === null) { // 倉庫が選択されていない場合
                         this.error = true; // エラーメッセージを表示
 
                     } else {
                         this.error = false; // エラーメッセージを非表示に
                         // get送信
-                        const url = `./third.
-php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}&souko_name=${selectedSouko_name}`; // リダイレクト
+                        const url = `./nine.php?selected_day=${selectedDay}&selected_shippingname=${selectedShippingName}&selected_shippingcode=${selectedShippingCode}&selected_soukocode=${selectedSoukoCode}&selected_soukoname=${selectedSoukoName}`; // リダイレクト
                         window.location.href = url;
                     }
                 }

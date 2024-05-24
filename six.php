@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 
-require(dirname(__FILE__) . "./class/function.php");
+require(dirname(__FILE__) . "\class/function.php");
 
 // セッションスタート
 session_start();
@@ -18,10 +18,6 @@ $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
 
     $souko_Flg = $_GET['souko_Flg'];
-
-    // === ログイン ID
-    $_SESSION['input_login_id'] = $_POST['input_login_id'];
-
 
     if ($souko_Flg == 0) {
         $GET_souko_Flg = 0;
@@ -50,8 +46,8 @@ $_SESSION['token_jim'] = $token_jim;
     <!-- css -->
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/forth.css">
     <link rel="stylesheet" href="./css/third.css">
-    <link rel="stylesheet" href="./css/first.css">
 
     <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
@@ -62,7 +58,7 @@ $_SESSION['token_jim'] = $token_jim;
     <!-- jQuery cdn -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>トップ</title>
+    <title>ピッキング実績照会出荷日指定</title>
 </head>
 
 <body>
@@ -93,14 +89,14 @@ $_SESSION['token_jim'] = $token_jim;
     </div>
 
     <div class="container" id="app">
-        <div class="content_top" id="first_content">
+        <div class="content_top">
 
 
             <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01" v-model="dayval">
 
-            <div class="btn_01" id="day_search_submit_box">
+            <!-- <div class="btn_01">
                 <button id="day_search_submit" class="button_01" type="button" @click="submitForm">開始</button>
-            </div>
+            </div> -->
 
             <div class="error-message" v-show="error">日付を入力してください。</div>
 
@@ -109,7 +105,17 @@ $_SESSION['token_jim'] = $token_jim;
                     出荷指示されていません。
                 </p>
             <?php endif; ?>
+            <!-- フッターメニュー -->
+            <footer class="footer-menu_fixed">
+                <ul>
+                    <li><a href="./top_menu.php">戻る</a></li>
+                    <li><button id="day_search_submit" class="button_01" type="button" @click="submitForm">次へ</button></li>
+                </ul>
+            </footer>
+
         </div>
+
+        
     </div> <!-- ================ END container =============== -->
 
 
@@ -161,6 +167,7 @@ $_SESSION['token_jim'] = $token_jim;
 
             $("#day_search_submit").click(function() {
                 var selectedDate = $("#datepicker").val();
+                //var soukoFlg = <?php echo $GET_souko_Flg ?>;
                 // 日付をYYYY/MM/DD形式に整形
                 var formattedDate = selectedDate.replace(/年|月/g, '-').replace(/日/g, '');
 
@@ -168,7 +175,7 @@ $_SESSION['token_jim'] = $token_jim;
                     $(".error-message").show();
                 } else {
                     $(".error-message").hide();
-                    var url = "./second.php?selected_day=" + encodeURIComponent(formattedDate);
+                    var url = "./seven.php?selected_day=" + encodeURIComponent(formattedDate);
                     // リダイレクト
                     window.location.href = url;
                 }
