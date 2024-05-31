@@ -333,5 +333,16 @@
                                     outline: none;
                                 }
 
+                                /** Scan　部分 **/
+                                #scan_val {
+                                        padding: 8px 10px;
+                                            text-align: center;
+                                            font-size: 1.1em;
+                                            border: 0;
+                                            border-bottom: 1px solid #aaa;
+                                            background-color: transparent;
+                                            width: 80%;
+                                }
+
 
 } /* ========================= END ====================== */

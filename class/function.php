@@ -59,27 +59,47 @@ function getCondition($data)
 // === 運送便 複数 & 運送便、備考・特記あり　取得用
 function getCondition_Multiple($data)
 {
-    $pattern = "/AND SK\.倉庫Ｃ = :SELECT_SOUKO(.*?)GROUP BY/s";
+    // 正規表現パターンを修正
+    $pattern = '/AND RZ\.倉庫Ｃ = :SELECT_SOUKO_02(.*?)AND NVL\(PK\.処理Ｆ,0\) <> 9 GROUP BY/s';
 
     if (preg_match($pattern, $data, $matches)) {
+        $search_string_01 = "AND RZ.倉庫Ｃ = :SELECT_SOUKO_02";
+        $search_string_02 = "AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY";
 
-        $search_string_01 = "AND SK.倉庫Ｃ = :SELECT_SOUKO ";
-        $search_string_02 = " GROUP BY";
-
+        // マッチした部分から最初の検索文字列を取り除く
         if (strpos($matches[0], $search_string_01) !== false) {
             $tmp_multi_sql = str_replace($search_string_01, '', $matches[0]);
         } else {
-            echo "SK.倉庫Ｃ 含まれない" . "\n";
+            echo "RZ.倉庫Ｃ 含まれない" . "\n";
         }
 
+        // マッチした部分から二つ目の検索文字列を取り除く
         if (strpos($matches[0], $search_string_02) !== false) {
             $result_multi_sql = str_replace($search_string_02, '', $tmp_multi_sql);
         } else {
-            echo "GROUP BY 含まれない" . "\n";
+            echo "NVL(PK.処理Ｆ,0) <> 9 GROUP BY 含まれない" . "\n";
         }
 
-        return $result_multi_sql;
+        // 結果を返します
+        return trim($result_multi_sql);
     } else {
         return "運送便（複数）No match found.";
+    }
+}
+// === デバッグ用プリント
+function dprint($data)
+{
+    //    print($data);
+}
+
+
+// === PHP 8 対応 urlencode
+function UrlEncode_Val_Check($data)
+{
+    if ($data != "") {
+        $data_encode = urlencode($data);
+        return $data_encode;
+    } else {
+        return $data = "";
     }
 }

@@ -21,6 +21,7 @@ if (!isset($_SESSION["sid"])) {
 } else {
     $session_id = $_SESSION['sid'];
 }
+echo "セッションID:" . $session_id;
 
 // session判定
 if (empty($session_id)) {
@@ -61,17 +62,19 @@ if (empty($session_id)) {
         AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
         AND SK.伝票行番号 = SL.伝票行番号
         AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-        AND SL.伝票番号   = PK.伝票番号(+)
-        AND SL.伝票行番号 = PK.伝票行番号(+)
-        AND SL.伝票行枝番 = PK.伝票行枝番(+)
+        AND SL.伝票番号   = PK.伝票番号
+        AND SL.伝票行番号 = PK.伝票行番号
+        AND SL.伝票行枝番 = PK.伝票行枝番
         AND SL.倉庫Ｃ = SO.倉庫Ｃ
         AND SJ.運送Ｃ = US.運送Ｃ
         AND SL.商品Ｃ = SH.商品Ｃ
         AND SL.倉庫Ｃ = RZ.倉庫Ｃ
         AND SL.商品Ｃ = RZ.商品Ｃ
         AND SJ.出荷日 = :SELECT_DATE
+        AND US.運送略称 = :SELECT_UNSOUNAME   
         AND SL.倉庫Ｃ = :SELECT_SOUKO
         AND SJ.運送Ｃ = :SELECT_UNSOU
+        AND SO.倉庫名 = :SELECT_SOUKONAME
         AND PK.処理Ｆ = 9
         GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.商品Ｃ,SH.品名,SH.ＪＡＮ
         ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.商品Ｃ";
@@ -83,8 +86,10 @@ if (empty($session_id)) {
         }
 
         oci_bind_by_name($stid_select, ":SELECT_DATE", $selected_day);
+        oci_bind_by_name($stid_select, ":SELECT_UNSOUNAME", $selected_shippingname);
         oci_bind_by_name($stid_select, ":SELECT_SOUKO", $selected_soukocode);
         oci_bind_by_name($stid_select, ":SELECT_UNSOU", $selected_shippingcode);
+        oci_bind_by_name($stid_select, ":SELECT_SOUKONAME", $selected_soukoname);
 
         oci_execute($stid_select);
 
@@ -120,23 +125,19 @@ if (empty($session_id)) {
         }
 
         // 特記あり
-        $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
-                       SM.出荷元名,SK.特記事項
-                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
+        $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
+                SM.出荷元名,SK.特記事項
+                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-                AND SK.伝票行番号 = SL.伝票行番号
-                AND SL.伝票行番号 = PK.伝票行番号
                 AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                AND SL.倉庫Ｃ = PK.倉庫Ｃ
+                AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                AND SK.伝票行番号 = SL.伝票行番号
                 AND SL.出荷元 = SM.出荷元Ｃ(+)
                 AND SJ.運送Ｃ = US.運送Ｃ
                 AND SJ.出荷日 = :SELECT_DATE
                 AND US.運送略称 = :SELECT_UNSOUNAME
                 AND SL.倉庫Ｃ = :SELECT_SOUKO
-                AND PK.処理Ｆ = 9
-                GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
+                GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                 ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 
         $stid = oci_parse($conn, $sql);
@@ -317,12 +318,14 @@ if (empty($session_id)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="./css/nine.css">
+    <!-- <link rel="stylesheet" href="./css/third.css"> -->
     <link rel="stylesheet" href="./css/common.css">
+    <!-- <link rel="stylesheet" href="./css/second_02.css"> -->
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <!-- jQuery cdn -->
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <title>ピッキング実績照会照会画面</title>
 
@@ -450,25 +453,19 @@ if (empty($session_id)) {
                                     echo '<td>品名: ' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span><span style="display:inline-block;position:relative;left:32%"> 備考:</span>' . '<span style="display:inline-block;position:relative;left:32%">' . $Get_VAL['shipping_moto_name'] . '</span></span>' . '<span style=float:right;>特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
-                            } else if ($_GET['detail_biko'] != 'ー' && $_GET['detail_tokki'] == 'ーーー') {
+                            } else if (isset($_GET['detail_biko']) && $_GET['detail_tokki'] == 'ーーー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {    
                                     echo '<tr>';
                                     echo '<td>品名: ' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 備考:' . $Get_VAL['shipping_moto_name'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
-                            } else if ($_GET['detail_tokki'] != 'ーーー' && $_GET['detail_biko'] == 'ー') {
+                            } else if (isset($_GET['detail_tokki']) && $_GET['detail_biko'] == 'ー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {
                                     echo '<tr>';
                                     echo '<td>品名: ' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
-                            } else if ($_GET['detail_biko'] == 'ー' && $_GET['detail_tokki'] == 'ーーー') {
-                                foreach ($arr_Picking_DATA as $Get_VAL) {
-                                    echo '<tr>';
-                                    echo '<td>品名: ' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>';
-                                    echo '</tr>';
-                                }
-                            }
+                            } 
                         }
 
                         ?>
@@ -497,7 +494,7 @@ if (empty($session_id)) {
 
     </div> <!-- ======== END app ========= -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script>
         new Vue({
             el: '#app',

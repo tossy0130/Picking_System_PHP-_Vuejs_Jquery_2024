@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "/conf.php";
+require __DIR__ . "./conf.php";
 
 // セッションスタート
 session_start();
@@ -69,7 +69,7 @@ oci_close($conn);
     <link rel="stylesheet" href="./css/forth.css">
     <link rel="stylesheet" href="./css/third.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ログイン</title>
 </head>
@@ -81,7 +81,7 @@ oci_close($conn);
         <div class="head_box">
             <div class="head_content">
                 <span class="home_icon_span">
-                    <a href="#"><img src="./img/home_img.png"></a>
+                    <a href="#"><i class="fa-solid fa-house"></i></a>
                 </span>
 
                 <span class="App_name">
@@ -94,7 +94,7 @@ oci_close($conn);
         <div class="head_box_02">
             <div class="head_content_02">
                 <span class="home_sub_icon_span">
-                    <a href="#"><img src="./img/page_img.png"></a>
+                    <i class="fa-solid fa-thumbtack"></i>
                 </span>
 
                 <span class="page_title">
@@ -127,7 +127,7 @@ oci_close($conn);
 
     </div> <!-- END app -->
 
-    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         (function($) {
             $(document).ready(function() {

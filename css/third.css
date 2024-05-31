@@ -80,6 +80,9 @@
                 /* 選択した値を表示する部分のスタイル */
                 .selected-value {
                     margin-top: 20px;
+                    /*暫定処理*/
+                    font-size: 0.3px;
+                    display: none;
                 }
                 
                 /* 次へボタンのスタイル */
@@ -91,12 +94,12 @@
                 #sendSelectedValues {
                     background-color: #3498db;
                     color: #fff;
-                    padding: 20px 50px;
+                    padding: 15px 20px;
                     border: none;
                     border-radius: 5px;
                     cursor: pointer;
-                    margin: 1.2em 0 4em 0;
-                    font-size: 1.12em;
+                    margin: 1.2em 0.8em 4em 0.4em;
+                    font-size: 0.91em;
                 }
             
                 #sendSelectedValues:hover {
@@ -109,22 +112,101 @@
                 }
                 
                 .third_btn_flex_box > div:nth-of-type(1) {
-                    width: 48%;
+                    width: 32%;
                 }
 
                 .third_btn_flex_box>div:nth-of-type(2) {
-                    width: 48%;
-                }   
+                    width: 32%;
+                } 
+                
+                .third_btn_flex_box>div:nth-of-type(3) {
+                    width: 32%;
+                }
 
                 .third_btn_flex_box>div:nth-of-type(2) > button {
                     background-color: #3498db;
                         color: #fff;
-                        padding: 20px 50px;
+                        padding: 15px 20px;
                         border: none;
                         border-radius: 5px;
                         cursor: pointer;
-                        margin: 1.2em 0 4em 0;
-                        font-size: 1.12em;
+                        margin: 1.2em 0.8em 4em 0px;
+                            font-size: 0.91em;
                 }
+
+                .third_btn_flex_box>div:nth-of-type(3)>button {
+                                       background-color: #3498db;
+                                       color: #fff;
+                                        padding: 15px 20px;
+                                       border: none;
+                                       border-radius: 5px;
+                                       cursor: pointer;
+                                        margin: 1.2em 0.8em 4em 0px;
+                                            font-size: 0.91em;
+                                   }
+
+                    /* 選択 */
+                                                .view_item_01 {
+                                                    margin: 0 0 0 15px;
+                                                    padding: 5px 5px;
+                                                    background: #ddd;
+                                                }
+             
+                                                        .view_item_02 {
+                                                            margin: 0 5px 0 15px;
+                                                            padding: 5px 5px;
+                                                            background: #ddd;
+                                                        }
+
+                                                                                                
+                        .view_item_03 {
+                                margin: 0 5px 0 15px;
+                                    padding: 5px 5px;
+                                    background: #ddd;
+                                }
+                        
+
+                         .view_item_04 {
+                                margin: 0 5px 0 15px;
+                                    padding: 5px 5px;
+                                    background: #ddd;
+                                }
+
+                        .tansou_select {
+                                margin: 0 0 0 15px;
+                                    padding: 5px 5px;
+                                    background: #ddd;
+                        }
+                         
+
+                         .view_item_01_val {
+
+                         }
+
+                        .view_item_02_val {
+
+                        }
+
+                        .view_item_03_val {
+
+                        }
+
+                        .view_item_04_val {
+
+                        }
+
+                        .select_data_box {
+                            /*暫定処理*/
+                            font-size: 0.3px;
+                                margin: 0;
+                                padding: 0;
+                                display: none;
+                        }
+
+                        #selectedValues_set_next_val {
+                            /*暫定処理*/
+                                font-size: 0.3px;
+                                display: none;
+                        }
 
 }

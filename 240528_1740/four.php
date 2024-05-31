@@ -2,9 +2,9 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "/conf.php";
-require_once(dirname(__FILE__) . "/class/init_val.php");
-require(dirname(__FILE__) . "/class/function.php");
+require __DIR__ . "./conf.php";
+require_once(dirname(__FILE__) . "./class/init_val.php");
+require(dirname(__FILE__) . "./class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -49,7 +49,6 @@ if (empty($session_id)) {
         $select_unsou_code = $_GET['unsou_code'];
     }
 
-    $sql_multiple_cut = "";
 
     // =================== 「確定」five.php からの戻り ===========================
     // ========= five.php「確定ボタン」を押した時の処理 =========
@@ -78,7 +77,7 @@ if (empty($session_id)) {
             $Dennpyou_Gyou_num = $_GET['Dennpyou_Gyou_num'];
             // === カウントの値
             $count_num_val = $_GET['count_num_val'];
-            dprint("count_num_val:::" . $count_num_val);
+            print("count_num_val:::" . $count_num_val);
 
             // 倉庫名
             $get_souko_name = $souko_name;
@@ -87,7 +86,7 @@ if (empty($session_id)) {
 
             // ********* 伝票 SEQ（値を 処理SEQへ変更 ） five.php から戻ってきた値（確定） *********
             $Syori_SEQ = $_GET['IN_Denpyou_SEQ'];
-            dprint("処理SEQ:::" . $Syori_SEQ);
+            print("処理SEQ:::" . $Syori_SEQ);
 
             $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
 
@@ -131,7 +130,7 @@ if (empty($session_id)) {
 
                 oci_execute($stid);
             } else {
-                //                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+                //                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
                 //      ,RZ.棚番
                 //      ,SH.梱包入数
                 //      ,SUM(SK.出荷数量) AS 数量	
@@ -150,17 +149,17 @@ if (empty($session_id)) {
                 //   AND SL.伝票行枝番 = PK.伝票行枝番(+)
                 //   AND SK.倉庫Ｃ = SO.倉庫Ｃ
                 //   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                //   AND SJ.運送Ｃ = US.運送Ｃ
+                //   AND SK.運送Ｃ = US.運送Ｃ
                 //   AND SL.商品Ｃ = SH.商品Ｃ
                 //   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
                 //   AND SK.商品Ｃ = RZ.商品Ｃ
                 //   AND SJ.出荷日 = :SELECT_DATE     
                 //   AND SK.倉庫Ｃ = :SELECT_SOUKO
-                //   AND SJ.運送Ｃ = :SELECT_UNSOU
+                //   AND SK.運送Ｃ = :SELECT_UNSOU
                 //   AND DECODE(NULL,PK.処理Ｆ,0) <> 9
-                // GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+                // GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                 //         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
-                // ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
+                // ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
 
                 $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
                             ,RZ.棚番
@@ -238,7 +237,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -261,7 +260,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -300,7 +299,7 @@ if (empty($session_id)) {
             $Dennpyou_Gyou_num = $_GET['Dennpyou_Gyou_num'];
             // === カウントの値
             $count_num_val = $_GET['count_num_val'];
-            dprint("count_num_val:::" . $count_num_val);
+            print("count_num_val:::" . $count_num_val);
             // 倉庫名
             $get_souko_name = $souko_name;
             // 運送名
@@ -308,7 +307,7 @@ if (empty($session_id)) {
 
             // ********* 伝票 SEQ（処理 SEQ の値に変更） five.php から戻ってきた値（確定） *********
             $Syori_SEQ = $_GET['IN_Denpyou_SEQ'];
-            dprint("処理SEQ:::" . $Syori_SEQ);
+            print("処理SEQ:::" . $Syori_SEQ);
 
 
             $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
@@ -343,6 +342,7 @@ if (empty($session_id)) {
             if (isset($_GET['one_now_sql_kakutei'])) {
 
                 $sql = $_GET['one_now_sql_kakutei'];
+
                 $stid = oci_parse($conn, $sql);
                 if (!$stid) {
                     $e = oci_error($stid);
@@ -352,14 +352,9 @@ if (empty($session_id)) {
                 oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
 
                 oci_execute($stid);
-
-                // === 運送便 の　場合 ===
-            } else if (isset($_GET['default_root_sql_zensuu'])) {
-
-                dprint("koko:default_root_sql_zensuu");
             } else {
                 //24/05/24
-                //                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+                //                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
                 //      ,RZ.棚番
                 //      ,SH.梱包入数
                 //      ,SUM(SK.出荷数量) AS 数量	
@@ -378,17 +373,17 @@ if (empty($session_id)) {
                 //   AND SL.伝票行枝番 = PK.伝票行枝番(+)
                 //   AND SK.倉庫Ｃ = SO.倉庫Ｃ
                 //   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                //   AND SJ.運送Ｃ = US.運送Ｃ
+                //   AND SK.運送Ｃ = US.運送Ｃ
                 //   AND SL.商品Ｃ = SH.商品Ｃ
                 //   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
                 //   AND SK.商品Ｃ = RZ.商品Ｃ
                 //   AND SJ.出荷日 = :SELECT_DATE     
                 //   AND SK.倉庫Ｃ = :SELECT_SOUKO
-                //   AND SJ.運送Ｃ = :SELECT_UNSOU
+                //   AND SK.運送Ｃ = :SELECT_UNSOU
                 //   AND DECODE(NULL,PK.処理Ｆ,0) <> 9
-                // GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+                // GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                 //         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
-                // ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
+                // ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
 
                 $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
                             ,RZ.棚番
@@ -464,7 +459,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -487,7 +482,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -518,7 +513,7 @@ if (empty($session_id)) {
         $shouhin_code = $_GET['shouhin_code'];
         $shouhin_name = $_GET['shouhin_name'];
 
-        dprint("戻ってきた");
+        print("戻ってきた");
 
         // === five.php から、 運送コード 単体 , 備考・特記
         if (isset($_GET['back_one_condition'])) {
@@ -573,7 +568,7 @@ if (empty($session_id)) {
             $e = oci_error();
         }
         //24/05/24
-        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
         //      ,RZ.棚番
         //      ,SH.梱包入数
         //      ,SUM(SK.出荷数量) AS 数量	
@@ -592,7 +587,7 @@ if (empty($session_id)) {
         //   AND SL.伝票行枝番 = PK.伝票行枝番(+)
         //   AND SK.倉庫Ｃ = SO.倉庫Ｃ
         //   AND SL.出荷元 = SM.出荷元Ｃ(+)
-        //   AND SJ.運送Ｃ = US.運送Ｃ
+        //   AND SK.運送Ｃ = US.運送Ｃ
         //   AND SL.商品Ｃ = SH.商品Ｃ
         //   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
         //   AND SK.商品Ｃ = RZ.商品Ｃ
@@ -631,15 +626,15 @@ if (empty($session_id)) {
         } else if (isset($one_condition) && $one_condition != "") {
             $sql .= $one_condition;
         } else if (isset($back_multiple_condition) && $back_multiple_condition != "") {
-            dprint("戻る 複数");
+            print("戻る 複数");
             $sql .= $back_multiple_condition;
         }
 
         //24/05/24
         //        $sql .= " AND DECODE(NULL,PK.処理Ｆ,0) <> 9
-        // GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+        // GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
         //         ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
-        // ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
+        // ORDER BY SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
 
         $sql .= " AND DECODE(NULL,PK.処理Ｆ,0) <> 9
              GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
@@ -695,7 +690,7 @@ if (empty($session_id)) {
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -720,7 +715,7 @@ if (empty($session_id)) {
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -744,7 +739,7 @@ if (empty($session_id)) {
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -784,7 +779,7 @@ if (empty($session_id)) {
         // =====================================================================================================
     } else if (isset($_GET['all_completed_button']) && !isset($_GET['back_one_condition'])) {
 
-        //      dprint("全数");
+        print("全数");
 
         $select_unsou_code = $_GET['unsou_code'];
 
@@ -814,23 +809,13 @@ if (empty($session_id)) {
             $e = oci_error();
         }
 
-        // ==================================================================================
-        // =============================== 全数完了　SQL 分岐  =============================== 
-        // ==================================================================================
+        // === 全数完了　SQL 分岐
+        if ($_GET['one_now_sql_zensuu']) {
 
-        // ================================== 運送便（単数）備考・特記  の 場合 ==============================
-        if (isset($_GET['one_now_sql_zensuu'])) {
-
-            dprint("ここone_now_sql_zensuu");
-
-            //  print($_SESSION['five_back_one_bikou_tokki_sql']);
             //print("kokoko");
-
-            // === SQL 受け渡し
             $sql = $_GET['one_now_sql_zensuu'];
+
             $_SESSION['back_one_option_zensuu_kanryou'] = $sql;
-            $sql_one_tokki = $sql;
-            $_SESSION['sql_one_option'] = $sql_one_tokki;
 
             $stid = oci_parse($conn, $sql);
             if (!$stid) {
@@ -841,55 +826,12 @@ if (empty($session_id)) {
             oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
             oci_bind_by_name($stid, ":SELECT_SOUKO_02", $select_souko_code);
 
-            // print($sql);
-            oci_execute($stid);
-
-            // ================================== 運送便（単１）の　場合 ==============================
-        } else if (isset($_GET['default_root_sql_zensuu'])) {
-
-            dprint("ここ:default_root_sql_zensuu");
-
-            // === SQL 受け渡し
-            $sql = $_GET['default_root_sql_zensuu'];
-            $_SESSION['back_five_default_root_sql_zensuukanryou'] = $sql;
-
-            $stid = oci_parse($conn, $sql);
-            if (!$stid) {
-                $e = oci_error($stid);
-            }
-
-            oci_bind_by_name($stid, ":SELECT_DATE",  $select_day);
-            oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
-            oci_bind_by_name($stid, ":SELECT_UNSOU", $select_unsou_code);
-            oci_bind_by_name($stid, ":SELECT_SOUKO_02", $select_souko_code);
-
-            // print($sql);
-            oci_execute($stid);
-
-            // 複数
-        } else if (isset($_GET['back_multiple_sql_zensuu'])) {
-
-            dprint("ここ:back_multiple_sql_zensuu");
-
-            // === SQL 受け渡し
-            $sql = $_GET['back_multiple_sql_zensuu'];
-            $_SESSION['back_five_back_multiple_sql_zensuu'] = $sql;
-
-            $stid = oci_parse($conn, $sql);
-            if (!$stid) {
-                $e = oci_error($stid);
-            }
-
-            oci_bind_by_name($stid, ":SELECT_DATE",  $select_day);
-            oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
-            oci_bind_by_name($stid, ":SELECT_SOUKO_02", $select_souko_code);
-
-            // print($sql);
+            //print($sql);
             oci_execute($stid);
         } else {
 
             $sql =
-                "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+                "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
       ,RZ.棚番
       ,SH.梱包入数
       ,SUM(SK.出荷数量) AS 数量	
@@ -910,18 +852,18 @@ if (empty($session_id)) {
    AND SL.伝票行枝番 = PK.伝票行枝番(+)
    AND SK.倉庫Ｃ = SO.倉庫Ｃ
    AND SL.出荷元 = SM.出荷元Ｃ(+)
-   AND SJ.運送Ｃ = US.運送Ｃ
+   AND SK.運送Ｃ = US.運送Ｃ
    AND SL.商品Ｃ = SH.商品Ｃ
    AND SK.倉庫Ｃ = RZ.倉庫Ｃ
    AND SK.商品Ｃ = RZ.商品Ｃ
    AND SJ.出荷日 = :SELECT_DATE     
    AND SK.倉庫Ｃ = :SELECT_SOUKO
-   AND SJ.運送Ｃ = :SELECT_UNSOU
+   AND SK.運送Ｃ = :SELECT_UNSOU
    AND RZ.倉庫Ｃ = :SELECT_SOUKO_02
    AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
- GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
          ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
- ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
+ ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
 
             $stid = oci_parse($conn, $sql);
             if (!$stid) {
@@ -943,8 +885,8 @@ if (empty($session_id)) {
             $syuka_day = $row['出荷日'];
             $souko_code = $row['倉庫Ｃ'];
             $souko_name = $row['倉庫名'];
-            $Unsou_code = $row['運送Ｃ'] ?? '';
-            $Unsou_name = $row['運送略称'] ?? '';;
+            $Unsou_code = $row['運送Ｃ'];
+            $Unsou_name = $row['運送略称'];
             $shipping_moto = $row['出荷元'];
             $shipping_moto_name = $row['出荷元名'];
             $Shouhin_code = $row['商品Ｃ'];
@@ -963,14 +905,12 @@ if (empty($session_id)) {
 
                 $sql_one_tokki = $_GET['one_now_sql_zensuu'];
 
-                // print($sql_one_tokki);
-
                 // 取得した値を配列に追加
                 $arr_Picking_DATA[] = array(
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -984,18 +924,15 @@ if (empty($session_id)) {
                     //           'Tokuisaki_name' => $Tokuisaki_name,        // SJ.得意先名
                     'shouhin_JAN' => $shouhin_JAN,               // JANコード
                     'tokki_zikou' => $tokki_zikou,
-                    'sql_one_tokki' => $sql_one_tokki,
-                    'four_status' => 'one_bikou_tokki'           // ステータス情報
+                    'back_sql_one_tokki' => $sql_one_tokki
                 );
-
-                // === 単数
-            } else if (isset($_GET["default_root_sql_zensuu"])) {
+            } else {
                 // 取得した値を配列に追加
                 $arr_Picking_DATA[] = array(
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -1008,34 +945,7 @@ if (empty($session_id)) {
                     'Shori_Flg' => $Shori_Flg,                  // PK.処理Ｆ
                     //      'Tokuisaki_name' => $Tokuisaki_name,        // SJ.得意先名
                     'shouhin_JAN' => $shouhin_JAN,               // JANコード
-                    'tokki_zikou' => $tokki_zikou,
-                    'four_status' => 'default_root'           // ステータス情報
-                );
-
-                // === 複数
-            } else if (isset($_GET["back_multiple_sql_zensuu"])) {
-
-                dprint("<br>" . "ここ複数、全数戻り" . "<br>");
-                // 取得した値を配列に追加
-                $arr_Picking_DATA[] = array(
-                    'syuka_day' => $syuka_day,                  // SK.出荷日
-                    'souko_code' => $souko_code,                // SK.倉庫Ｃ
-                    'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
-                    'Unsou_name' => $Unsou_name,                // US.運送略称
-                    'shipping_moto' => $shipping_moto,          // SL.出荷元
-                    'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
-                    'Shouhin_code' => $Shouhin_code,            // SK.商品Ｃ
-                    'Shouhin_name' => $Shouhin_name,            // SH.品名
-                    'Tana_num' => $Tana_num,                    // RZ.棚番
-                    'Konpou_num' => $Konpou_num,                // SH.梱包入数
-                    'Shouhin_num' => $Shouhin_num,              // SUM(SK.出荷数量) AS 数量
-                    'Picking_num' => $Picking_num,              // SUM(PK.ピッキング数量) AS ピッキング数量
-                    'Shori_Flg' => $Shori_Flg,                  // PK.処理Ｆ
-                    //      'Tokuisaki_name' => $Tokuisaki_name,        // SJ.得意先名
-                    'shouhin_JAN' => $shouhin_JAN,               // JANコード
-                    'tokki_zikou' => $tokki_zikou,
-                    'four_status' => 'multiple_sql_four'           // ステータス情報
+                    'tokki_zikou' => $tokki_zikou
                 );
             }
         }
@@ -1056,12 +966,9 @@ if (empty($session_id)) {
         // =====================================================================================================
         // =========================================== 複数選択の場合  ===========================================
         // =====================================================================================================
-    } else if (
-        isset($_GET['fukusuu_select']) && !isset($_GET['back_one_condition']) ||
-        isset($_GET['back_multiple_sql_zensuu'])
-    ) {
+    } else if (isset($_GET['fukusuu_select']) && !isset($_GET['back_one_condition'])) {
 
-        dprint("複数選択" . "<br>");
+        print("複数選択" . "<br>");
 
         $select_day = $_GET['day'];
         $select_souko_code = $_GET['souko'];
@@ -1075,11 +982,11 @@ if (empty($session_id)) {
         $fukusuu_select_val = $_GET['fukusuu_select_val'];
 
         if (empty($fukusuu_select_val)) {
-            //      dprint("特記あり 空:::" . $fukusuu_select_val);
+            //      print("特記あり 空:::" . $fukusuu_select_val);
         }
 
         if (empty($fukusuu_unsouo_num)) {
-            //   dprint("複数 空:::" . $fukusuu_select_val);
+            //   print("複数 空:::" . $fukusuu_select_val);
         }
 
         // 複数　運送コード 分割
@@ -1117,7 +1024,7 @@ if (empty($session_id)) {
 
         /*
         if (empty($arr_Fku_Val)) {
-            dprint("arr_Fku_Val:::空");
+            print("arr_Fku_Val:::空");
         }
         */
 
@@ -1161,22 +1068,22 @@ if (empty($session_id)) {
             }
         }
 
-        // === 運送コード（備考・特記）なし抽出　重複削除 *php8 修正
+        // === 運送コード（備考・特記）なし抽出　重複削除
         if (!empty($arr_Fku_Val)) {
             $idx = 0;
             for ($i = 0; $i < count($arr_fukusuu_unsouo_num); $i++) {
-                // キーが存在するかを確認
-                if (isset($arr_Fku_Val[$idx][1]) && $arr_fukusuu_unsouo_num[$idx] == $arr_Fku_Val[$idx][1]) {
+
+                if ($arr_fukusuu_unsouo_num[$idx] == $arr_Fku_Val[$idx][1]) {
                     unset($arr_fukusuu_unsouo_num[$idx]);
                     break;
                 }
+
                 $idx = $idx + 1;
             }
         }
 
-
         if (empty($arr_fukusuu_unsouo_num)) {
-            dprint("複数は空");
+            print("複数は空");
         }
 
 
@@ -1204,7 +1111,7 @@ if (empty($session_id)) {
         }
 
         //24/05/24
-        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
         //      ,RZ.棚番
         //      ,SH.梱包入数
         //      ,SUM(SK.出荷数量) AS 数量	
@@ -1223,42 +1130,14 @@ if (empty($session_id)) {
         //   AND SL.伝票行枝番 = PK.伝票行枝番(+)
         //   AND SK.倉庫Ｃ = SO.倉庫Ｃ
         //   AND SL.出荷元 = SM.出荷元Ｃ(+)
-        //   AND SJ.運送Ｃ = US.運送Ｃ
+        //   AND SK.運送Ｃ = US.運送Ｃ
         //   AND SL.商品Ｃ = SH.商品Ｃ
         //   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
         //   AND SK.商品Ｃ = RZ.商品Ｃ
         //   AND SJ.出荷日 = :SELECT_DATE     
         //   AND SK.倉庫Ｃ = :SELECT_SOUKO";
-        /** 複数運送便対応
+
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
-                      ,RZ.棚番
-                      ,SH.梱包入数
-                      ,SUM(SL.数量) AS 数量
-                      ,SUM(PK.ピッキング数量) AS ピッキング数量
-                      ,PK.処理Ｆ
-                      ,SH.ＪＡＮ
-                      ,SK.特記事項
-                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-                      ,RZMF RZ
-                      ,HTPK PK
-                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                   AND SK.伝票行番号 = SL.伝票行番号
-                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                   AND SL.伝票番号   = PK.伝票番号(+)
-                   AND SL.伝票行番号 = PK.伝票行番号(+)
-                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                   AND SJ.運送Ｃ = US.運送Ｃ
-                   AND SL.商品Ｃ = SH.商品Ｃ
-                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
-                   AND SL.商品Ｃ = RZ.商品Ｃ
-                   AND SJ.出荷日 = :SELECT_DATE     
-                   AND SL.倉庫Ｃ = :SELECT_SOUKO
-                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02";
-         **/
-        $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
                       ,RZ.棚番
                       ,SH.梱包入数
                       ,SUM(SL.数量) AS 数量
@@ -1305,17 +1184,10 @@ if (empty($session_id)) {
 
         // GROUP BY句とORDER BY句を追加
         //24/05/24
-        //        $sql .= " GROUP BY SK.出荷日, SK.倉庫Ｃ, SO.倉庫名, SJ.運送Ｃ, US.運送略称, SL.出荷元, SM.出荷元名, SK.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SJ.得意先名, SH.ＪＡＮ, SK.特記事項
-        //              ORDER BY SK.倉庫Ｃ, SJ.運送Ｃ, SM.出荷元名, SK.商品Ｃ, SL.出荷元, SK.特記事項";
-
-        /*
+        //        $sql .= " GROUP BY SK.出荷日, SK.倉庫Ｃ, SO.倉庫名, SK.運送Ｃ, US.運送略称, SL.出荷元, SM.出荷元名, SK.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SJ.得意先名, SH.ＪＡＮ, SK.特記事項
+        //              ORDER BY SK.倉庫Ｃ, SK.運送Ｃ, SM.出荷元名, SK.商品Ｃ, SL.出荷元, SK.特記事項";
         $sql .= " AND DECODE(NULL,PK.処理Ｆ,0) <> 9 GROUP BY SJ.出荷日, SL.倉庫Ｃ, SO.倉庫名, SJ.運送Ｃ, US.運送略称, SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項
                   ORDER BY SL.倉庫Ｃ, SJ.運送Ｃ, SM.出荷元名, SL.商品Ｃ, SL.出荷元, SK.特記事項";
-        */
-
-        $sql .= "AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SJ.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
-        SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項
-        ORDER BY SL.倉庫Ｃ, SM.出荷元名, SL.商品Ｃ, SL.出荷元, SK.特記事項";
 
         // =================
         // === 複数SQL　取得
@@ -1327,7 +1199,7 @@ if (empty($session_id)) {
         $_SESSION['multiple_sql'] = $Multiple_Sql;
 
         $sql_multiple_cut = getCondition_Multiple($Multiple_Sql);
-        //  dprint($sql_multiple_cut);
+        print($sql_multiple_cut);
 
         $_SESSION['multiple_sql_cut'] = $sql_multiple_cut;
 
@@ -1342,8 +1214,6 @@ if (empty($session_id)) {
         oci_bind_by_name($stid, ":SELECT_SOUKO", $select_souko_code);
         oci_bind_by_name($stid, ":SELECT_SOUKO_02", $select_souko_code);
 
-        dprint($sql);
-
         oci_execute($stid);
 
 
@@ -1354,8 +1224,8 @@ if (empty($session_id)) {
             $syuka_day = $row['出荷日'];
             $souko_code = $row['倉庫Ｃ'];
             $souko_name = $row['倉庫名'];
-            //    $Unsou_code = $row['運送Ｃ'];
-            //    $Unsou_name = $row['運送略称'];
+            $Unsou_code = $row['運送Ｃ'];
+            $Unsou_name = $row['運送略称'];
             $shipping_moto = $row['出荷元'];
             $shipping_moto_name = $row['出荷元名'];
             $Shouhin_code = $row['商品Ｃ'];
@@ -1375,8 +1245,8 @@ if (empty($session_id)) {
                 'syuka_day' => $syuka_day,                  // SK.出荷日
                 'souko_code' => $souko_code,                // SK.倉庫Ｃ
                 'souko_name' => $souko_name,                // SO.倉庫名
-                //    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
-                //    'Unsou_name' => $Unsou_name,                // US.運送略称
+                'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
+                'Unsou_name' => $Unsou_name,                // US.運送略称
                 'shipping_moto' => $shipping_moto,          // SL.出荷元
                 'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
                 'Shouhin_code' => $Shouhin_code,            // SK.商品Ｃ
@@ -1418,10 +1288,9 @@ if (empty($session_id)) {
         isset($_GET['day']) && !isset($_GET['selectedToki_Code']) && !isset($_GET['fukusuu_select_val'])
         && !isset($_GET['back_one_condition']) && !isset($_GET['show_all'])
         && !isset($_GET['one_now_sql_zensuu']) && !isset($_GET['back_now_sql_multiple'])
-        && !isset($_GET['back_multiple_sql_zensuu'])
     ) {
 
-        dprint("通常処理 （運送単数）");
+        print("通常処理 （運送単数）");
 
         if (isset($_GET['day'])) {
             $select_day = $_GET['day'];
@@ -1529,7 +1398,7 @@ if (empty($session_id)) {
                 'syuka_day' => $syuka_day,                  // SK.出荷日
                 'souko_code' => $souko_code,                // SK.倉庫Ｃ
                 'souko_name' => $souko_name,                // SO.倉庫名
-                'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                 'Unsou_name' => $Unsou_name,                // US.運送略称
                 'shipping_moto' => $shipping_moto,          // SL.出荷元
                 'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -1568,7 +1437,7 @@ if (empty($session_id)) {
         && !isset($_GET['back_now_sql_multiple'])
     ) {
 
-        //      dprint("単数 運送コード 特記・備考あり");
+        //      print("単数 運送コード 特記・備考あり");
         // ============= 運送便（単数） & 備考・特記あり ================
         $select_day = $_GET['day'];
         $select_souko_code = $_GET['souko'];
@@ -1585,7 +1454,7 @@ if (empty($session_id)) {
         // 可変部分の条件を生成
         $conditions = [];
 
-        $conditionSet[0] = "SJ.運送Ｃ = '{$arr_SQL[1]}'";
+        $conditionSet[0] = "SK.運送Ｃ = '{$arr_SQL[1]}'";
 
         if ($arr_SQL[2] !== '-') {
             $conditionSet[1] = "SL.出荷元 = '{$arr_SQL[2]}'";
@@ -1704,7 +1573,7 @@ if (empty($session_id)) {
                 'syuka_day' => $syuka_day,                  // SK.出荷日
                 'souko_code' => $souko_code,                // SK.倉庫Ｃ
                 'souko_name' => $souko_name,                // SO.倉庫名
-                'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                 'Unsou_name' => $Unsou_name,                // US.運送略称
                 'shipping_moto' => $shipping_moto,          // SL.出荷元
                 'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -1718,8 +1587,7 @@ if (empty($session_id)) {
                 //       'Tokuisaki_name' => $Tokuisaki_name,        // SJ.得意先名
                 'shouhin_JAN' => $shouhin_JAN,               // JANコード
                 'tokki_zikou ' => $tokki_zikou,
-                'sql_one_tokki' => $sql_one_tokki,
-                'four_status' => 'one_bikou_tokki'
+                'sql_one_tokki' => $sql_one_tokki
             );
         }
 
@@ -1784,7 +1652,7 @@ if (empty($session_id)) {
 
 
         //24/05/24
-        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
         //      ,RZ.棚番
         //      ,SH.梱包入数
         //      ,SUM(SK.出荷数量) AS 数量	
@@ -1803,7 +1671,7 @@ if (empty($session_id)) {
         //   AND SL.伝票行枝番 = PK.伝票行枝番(+)
         //   AND SK.倉庫Ｃ = SO.倉庫Ｃ
         //   AND SL.出荷元 = SM.出荷元Ｃ(+)
-        //   AND SJ.運送Ｃ = US.運送Ｃ
+        //   AND SK.運送Ｃ = US.運送Ｃ
         //   AND SL.商品Ｃ = SH.商品Ｃ
         //   AND SK.倉庫Ｃ = RZ.倉庫Ｃ
         //   AND SK.商品Ｃ = RZ.商品Ｃ
@@ -1849,21 +1717,21 @@ if (empty($session_id)) {
         //            ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元 ,SK.特記事項";
 
         /*
-        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ
+        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ
         ,SH.品名,SUM(SK.出荷数量) AS 数量,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
                 FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
                 AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
                 AND SK.倉庫Ｃ = SO.倉庫Ｃ
                 AND SL.出荷元 = SM.出荷元Ｃ(+)
-                AND SJ.運送Ｃ = US.運送Ｃ
+                AND SK.運送Ｃ = US.運送Ｃ
                 AND SL.商品Ｃ = SH.商品Ｃ
                 AND SJ.出荷日 = :SELECT_DATE
                 AND SK.倉庫Ｃ = :SELECT_SOUKO
-                AND SJ.運送Ｃ = :SELECT_UNSOU
-                GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
+                AND SK.運送Ｃ = :SELECT_UNSOU
+                GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,
                     SK.商品Ｃ,SH.品名 ,SJ.得意先名,SH.ＪＡＮ,SK.特記事項	
-                ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+                ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
 */
         //Debug
         //print($sql);
@@ -1901,7 +1769,7 @@ if (empty($session_id)) {
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -1946,7 +1814,7 @@ if (empty($session_id)) {
                     'syuka_day' => $syuka_day,                  // SK.出荷日
                     'souko_code' => $souko_code,                // SK.倉庫Ｃ
                     'souko_name' => $souko_name,                // SO.倉庫名
-                    'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                    'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // SL.出荷元
                     'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -2042,7 +1910,7 @@ if (empty($session_id)) {
                     $e = oci_error();
                 }
 
-                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名     	
+                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名     	
       ,RZ.棚番
       ,SH.梱包入数
       ,SUM(SK.出荷数量) AS 数量	
@@ -2063,7 +1931,7 @@ if (empty($session_id)) {
    AND SL.伝票行枝番 = PK.伝票行枝番(+)
    AND SK.倉庫Ｃ = SO.倉庫Ｃ
    AND SL.出荷元 = SM.出荷元Ｃ(+)
-   AND SJ.運送Ｃ = US.運送Ｃ
+   AND SK.運送Ｃ = US.運送Ｃ
    AND SL.商品Ｃ = SH.商品Ｃ
    AND SK.倉庫Ｃ = RZ.倉庫Ｃ
    AND SK.商品Ｃ = RZ.商品Ｃ
@@ -2071,15 +1939,15 @@ if (empty($session_id)) {
    AND SK.倉庫Ｃ = :SELECT_SOUKO";
 
                 if ($one_condition == "") {
-                    $sql .= " AND SJ.運送Ｃ = :SELECT_UNSOU";
+                    $sql .= " AND SK.運送Ｃ = :SELECT_UNSOU";
                 } else {
                     $sql .= $one_condition;
                 }
 
                 $sql .= " AND DECODE(NULL,PK.処理Ｆ,0) <> 9
- GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
          ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
- ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
+ ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元,SK.特記事項";
 
                 $stid = oci_parse($conn, $sql);
                 if (!$stid) {
@@ -2122,7 +1990,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -2162,7 +2030,7 @@ if (empty($session_id)) {
                     $e = oci_error();
                 }
 
-                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
       ,RZ.棚番
       ,SH.梱包入数
       ,SUM(SK.出荷数量) AS 数量	
@@ -2183,7 +2051,7 @@ if (empty($session_id)) {
    AND SL.伝票行枝番 = PK.伝票行枝番(+)
    AND SK.倉庫Ｃ = SO.倉庫Ｃ
    AND SL.出荷元 = SM.出荷元Ｃ(+)
-   AND SJ.運送Ｃ = US.運送Ｃ
+   AND SK.運送Ｃ = US.運送Ｃ
    AND SL.商品Ｃ = SH.商品Ｃ
    AND SK.倉庫Ｃ = RZ.倉庫Ｃ
    AND SK.商品Ｃ = RZ.商品Ｃ
@@ -2191,15 +2059,15 @@ if (empty($session_id)) {
    AND SK.倉庫Ｃ = :SELECT_SOUKO";
 
                 if ($one_condition == "") {
-                    $sql .= " AND SJ.運送Ｃ = :SELECT_UNSOU";
+                    $sql .= " AND SK.運送Ｃ = :SELECT_UNSOU";
                 } else {
                     $sql .= $one_condition;
                 }
 
                 $sql .= " AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
- GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
          ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ,SK.特記事項
- ORDER BY 数量 desc, SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+ ORDER BY 数量 desc, SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
 
                 $stid = oci_parse($conn, $sql);
                 if (!$stid) {
@@ -2248,7 +2116,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -2296,7 +2164,7 @@ if (empty($session_id)) {
                     $e = oci_error();
                 }
 
-                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
+                $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.商品Ｃ,SH.品名	
       ,RZ.棚番
       ,SH.梱包入数
       ,SUM(SK.出荷数量) AS 数量	
@@ -2316,7 +2184,7 @@ if (empty($session_id)) {
    AND SL.伝票行枝番 = PK.伝票行枝番(+)
    AND SK.倉庫Ｃ = SO.倉庫Ｃ
    AND SL.出荷元 = SM.出荷元Ｃ(+)
-   AND SJ.運送Ｃ = US.運送Ｃ
+   AND SK.運送Ｃ = US.運送Ｃ
    AND SL.商品Ｃ = SH.商品Ｃ
    AND SK.倉庫Ｃ = RZ.倉庫Ｃ
    AND SK.商品Ｃ = RZ.商品Ｃ
@@ -2324,15 +2192,15 @@ if (empty($session_id)) {
    AND SK.倉庫Ｃ = :SELECT_SOUKO";
 
                 if ($one_condition == "") {
-                    $sql .= " AND SJ.運送Ｃ = :SELECT_UNSOU";
+                    $sql .= " AND SK.運送Ｃ = :SELECT_UNSOU";
                 } else {
                     $sql .= $one_condition;
                 }
 
                 " AND DECODE(NULL,PK.処理Ｆ,0) <> 9 -- 完了は除く
- GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+ GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
          ,SK.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SJ.得意先名,SH.ＪＡＮ
- ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
+ ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SK.商品Ｃ,SL.出荷元";
 
                 $stid = oci_parse($conn, $sql);
                 if (!$stid) {
@@ -2376,7 +2244,7 @@ if (empty($session_id)) {
                         'syuka_day' => $syuka_day,                  // SK.出荷日
                         'souko_code' => $souko_code,                // SK.倉庫Ｃ
                         'souko_name' => $souko_name,                // SO.倉庫名
-                        'Unsou_code' => $Unsou_code,                // SJ.運送Ｃ
+                        'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                         'Unsou_name' => $Unsou_name,                // US.運送略称
                         'shipping_moto' => $shipping_moto,          // SL.出荷元
                         'shipping_moto_name' => $shipping_moto_name, // SM.出荷元名
@@ -2469,12 +2337,12 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/third.css">
     <link rel="stylesheet" href="./css/common.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <!-- jQuery cdn -->
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>ピッキング対象選択</title>
+    <title>ピッキング 04</title>
 
 
 </head>
@@ -2484,11 +2352,11 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="#"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
-                グリーンライフ ピッキング
+                APP ピッキングアプリ
             </span>
         </div>
     </div>
@@ -2497,7 +2365,7 @@ if (empty($session_id)) {
         <div class="head_box_02">
             <div class="head_content_02">
                 <span class="home_sub_icon_span">
-                    <a href="#"><img src="./img/page_img.png"></a>
+                    <i class="fa-solid fa-thumbtack"></i>
                 </span>
 
                 <span class="page_title">
@@ -2576,13 +2444,15 @@ if (empty($session_id)) {
             <!-- ********* five.php 「戻る」 ********* -->
             <?php if (isset($_GET['back_one_condition'])) : ?>
                 <input type="hidden" name="back_sql_one_tokki" id="back_sql_one_tokki" value="<?php print $back_one_condition; ?>">
+            <?php else : ?>
+                <?php $back_one_condition = ""; ?>
             <?php endif; ?>
 
             <!-- ********* 複数処理の場合 ********* -->
             <?php if (isset($arr_Picking_DATA[0]['Multiple_Sql'])) : ?>
                 <?php
                 $Multiple_condition = getCondition_Multiple($arr_Picking_DATA[0]['Multiple_Sql']);
-                //     dprint($Multiple_condition);
+                print($Multiple_condition);
                 ?>
                 <input type="hidden" name="Multiple_condition" id="Multiple_condition" value="<?php print $Multiple_condition; ?>">
             <?php endif; ?>
@@ -2590,8 +2460,10 @@ if (empty($session_id)) {
             <!-- ==================================================== -->
             <!-- ============== テーブルレイアウト 開始 =============== -->
             <!-- ==================================================== -->
-            <div id="select_view_box">
-                <table border="1">
+            <div class="">
+
+                <table class="" border="1">
+
                     <thead>
                         <tr>
                             <th>ロケ</th>
@@ -2650,7 +2522,7 @@ if (empty($session_id)) {
 
                             // === 処理フラグ
                             $Shori_Flg = $Picking_VAL['Shori_Flg'];
-
+                            print($Shori_Flg . "<br>");
                             if ($Shori_Flg == 9) {
                                 $Sagyou_NOW_Flg = 3;
                             }
@@ -2659,49 +2531,36 @@ if (empty($session_id)) {
                             if ($Sagyou_NOW_Flg == 0) {
 
                                 // === 運送便（単数）, 備考・特記あり
-                                //           if (isset($Picking_VAL['sql_one_tokki']) && $Picking_VAL['sql_one_tokki'] != "" && $Picking_VAL['four_status'] == 'one_bikou_tokki') {
-                                if (isset($Picking_VAL['sql_one_tokki']) && $Picking_VAL['sql_one_tokki'] != "" && $Picking_VAL['four_status'] == 'one_bikou_tokki') {
-                                    $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
+                                if (isset($Picking_VAL['sql_one_tokki']) && $Picking_VAL['sql_one_tokki'] != "") {
+                                    $encoded_sql_one_tokki = urlencode($sql_one_tokki);
 
                                     if (isset($Picking_VAL['tokki_zikou'])) {
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($select_unsou_code) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . urldecode($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     } else {
                                         $Picking_VAL['tokki_zikou'] = "";
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($select_unsou_code) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . urldecode($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     }
 
 
                                     // === 運送便（複数） , 備考・特記あり,　※備考・特記ありも複数　=> five.php から戻ってきた
                                 } else if (isset($Picking_VAL['sql_multiple_tokki']) && $Picking_VAL['sql_multiple_tokki'] != "") {
 
-                                    dprint("ここ:複数");
-                                    $Multiple_Sql_Url = UrlEncode_Val_Check($Picking_VAL['sql_multiple_tokki']);
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '">';
+                                    $Multiple_Sql_Url = urlencode($Picking_VAL['sql_multiple_tokki']);
+                                    echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($select_unsou_code) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) .  '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . urldecode($Picking_VAL['tokki_zikou']) . '">';
 
-                                    // *** 複数が最初に通る ルート ***
                                     // four.php => five.php へ　運送便（複数） , 備考・特記あり,　※備考・特記ありも複数
                                 } else if (isset($Picking_VAL['four_status']) && $Picking_VAL['four_status'] == "multiple_sql_four") {
 
-                                    dprint("ここ:複数 最初のルート third.php => four.php => five.php");
-
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' .
-                                        UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&shipping_moto='
-                                        . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name'])
-                                        . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
-                                        . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num'])
-                                        . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' .
-                                        UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                        '&four_five_multiple_sql=' . $sql_multiple_cut . '&four_status=multiple_sql_four' . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($select_unsou_code) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . urldecode($Picking_VAL['tokki_zikou']) . '&four_five_multiple_sql=' . $sql_multiple_cut . '&four_status=multiple_sql_four' . '">';
                                 } else {
 
                                     // === 通常処理　特記事項 あり
-                                    if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "" && $Picking_VAL['four_status'] == 'default_root') {
-                                        dprint("koko,// === 通常処理　特記事項 あり");
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '">';
-                                    } else if ($Picking_VAL['four_status'] == 'default_root') {
-                                        dprint("koko,// === 通常処理　特記事項 あり else");
-                                        // === 通常処理　特記事項 あり
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '">';
+                                    if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
+                                        echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($Picking_VAL['Unsou_code']) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  urldecode($Picking_VAL['tokki_zikou']) . '&four_status=one_bikou_tokki' . '">';
+                                    } else {
+
+                                        // === 通常処理　特記事項 なし
+                                        echo '<tr data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($Picking_VAL['Unsou_code']) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($Picking_VAL['shouhin_JAN']) . '&four_status=default_root' . '">';
                                     }
                                 }
 
@@ -2741,7 +2600,7 @@ if (empty($session_id)) {
                                     "</td>";
 
                                 // === 特記
-                                if ((isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") || (isset($Picking_VAL['shipping_moto']) && $Picking_VAL['shipping_moto'] != "")) {
+                                if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
                                     echo '<td><span class="toki_list">' . $Picking_VAL['tokki_zikou'] . '</span>' .
                                         '<span class="bikou_list">' . $Picking_VAL['shipping_moto_name'] . '</span></td>';
                                 } else {
@@ -2755,46 +2614,46 @@ if (empty($session_id)) {
                                 if (isset($Picking_VAL['sql_one_tokki']) && $Picking_VAL['sql_one_tokki'] != "") {
 
                                     if (isset($Picking_VAL['Denpyou_SEQ']) && $Picking_VAL['Denpyou_SEQ'] != "") {
-                                        $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
-                                        echo '<tr style="background: green;" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) .
-                                            '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
-                                            '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) .
-                                            '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) .
-                                            '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
-                                            '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
-                                            '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                            '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) .
-                                            '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .
-                                            '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) .
-                                            '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) .
-                                            '&case_num=' . UrlEncode_Val_Check($Case_num_View) .
-                                            '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                            '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) .
+                                        $encoded_sql_one_tokki = urlencode($sql_one_tokki);
+                                        echo '<tr style="background: green;" data-href="./five.php?select_day=' . urlencode($select_day) .
+                                            '&souko_code=' . urlencode($select_souko_code) .
+                                            '&unsou_code=' . urlencode($select_unsou_code) .
+                                            '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) .
+                                            '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) .
+                                            '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) .
+                                            '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) .
+                                            '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) .
+                                            '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) .
+                                            '&Tokuisaki=' . urlencode($Tokuisaki_name) .
+                                            '&tana_num=' . urlencode($Picking_VAL['Tana_num']) .
+                                            '&case_num=' . urlencode($Case_num_View) .
+                                            '&bara_num=' . urlencode($Bara_num_View) .
+                                            '&shouhin_jan=' . urlencode($shouhin_JAN) .
                                             '&tokki_zikou=' . $Picking_VAL['tokki_zikou'] .
-                                            '&Denpyou_SEQ=' . UrlEncode_Val_Check($Picking_VAL['Denpyou_SEQ']) . // 伝票 SEQ
+                                            '&Denpyou_SEQ=' . urldecode($Picking_VAL['Denpyou_SEQ']) . // 伝票 SEQ
                                             '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     } else {
 
-                                        $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
-                                        echo '<tr style="background: green;" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) .
-                                            '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
-                                            '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) .
-                                            '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) .
-                                            '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
-                                            '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
-                                            '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                            '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) .
-                                            '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .
-                                            '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) .
-                                            '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) .
-                                            '&case_num=' . UrlEncode_Val_Check($Case_num_View) .
-                                            '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                            '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) .
+                                        $encoded_sql_one_tokki = urlencode($sql_one_tokki);
+                                        echo '<tr style="background: green;" data-href="./five.php?select_day=' . urlencode($select_day) .
+                                            '&souko_code=' . urlencode($select_souko_code) .
+                                            '&unsou_code=' . urlencode($select_unsou_code) .
+                                            '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) .
+                                            '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) .
+                                            '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) .
+                                            '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) .
+                                            '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) .
+                                            '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) .
+                                            '&Tokuisaki=' . urlencode($Tokuisaki_name) .
+                                            '&tana_num=' . urlencode($Picking_VAL['Tana_num']) .
+                                            '&case_num=' . urlencode($Case_num_View) .
+                                            '&bara_num=' . urlencode($Bara_num_View) .
+                                            '&shouhin_jan=' . urlencode($shouhin_JAN) .
                                             '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     }
                                 } else {
 
-                                    echo '<tr style="background: green"; data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) . '">';
+                                    echo '<tr style="background: green"; data-href="./five.php?select_day=' . urlencode($select_day) . '&souko_code=' . urlencode($select_souko_code) . '&unsou_code=' . urlencode($select_unsou_code) . '&unsou_name=' . urlencode($Picking_VAL['Unsou_name']) . '&shipping_moto=' . urlencode($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . urlencode($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . urlencode($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . urlencode($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . urlencode($Picking_VAL['Shouhin_num']) . '&Tokuisaki=' . urlencode($Tokuisaki_name) . '&tana_num=' . urlencode($Picking_VAL['Tana_num']) . '&case_num=' . urlencode($Case_num_View) . '&bara_num=' . urlencode($Bara_num_View) . '&shouhin_jan=' . urlencode($shouhin_JAN) . '">';
                                 }
 
                                 echo '<td><span id="sagyou_now_text">残<i class="fa-regular fa-circle-stop"></i></span>' . $Picking_VAL['Tana_num'] . '</td>';
@@ -2822,7 +2681,7 @@ if (empty($session_id)) {
                                 $row_class = 'picking-row1';
 
                                 if ($Picking_VAL['now_sql'] != "") {
-                                    $encoded_sql_one_tokki = UrlEncode_Val_Check($Picking_VAL['now_sql']);
+                                    $encoded_sql_one_tokki = urlencode($Picking_VAL['now_sql']);
                                     echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num']  . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '&shouhin_jan=' . $shouhin_JAN . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                 } else {
 
@@ -2868,7 +2727,7 @@ if (empty($session_id)) {
                                 echo '</tr>';
                             } /* else if ($Sagyou_NOW_Flg == 55) {
 
-                                $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
+                                $encoded_sql_one_tokki = urlencode($sql_one_tokki);
                                 echo '<tr data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&Tokuisaki=' . $Tokuisaki_name . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '&shouhin_jan=' . $shouhin_JAN . '&now_sql=' . $encoded_sql_one_tokki . '">';
 
                                 echo '<td>' . $Picking_VAL['Tana_num'] . '</td>';
@@ -2902,11 +2761,9 @@ if (empty($session_id)) {
         <!-- 全数完了　「戻り」 five.php => four.php -->
         <?php
 
-        /*
         if (isset($_SESSION['one_now_sql_zensuu'])) {
             echo '<input type="hidden" name="one_now_sql_zensuu" id="one_now_sql_zensuu" value="' . h($_SESSION['one_now_sql_zensuu']) . '">';
         }
-        */
 
         /*
         if (isset($_GET['selectedToki_Code']) && $_GET['selectedToki_Code'] != "") {
@@ -2922,7 +2779,7 @@ if (empty($session_id)) {
         <footer class="footer-menu">
             <ul>
                 <?php $back_flg = 1; ?>
-                <?php $url = "./third.php?selectedSouko=" . UrlEncode_Val_Check($select_souko_code) . "&selected_day=" . UrlEncode_Val_Check($select_day) . "&souko_name=" . UrlEncode_Val_Check($get_souko_name) . "&back_flg=" . $back_flg; ?>
+                <?php $url = "./third.php?selectedSouko=" . urlencode($select_souko_code) . "&selected_day=" . urlencode($select_day) . "&souko_name=" . urlencode($get_souko_name) . "&back_flg=" . $back_flg; ?>
                 <li><a href="<?php echo $url; ?>">戻る</a></li>
                 <li><a href="" id="Kousin_Btn">更新</a></li>
             </ul>
@@ -2931,7 +2788,7 @@ if (empty($session_id)) {
 
     </div> <!-- ======== END app ========= -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script>
         new Vue({
             el: '#app',

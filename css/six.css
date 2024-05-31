@@ -1,0 +1,67 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 768px) {
+
+    #six_content {
+        margin: 0 0 0 5%;
+    }
+    
+    /* デートピッカー */
+    #ui-datepicker-div{
+            width: 85%;
+        }
+    
+    
+    .ui-datepicker .ui-datepicker-title {
+        margin: 0.9em 2.3em !important; line-height: 1.8em;
+        text-align: center;
+        }
+    
+    }
+    
+     /* デートピッカー　用 */
+     table {
+         border-collapse: collapse;
+         width: 100%;
+         border-color: #4b4b4b;
+    
+     }
+    
+     /* テーブルのボーダー */
+     th,
+     td {
+         border: 1px solid grey;
+         /* セルの境界線をグレーに設定 */
+     }
+    
+     /* テーブルヘッダーのスタイル */
+     th {
+         background-color: #5CBCE0;
+         text-align: center;
+         padding: 12px 0px;
+         font-size: 0.82em !important;
+         color: #fff;
+     }
+    
+     /* テーブルセルのスタイル */
+     td {
+         padding: 8px;
+         text-align: center;
+         font-size: 0.95em;
+     }
+    
+     /* 開始　ボタン */
+    
+     #day_search_submit_box {
+        text-align: center;
+     }
+    
+     #day_search_submit {
+        background-color: #3498db;
+            color: #fff;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 4.2em 0 0 0;
+            font-size: 1.12em;
+     }

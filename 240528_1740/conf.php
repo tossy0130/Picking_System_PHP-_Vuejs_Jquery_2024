@@ -15,8 +15,6 @@ define('DB_PASSWORD', 'GL');
 //define('DB_SERVER', '192.168.254.16');
 define('DB_SERVER', '192.168.254.17');
 
-// 本番　192.168.10.10
-
 /** DBサーバーポート番号 */
 define('DB_PORT', '1521');
 /** DBサービス名 */

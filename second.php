@@ -2,10 +2,10 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "./conf.php";
+require __DIR__ . "/conf.php";
 
-require_once(dirname(__FILE__) . "./class/init_val.php");
-require(dirname(__FILE__) . "./class/function.php");
+require_once(dirname(__FILE__) . "/class/init_val.php");
+require(dirname(__FILE__) . "/class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -47,13 +47,21 @@ if (empty($session_id)) {
     if (!$conn) {
         $e = oci_error();
     }
-
-    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-	            FROM SJTR SJ,SKTR SK,SOMF SO
-	               WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
-	               AND SJ.出荷日 = :POST_DATE
-	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
+    //24/05/24
+    //    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
+    //	            FROM SJTR SJ,SKTR SK,SOMF SO
+    //	               WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+    //	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
+    //	               AND SJ.出荷日 = :POST_DATE
+    //	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
+    $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
+              FROM SJTR SJ,SKTR SK,SLTR SL,SOMF SO
+             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+               AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+               AND SK.伝票行番号 = SL.伝票行番号
+               AND SL.倉庫Ｃ = SO.倉庫Ｃ
+               AND SJ.出荷日 = :POST_DATE
+             GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {
@@ -96,6 +104,12 @@ if (empty($session_id)) {
     }
 
 
+    if (isset($_GET['back_flg'])) {
+        $back_flg = $_GET['back_flg'];
+        // print($back_flg);
+    }
+
+
 
 
 
@@ -121,9 +135,9 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    <link href="./css/all.css" rel="stylesheet">
 
-    <title>ピッキング 2</title>
+    <title>ピッキング 倉庫選択</title>
 
 </head>
 
@@ -133,11 +147,11 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><i class="fa-solid fa-house"></i></a>
+                <a href="#"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
-                APP ピッキングアプリ
+                グリーンライフ ピッキング
             </span>
         </div>
     </div>
@@ -146,7 +160,7 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <i class="fa-solid fa-thumbtack"></i>
+                <a href="#"><img src="./img/page_img.png"></a>
             </span>
 
             <span class="page_title">
@@ -180,19 +194,27 @@ if (empty($session_id)) {
                     <button @click="submitForm">次へ</button>
                 </div>
 
-                <!-- フッターメニュー -->
-                <footer class="footer-menu_fixed">
-                    <ul>
-                        <li><a href="#">戻る</a></li>
-                        <li><a href="#">更新</a></li>
-                    </ul>
-                </footer>
+
 
             </div>
         </div> <!-- END container -->
+
+
+        <div>
+            <!-- フッターメニュー -->
+            <footer class="footer-menu_fixed">
+                <ul>
+                    <?php $back_flg = 1; ?>
+                    <?php $url = "./first.php"; ?>
+                    <li><a href="<?php print h($url); ?>">戻る</a></li>
+                    <li><a href="#">更新</a></li>
+                </ul>
+            </footer>
+        </div>
+
     </div> <!-- END app -->
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="./js/vue@2.js"></script>
 
     <script>
         new Vue({

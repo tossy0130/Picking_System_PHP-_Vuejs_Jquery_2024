@@ -15,6 +15,7 @@ $top_url = Init_Val::TOP_URL;
 session_start();
 
 
+
 // セッションIDが一致しない場合はログインページにリダイレクト
 if (!isset($_SESSION["sid"])) {
     header("Location: index.php");
@@ -22,6 +23,7 @@ if (!isset($_SESSION["sid"])) {
 } else {
     $session_id = $_SESSION["sid"];
 }
+
 
 // session判定
 if (empty($session_id)) {
@@ -50,52 +52,18 @@ if (empty($session_id)) {
         $e = oci_error();
     }
 
-    // 2024/05/27
-    /* $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
+    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
             FROM SJTR SJ, SKTR SK, SOMF SO, USMF US, HTPK PK
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
                 AND SK.倉庫Ｃ = SO.倉庫Ｃ
-                AND SK.倉庫Ｃ = PK.倉庫Ｃ
+                AND SK.倉庫Ｃ = PK.倉庫Ｃ   --2024/05/27 追加
                 AND SK.運送Ｃ = US.運送Ｃ
+                --AND SK.運送Ｃ = PK.運送Ｃ   --2024/05/27 追加
                 AND SK.出荷日 = :POST_DATE
                 AND SK.運送Ｃ = :POST_CODE
-                AND PK.処理Ｆ = 9
+                AND PK.処理Ｆ = 9   --2024/05/27 追加
             GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-            ORDER BY SK.倉庫Ｃ,SO.倉庫名"; */
-    // 2024/05/28
-    /* $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
-            FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SL.伝票番号 = PK.伝票番号
-            AND SL.伝票行番号 = PK.伝票行番号
-            AND SL.伝票行枝番 = PK.伝票行枝番
-            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-            AND SL.倉庫Ｃ = PK.倉庫Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称"; */
-
-    // 2024/05/29
-    $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
-            FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SL.伝票番号 = PK.伝票番号
-            AND SK.伝票行番号 = SL.伝票行番号
-            AND SK.伝票行番号 = PK.伝票行番号
-            AND SL.伝票行枝番 = PK.伝票行枝番
-            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-            AND SL.倉庫Ｃ = PK.倉庫Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            --AND US.運送略称 = '”コメリ新潟'
-            AND SJ.運送Ｃ = :POST_CODE
-            --AND SJ.運送Ｃ = US.運送Ｃ
-            AND SJ.運送Ｃ = PK.運送Ｃ
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
+            ORDER BY SK.倉庫Ｃ,SO.倉庫名";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {
@@ -155,7 +123,7 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会倉庫選択</title>
 
@@ -193,8 +161,8 @@ if (empty($session_id)) {
         <div class="container">
             <div class="content_02">
 
-                <!-- <p id="syuka_day">出荷日：<?= $selected_day; ?></p> -->
-                <p id="syuka_day">出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
+                <p>出荷日：<?= $selected_day; ?></p>
+                <p>運送便：<?= $selected_shippingname; ?></p>
                 <div class="souko_box">
                     <?php
                     // 配列内の要素をループしてボタンを生成
@@ -230,7 +198,7 @@ if (empty($session_id)) {
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script>
         new Vue({

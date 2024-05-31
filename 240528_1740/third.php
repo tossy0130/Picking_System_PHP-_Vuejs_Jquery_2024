@@ -2,9 +2,9 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "/conf.php";
-require_once(dirname(__FILE__) . "/class/init_val.php");
-require(dirname(__FILE__) . "/class/function.php");
+require __DIR__ . "./conf.php";
+require_once(dirname(__FILE__) . "./class/init_val.php");
+require(dirname(__FILE__) . "./class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -46,33 +46,33 @@ if (empty($session_id)) {
 
         // 特記なし
         /*
-        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
 	                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
 	                WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
                         AND SK.倉庫Ｃ = SO.倉庫Ｃ
                         AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
                         AND SL.出荷元 = SM.出荷元Ｃ(+)
-	                    AND SJ.運送Ｃ = US.運送Ｃ
+	                    AND SK.運送Ｃ = US.運送Ｃ
 	                    AND SJ.出荷日 = :GET_DATE
                         AND SK.倉庫Ｃ = :GET_SOUKO
-                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                    ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名";
+                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+                    ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名";
         */
 
         // 特記あり
         //24/05/24
-        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
+        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
         //                    SM.出荷元名,SK.特記事項
         //                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
         //                  WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
         //                        AND SK.倉庫Ｃ = SO.倉庫Ｃ
         //                        AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
         //                        AND SL.出荷元 = SM.出荷元Ｃ(+)
-        //                      AND SJ.運送Ｃ = US.運送Ｃ
+        //                      AND SK.運送Ｃ = US.運送Ｃ
         //                      AND SJ.出荷日 = :GET_DATE
         //                        AND SK.倉庫Ｃ = :GET_SOUKO
-        //                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
-        //                    ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
+        //                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
+        //                    ORDER BY SK.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
@@ -162,7 +162,7 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/second_02.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>運送便選択</title>
 
@@ -180,7 +180,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="#"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
@@ -193,7 +193,7 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <a href="#"><img src="./img/page_img.png"></a>
+                <i class="fa-solid fa-thumbtack"></i>
             </span>
 
             <span class="page_title">
@@ -237,83 +237,38 @@ if (empty($session_id)) {
                 </div>
 
             </div>
-
             <!-- 選択した値を表示する部分 -->
-
-
-            <!--
-            <div class="selected-value" style="opacity: 0;">
-                -->
             <div class="selected-value">
                 選択した運送コード: <span id="selectedUnsouCode"></span><br>
                 選択した運送会社: <span id="selectedUnsouName"></span><br>
                 特記・備考: <span id="selectedToki_Code"></span><br>
             </div>
-
-
             <hr>
 
-            <!-- 選択した値表示 （備考・特記あり） -->
-            <div id="selectedValues_set_next_val_View_Tan">
-                <span style="display:inline-block;">■選択された値（単数便）</span>
-            </div>
-
-            <!-- 選択した値表示 （備考・特記あり） -->
-            <div id="selectedValues_set_next_val_View">
-                <span style="display:inline-block;">■選択された値</span>
-            </div>
-
-            <!--
-            <div style="opacity: 0;">
-                -->
-            <div style="opacity: 0;">
-                <span id="op_01" style="display: inline-block;">複数選択</span>
-                <span id="fukusuu_select">：</span><br />
-            </div>
-
-            <!--
-            <div style="opacity: 0;">
-                -->
-            <div class="select_data_box">
-                <span id="op_00">選択した運送会社名: </span><span id="selectedUnsouName_all"></span><br>
-
+            <div>
+                <span id="op_01">複数選択</span><span id="fukusuu_select">：</span><br />
                 <span id="op_02">複数選択（特記）</span><span id="fukusuu_select_option_01">：</span><br />
                 <span id="op_03">複数選択名</span><span id="fukusuu_select_name">：</span><br /><br />
 
-                <span id="op_04">複数選択:::</span><span id="f_select"></span>
+                <span id="op_04">複数選択 持っていく値:::</span><span id="f_select"></span>
             </div>
 
-
             <!-- 複数選択 -->
-            <!--
-            <div id="selectedValues_set_next_val" style="opacity: 0;">
-                -->
             <div id="selectedValues_set_next_val">
-                <span style="display:inline-block;">■選択された値</span>
+                <span style="display:inline-block;">■次ページへ持っていく値（特記あり）</span>
             </div>
 
             <p id="err_text" style="color:red;text-align:center;"></p>
 
-            <!-- ================================================= -->
-            <!-- ================     運送便 選択ボタン   ==================== -->
-            <!-- ================================================= -->
             <div class="third_btn_flex_box">
                 <div id="sendSelectedValues_box">
-                    <button id="sendSelectedValues">単数選択</button>
+                    <button id="sendSelectedValues">次へ</button>
                 </div>
 
                 <div id="sendSelectedValues_box">
                     <button id="sendSelectedValues_multiple">複数選択</button>
                 </div>
-
-                <div id="sendSelectedValues_box">
-                    <button id="sendSelectedValues_clear">条件クリア</button>
-                </div>
             </div>
-
-            <!-- ================================================= -->
-            <!-- ================     運送便 選択ボタン  END  ==================== -->
-            <!-- ================================================= -->
 
         </div>
     </div> <!-- container END -->
@@ -330,54 +285,11 @@ if (empty($session_id)) {
         </footer>
     </div>
 
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
         (function($) {
             $(document).ready(function() {
-
-                // === ボタンの状態判別
-                function Button_Check() {
-                    var text = $('#fukusuu_select').text();
-                    // 末尾のカンマを削除して分割
-                    var values = text.replace(/,$/, '').split(',');
-                    // 配列の長さを取得
-                    var count = values.length;
-                    console.log("ボタンチェック:::" + count);
-
-                    if (count > 1) {
-                        $('#sendSelectedValues').attr('disabled', true).css({
-                            'background-color': '#ccc',
-                            'cursor': 'not-allowed'
-                        });; // 無効化
-
-                        $('#sendSelectedValues_multiple').attr('disabled', false).css({
-                            'background-color': '#3498db',
-                            'cursor': 'pointer'
-                        }); // 有効化
-
-                        // エラーメッセージを非表示
-                        $("#err_text").text("");
-
-                    } else {
-                        $('#sendSelectedValues').attr('disabled', false).css({
-                            'background-color': '#3498db',
-                            'cursor': 'pointer'
-                        });
-
-                        $('#sendSelectedValues_multiple').attr('disabled', true).css({
-                            'background-color': '#ccc',
-                            'cursor': 'not-allowed'
-                        });;
-
-                        $("#err_text").text("");
-
-                    }
-
-                }
-
-                // === ボタンの状態を分岐
-                Button_Check();
 
                 // ドロップダウンメニューの表示を切り替える
                 $('.dropdown_v').on('click', function() {
@@ -386,18 +298,14 @@ if (empty($session_id)) {
 
                     console.log("メニューID:" + menuId);
                     console.log("ドロップダウンコンテンツ:" + dropdownContent);
-
                     dropdownContent.toggleClass('show');
-
-                    // 他のドロップダウンメニューを閉じる
-                    $('.dropdown-content_v').not(dropdownContent).removeClass('show');
 
                     // 運送コード, 運送便名, 取得
                     var unsouCode = $(this).find('button').data('unsou-code');
                     var unsouName = $(this).find('button').data('unsou-name');
 
                     $('#selectedUnsouCode').text(unsouCode);
-                    //  $('#selectedUnsouName').text(unsouName);
+                    $('#selectedUnsouName').text(unsouName);
 
                     // 同じ値が存在する場合は処理を返す
                     // 運送コード表示
@@ -407,23 +315,10 @@ if (empty($session_id)) {
                         $('#fukusuu_select').append(unsouCode + ',');
                     }
 
-                    // 選択された、運送名を表示
-                    if ($('#selectedValues_set_next_val_View_Tan').text().includes(unsouName)) {
-                        return;
-                    } else {
-                        $('#selectedValues_set_next_val_View_Tan').empty();
-                        $('#selectedValues_set_next_val_View_Tan').append('■選択された値（単数便）' +
-                            '<p><span class="tansou_select">運送便名</span>' + unsouName + '</p>');
-                    }
-
-                    // === ボタンの状態を分岐
-                    Button_Check();
-
                 });
 
                 // プルダウンメニューのボタンがクリックされたときの処理
                 var selectedValues = [];
-                var selectedValues_view = [];
 
                 $('.dropdown-content_v button').on('click', function() {
 
@@ -451,73 +346,16 @@ if (empty($session_id)) {
                         selected_Detail_Code + ":" + selectedUnsou_Detail_tokki);
 
 
-                    var newValue = unsouName_m + ':' + unsouCode_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_tokki + ',';
-                    var valueFound = false;
-
-
-                    // === 表示用
-                    var newValue_VIEW = '<p><span class="view_item_01">運送便名</span><span class="view_item_01_val">' + unsouName_m + '</span>' +
-                        '<span class="view_item_02">運送便コード</span><span class="view_item_02_val">' + unsouCode_m + '</span>' +
-                        '<span class="view_item_03">備考</span><span class="view_item_03_val">' + selected_Detail_Code + '</span>' +
-                        '<span class="view_item_04">特記</span><span class="view_item_04_val">' + selectedUnsou_Detail_tokki + '</span></p>';
-
-
-                    // 重複を削除
-                    $("#selectedValues_set_next_val .set_next_val").each(function() {
-                        var currentText = $(this).text();
-                        if (currentText === newValue) {
-                            $(this).remove();
-                            selectedValues = selectedValues.filter(function(value) {
-                                return value !== newValue;
-                            });
-                            valueFound = true;
-                        }
-                    });
-
-                    if (!valueFound) {
-                        // 新しい値を追加
-                        selectedValues.push(newValue);
+                    // 要素を追加
+                    if (selectedValues.indexOf(data_value) === -1 && selectedValues.indexOf(unsouCode_m) === -1) {
+                        selectedValues.push(unsouCode_m + data_value);
                         console.log("selectedValuesに追加:", data_value);
-                        $("#selectedValues_set_next_val").append('<div class="set_next_val">' + newValue + '</div>');
+                        $("#selectedValues_set_next_val").append('<div class="set_next_val">' + unsouName_m + ':' +
+                            unsouCode_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_tokki + ',' + '</div>');
                     } else {
-                        console.log("selectedValuesに既に存在:", newValue);
+                        console.log("selectedValuesに既に存在:", data_value);
                     }
 
-
-
-                    // === 表示用 （重複を削除）
-                    var valueFound_02 = false;
-                    $("#selectedValues_set_next_val_View .set_next_val_view").each(function() {
-                        var currentText = $(this).html();
-                        if (currentText === newValue_VIEW) {
-                            $(this).remove();
-                            selectedValues_view = selectedValues_view.filter(function(value) {
-                                return value !== newValue_VIEW;
-                            });
-                            valueFound_02 = true;
-                        }
-                    });
-
-                    if (!valueFound_02) {
-                        // === 表示用 （新しい値を追加）
-                        selectedValues_view.push(newValue_VIEW);
-                        console.log("selectedValues_viewに追加:", newValue_VIEW);
-                        $("#selectedValues_set_next_val_View").append('<div class="set_next_val_view">' + newValue_VIEW + '</div>');
-                    } else {
-                        console.log("selectedValues_viewに既に存在:", newValue_VIEW);
-                    }
-
-                    // === ボタンの状態を分岐
-                    Button_Check();
-
-                });
-
-
-                // ドロップダウン以外 クリックされたら ドロップダウンメニューを閉じる
-                $(document).on('click', function(event) {
-                    if (!$(event.target).closest('.dropdown_v').length) {
-                        $('.dropdown-content_v').removeClass('show');
-                    }
                 });
 
                 // 「次へボタンを押した時の処理
@@ -607,18 +445,6 @@ if (empty($session_id)) {
                         url += '&fukusuu_select_val=' + encodeURIComponent(url_val); // 修正
                         window.location.href = url;
                     }
-
-                });
-
-                // === 「クリア ボタン」
-                $("#sendSelectedValues_clear").on('click', function() {
-
-                    $("#selectedValues_set_next_val_View_Tan p").text("");
-                    $("#selectedValues_set_next_val_View p").text("");
-
-                    // === ボタンの状態を分岐
-                    Button_Check();
-
 
                 });
 

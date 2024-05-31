@@ -41,36 +41,25 @@ if (empty($session_id)) {
         $e = oci_error();
     }
 
-    // 2024/05/28
-    /* $sql = "SELECT SK.出荷日,SK.運送Ｃ,US.運送略称
+
+    $sql = "SELECT SK.出荷日,SK.運送Ｃ,US.運送略称
                 FROM SJTR SJ,SKTR SK,USMF US, HTPK PK
                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
                 AND SK.運送Ｃ = US.運送Ｃ
-                AND SK.運送Ｃ = PK.運送Ｃ
+                AND SK.運送Ｃ = PK.運送Ｃ   --2024/05/27 追加
                 AND SK.出荷日 = :POST_DATE
-                AND PK.処理Ｆ = 9
+                AND PK.処理Ｆ = 9   --2024/05/27 追加
                 GROUP BY SK.出荷日,SK.運送Ｃ,US.運送略称
-                ORDER BY SK.運送Ｃ"; */
-    // 2024/05/29
-    $sql = "SELECT SJ.出荷日,SJ.運送Ｃ,US.運送略称
-            FROM SJTR SJ,SKTR SK,USMF US, HTPK PK, SLTR SL
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SJ.運送Ｃ = US.運送Ｃ
-            AND SJ.運送Ｃ = PK.運送Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SJ.運送Ｃ,US.運送略称
-            ORDER BY SJ.運送Ｃ";
+                ORDER BY SK.運送Ｃ";
 
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {
         $e = oci_error($stid);
     }
-    
+
     oci_bind_by_name($stid, ":POST_DATE", $selected_day);
+    //oci_bind_by_name($stid, ":GET_SOUKO", $selectedSouko);
 
     oci_execute($stid);
 
@@ -83,17 +72,20 @@ if (empty($session_id)) {
         $unsou_name = $row['運送略称'];
 
         // 取得した値を配列に追加
-        $arr_unsou_data[] = array(
-        'syuka_day' => $syuka_day,
-        'unsou_code' => $unsou_code,
-        'unsou_name' => $unsou_name
+        if (isset($unsou_name)) {
+            $arr_unsou_data[] = array(
+            'syuka_day' => $syuka_day,
+            'unsou_code' => $unsou_code,
+            'unsou_name' => $unsou_name
         );
+        }
+        
     }
 
     $unsou_Flg = 0;
     if (empty($arr_unsou_data)) {
         $unsou_Flg = 0;
-        header("Location: ./six.php?unsou_Flg={$unsou_Flg}");
+        header("Location: ./first.php?unsou_Flg={$unsou_Flg}");
         exit(); // リダイレクト後にスクリプトの実行を終了するために必要
     } else {
         $unsou_Flg = 1;
@@ -111,11 +103,15 @@ if (empty($session_id)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="./css/common.css">
+
+    <!-- <link rel="stylesheet" href="./css/seven.css"> -->
+
     <link rel="stylesheet" href="./css/seven.css">
+
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会運送便選択</title>
 
@@ -187,7 +183,7 @@ if (empty($session_id)) {
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script>
         new Vue({

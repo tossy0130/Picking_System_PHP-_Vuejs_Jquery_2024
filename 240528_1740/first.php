@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 
-require(dirname(__FILE__) . "/class/function.php");
+require(dirname(__FILE__) . "./class/function.php");
 
 // セッションスタート
 session_start();
@@ -13,19 +13,16 @@ if (!isset($_SESSION["sid"])) {
     exit;
 }
 
-// === ログイン ID
-if (isset($_SESSION['input_login_id'])) {
-    $input_login_id = $_SESSION['input_login_id'];
-    dprint($input_login_id);
-}
-
 //出荷指示日時があるかどうかの判定
 $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
 
     $souko_Flg = $_GET['souko_Flg'];
 
-
+    // === ログイン ID
+    if (isset($_POST['input_login_id'])) {
+        $_SESSION['input_login_id'] = $_POST['input_login_id'];
+    }
 
 
     if ($souko_Flg == 0) {
@@ -58,14 +55,14 @@ $_SESSION['token_jim'] = $token_jim;
     <link rel="stylesheet" href="./css/third.css">
     <link rel="stylesheet" href="./css/first.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <!-- jQuery UI -->
-    <link rel="stylesheet" href="./css/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
 
 
     <!-- jQuery cdn -->
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <title>出荷日選択</title>
 </head>
@@ -75,7 +72,7 @@ $_SESSION['token_jim'] = $token_jim;
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="#"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
@@ -88,7 +85,7 @@ $_SESSION['token_jim'] = $token_jim;
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <a href="#"><img src="./img/page_img.png"></a>
+                <i class="fa-solid fa-thumbtack"></i>
             </span>
 
             <span class="page_title">
@@ -117,21 +114,10 @@ $_SESSION['token_jim'] = $token_jim;
         </div>
     </div> <!-- ================ END container =============== -->
 
-    <div>
-        <!-- フッターメニュー -->
-        <footer class="footer-menu_fixed">
-            <ul>
-                <?php $back_flg = 1; ?>
-                <?php $url = "./top_menu.php?back_menu=okok&id=" . $input_login_id; ?>
-                <li><a href="<?php print h($url); ?>">戻る</a></li>
-                <li><a href="#">更新</a></li>
-            </ul>
-        </footer>
-    </div>
 
 
     <!-- jQuery UI -->
-    <script src="./js/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 
     <script type="text/javascript">

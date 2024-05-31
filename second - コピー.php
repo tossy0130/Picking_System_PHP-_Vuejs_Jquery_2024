@@ -2,10 +2,10 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "\conf.php";
+require __DIR__ . "./conf.php";
 
-require_once(dirname(__FILE__) . "\class/init_val.php");
-require(dirname(__FILE__) . "\class/function.php");
+require_once(dirname(__FILE__) . "./class/init_val.php");
+require(dirname(__FILE__) . "./class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -15,6 +15,7 @@ $top_url = Init_Val::TOP_URL;
 session_start();
 
 
+
 // セッションIDが一致しない場合はログインページにリダイレクト
 if (!isset($_SESSION["sid"])) {
     header("Location: index.php");
@@ -22,6 +23,7 @@ if (!isset($_SESSION["sid"])) {
 } else {
     $session_id = $_SESSION["sid"];
 }
+
 
 // session判定
 if (empty($session_id)) {
@@ -33,14 +35,10 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
-        // === 運送便
-        $selected_shippingname = $_GET['selected_shippingname'];
-        $selected_shippingcode = $_GET['selected_shippingcode'];
     } else {
         // === トークンが無い場合
         header("Location: $err_url");
     }
-
 
     // ============================= DB 処理 =============================
     // === 接続準備
@@ -49,53 +47,21 @@ if (empty($session_id)) {
     if (!$conn) {
         $e = oci_error();
     }
-
-    // 2024/05/27
-    /* $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-            FROM SJTR SJ, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                AND SK.倉庫Ｃ = SO.倉庫Ｃ
-                AND SK.倉庫Ｃ = PK.倉庫Ｃ
-                AND SK.運送Ｃ = US.運送Ｃ
-                AND SK.出荷日 = :POST_DATE
-                AND SK.運送Ｃ = :POST_CODE
-                AND PK.処理Ｆ = 9
-            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-            ORDER BY SK.倉庫Ｃ,SO.倉庫名"; */
-    // 2024/05/28
-    /* $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
-            FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SL.伝票番号 = PK.伝票番号
-            AND SL.伝票行番号 = PK.伝票行番号
-            AND SL.伝票行枝番 = PK.伝票行枝番
-            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-            AND SL.倉庫Ｃ = PK.倉庫Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称"; */
-
-    // 2024/05/29
+    //24/05/24
+    //    $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
+    //	            FROM SJTR SJ,SKTR SK,SOMF SO
+    //	               WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+    //	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
+    //	               AND SJ.出荷日 = :POST_DATE
+    //	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
     $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
-            FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SL.伝票番号 = PK.伝票番号
-            AND SK.伝票行番号 = SL.伝票行番号
-            AND SK.伝票行番号 = PK.伝票行番号
-            AND SL.伝票行枝番 = PK.伝票行枝番
-            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-            AND SL.倉庫Ｃ = PK.倉庫Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            --AND US.運送略称 = '”コメリ新潟'
-            AND SJ.運送Ｃ = :POST_CODE
-            --AND SJ.運送Ｃ = US.運送Ｃ
-            AND SJ.運送Ｃ = PK.運送Ｃ
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
+              FROM SJTR SJ,SKTR SK,SLTR SL,SOMF SO
+             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+               AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+               AND SK.伝票行番号 = SL.伝票行番号
+               AND SL.倉庫Ｃ = SO.倉庫Ｃ
+               AND SJ.出荷日 = :POST_DATE
+             GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {
@@ -103,7 +69,6 @@ if (empty($session_id)) {
     }
 
     oci_bind_by_name($stid, ":POST_DATE", $selected_day);
-    oci_bind_by_name($stid, ":POST_CODE", $selected_shippingcode);
 
     oci_execute($stid);
 
@@ -114,6 +79,12 @@ if (empty($session_id)) {
         $syuka_day = $row['出荷日'];
         $souko_code = $row['倉庫Ｃ'];
         $souko_name = $row['倉庫名'];
+
+        /*
+        print "出荷日：" . $syuka_day . "<br />";
+        print "倉庫Ｃ：" . $souko_code . "<br />";
+        print "倉庫名：" . $souko_name . "<br />";
+        */
 
         // 取得した値を配列に追加
         $arr_souko_data[] = array(
@@ -131,6 +102,15 @@ if (empty($session_id)) {
     } else {
         $souko_Flg = 1;
     }
+
+
+    if (isset($_GET['back_flg'])) {
+        $back_flg = $_GET['back_flg'];
+        // print($back_flg);
+    }
+
+
+
 
 
     // ============================= DB 処理 END =============================
@@ -155,9 +135,9 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
-    <title>ピッキング実績照会倉庫選択</title>
+    <title>ピッキング 倉庫選択</title>
 
 </head>
 
@@ -167,11 +147,11 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><i class="fa-solid fa-house"></i></a>
+                <a href="#"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
-            グリーンライフ ピッキング
+                グリーンライフ ピッキング
             </span>
         </div>
     </div>
@@ -184,7 +164,7 @@ if (empty($session_id)) {
             </span>
 
             <span class="page_title">
-                ピッキング実績照会 倉庫選択
+                ピッキング倉庫
             </span>
         </div>
     </div>
@@ -193,14 +173,14 @@ if (empty($session_id)) {
         <div class="container">
             <div class="content_02">
 
-                <!-- <p id="syuka_day">出荷日：<?= $selected_day; ?></p> -->
                 <p id="syuka_day">出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
+
                 <div class="souko_box">
                     <?php
                     // 配列内の要素をループしてボタンを生成
                     $idx = 0;
                     foreach ($arr_souko_data as $souko) {
-                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_name"] . '\', \'' . $souko["souko_code"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_name"] . '\'}">' . $souko["souko_name"] . '</button></div>';
+                        echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_code"] . '\', \'' . $souko["souko_name"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_code"] . '\'}">' . $souko["souko_name"] . '</button></div>';
                     }
                     ?>
                 </div>
@@ -214,54 +194,59 @@ if (empty($session_id)) {
                     <button @click="submitForm">次へ</button>
                 </div>
 
-                <!-- フッターメニュー -->
-                <footer class="footer-menu_fixed">
-                    <ul>
-                        <?php
-                        $urlBack = "./seven.php?selected_day=" . urlencode($selected_day);
-                        $urlReload = "./eight.php?selected_day=" . urlencode($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode=" . urlencode($selected_shippingcode);
-                        ?>
-                        <li><a href="<?php echo $urlBack; ?>">戻る</a></li>
-                        <li><a href="<?php echo $urlReload; ?>">更新</a></li>
-                    </ul>
-                </footer>
+
 
             </div>
         </div> <!-- END container -->
+
+
+        <div>
+            <!-- フッターメニュー -->
+            <footer class="footer-menu_fixed">
+                <ul>
+                    <?php $back_flg = 1; ?>
+                    <?php $url = "./first.php"; ?>
+                    <li><a href="<?php print h($url); ?>">戻る</a></li>
+                    <li><a href="#">更新</a></li>
+                </ul>
+            </footer>
+        </div>
+
     </div> <!-- END app -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script>
         new Vue({
             el: '#app',
             data: {
                 selectedValue: null, // 選択された値を保持
-                selectedCode: null,
+                selectedName: '',
                 error: false
             },
             methods: {
                 // ボタンがクリックされたら
-                handleButtonClick(value, code_val) {
+                handleButtonClick(value, name_val) {
                     this.selectedValue = value; // 選択した値を格納
-                    this.selectedCode =code_val;
+                    this.selectedName = name_val;
+
                     console.log("選択した値:::" + this.selectedValue);
-                    console.log("選択した値:::" + this.selectedCode);
+                    console.log("選択した値:::" + this.selectedName);
                 },
                 // フォームを送信する
                 submitForm() {
-                    const selectedSoukoName = this.selectedValue;
-                    const selectedSoukoCode = this.selectedCode;
+                    const selectedSouko = this.selectedValue;
+                    const selectedSouko_name = this.selectedName;
+
                     const selectedDay = '<?php echo $selected_day; ?>';
-                    const selectedShippingName = '<?php echo $selected_shippingname; ?>';
-                    const selectedShippingCode = '<?php echo $selected_shippingcode; ?>';
-                    if (selectedSoukoName === null) { // 倉庫が選択されていない場合
+                    if (selectedSouko === null) { // 倉庫が選択されていない場合
                         this.error = true; // エラーメッセージを表示
 
                     } else {
                         this.error = false; // エラーメッセージを非表示に
                         // get送信
-                        const url = `./nine.php?selected_day=${selectedDay}&selected_shippingname=${selectedShippingName}&selected_shippingcode=${selectedShippingCode}&selected_soukocode=${selectedSoukoCode}&selected_soukoname=${selectedSoukoName}`; // リダイレクト
+                        const url = `./third.
+php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}&souko_name=${selectedSouko_name}`; // リダイレクト
                         window.location.href = url;
                     }
                 }

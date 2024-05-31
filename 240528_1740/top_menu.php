@@ -11,14 +11,10 @@ session_start();
 $sid = session_id();
 $_SESSION["sid"] = session_id();
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // $submitted_token = $_POST['csrf_token'];
     $input_login_id = $_POST['input_login_id'];
-    $_SESSION['input_login_id'] = $input_login_id;
-} elseif (isset($_GET['back_menu'])) {
-    $input_login_id = $_GET['id'];
     $_SESSION['input_login_id'] = $input_login_id;
 } else {
     header("Location: index.php");
@@ -42,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="./css/third.css">
     <link rel="stylesheet" href="./css/top_menu.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>トップメニュー</title>
 </head>
@@ -52,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="#"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
@@ -65,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <a href="#"><img src="./img/page_img.png"></a>
+                <i class="fa-solid fa-thumbtack"></i>
             </span>
 
             <span class="page_title">
-                メニュー
+                ログイン
             </span>
         </div>
     </div>

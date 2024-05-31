@@ -1,28 +1,46 @@
-
-/* スマホ */
-@media only screen and (max-width: 768px) {
-
-    .unsou_box {
-        display: flex;
-        width: 95%;
-    }
-
-    .unsou_box > div:nth-child(1) {
-                    width: 45%;
-    }
-
-    .unsou_box > div:nth-child(2) {
-        width: 45%;
-    }
-
-    .unsou_box>div:nth-child(1) > button {
-        width: 95%;height: 5em;margin: 0 0 20px 0;
-    }
-
-    .unsou_box>div:nth-child(2) > button {
-        width: 95%;height: 5em;margin: 0 0 20px 0;
-    }
-
-
-
+.unsou_box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    /* ボタン間の間隔 */
 }
+
+.selected_unsou {
+    background-color: #007bff !important;
+    /* 選択されたボタンの背景色 */
+    color: #fff;
+    /* 選択されたボタンのテキスト色 */
+}
+
+.unsou_box button {
+    width: 100%;
+    /* ボタンの幅を100%に */
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.unsou_box button:hover {
+    background-color: #ddd;
+}
+
+#next_btn {
+    text-align: center;
+}
+
+#next_btn > button{
+    background-color: #3498db;
+        color: #fff;
+        padding: 20px 50px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 2.2em 0 0 0;
+        font-size: 1.12em;
+}
+
+
+

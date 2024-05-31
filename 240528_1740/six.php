@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 
-require(dirname(__FILE__) . "/class/function.php");
+require(dirname(__FILE__) . "\class/function.php");
 
 // セッションスタート
 session_start();
@@ -13,20 +13,11 @@ if (!isset($_SESSION["sid"])) {
     exit;
 }
 
-// === ログイン ID
-if (isset($_SESSION['input_login_id'])) {
-    $input_login_id = $_SESSION['input_login_id'];
-    dprint($input_login_id);
-}
-
 //出荷指示日時があるかどうかの判定
 $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
 
     $souko_Flg = $_GET['souko_Flg'];
-
-
-
 
     if ($souko_Flg == 0) {
         $GET_souko_Flg = 0;
@@ -39,7 +30,6 @@ session_regenerate_id(TRUE);
 $token_jim = uniqid('', true);
 //トークンをセッション変数にセット
 $_SESSION['token_jim'] = $token_jim;
-
 
 
 ?>
@@ -55,19 +45,19 @@ $_SESSION['token_jim'] = $token_jim;
     <!-- css -->
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/login.css">
-    <link rel="stylesheet" href="./css/third.css">
-    <link rel="stylesheet" href="./css/first.css">
+    <!-- <link rel="stylesheet" href="./css/third.css"> -->
+    <link rel="stylesheet" href="./css/six.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <!-- jQuery UI -->
-    <link rel="stylesheet" href="./css/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
 
 
     <!-- jQuery cdn -->
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>出荷日選択</title>
+    <title>ピッキング実績照会出荷日指定</title>
 </head>
 
 <body>
@@ -75,7 +65,7 @@ $_SESSION['token_jim'] = $token_jim;
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="./top_menu.php"><i class="fa-solid fa-house"></i></a>
             </span>
 
             <span class="App_name">
@@ -88,20 +78,20 @@ $_SESSION['token_jim'] = $token_jim;
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <a href="#"><img src="./img/page_img.png"></a>
+                <i class="fa-solid fa-thumbtack"></i>
             </span>
 
             <span class="page_title">
-                出荷日選択
+                ピッキング実績照会 出荷日選択
             </span>
         </div>
     </div>
 
     <div class="container" id="app">
-        <div class="content_top" id="first_content">
+        <div class="content_top" id="six_content">
 
 
-            <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01">
+            <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01" v-model="dayval">
 
             <div class="btn_01" id="day_search_submit_box">
                 <button id="day_search_submit" class="button_01" type="button" @click="submitForm">開始</button>
@@ -114,25 +104,26 @@ $_SESSION['token_jim'] = $token_jim;
                     出荷指示されていません。
                 </p>
             <?php endif; ?>
+            <!-- フッターメニュー -->
+            <footer class="footer-menu_fixed">
+                <ul>
+                    <li><a href="./top_menu.php">戻る</a></li>
+                    <li><a href="./six.php">更新</a></li>
+                    <!-- <li><button id="day_search_submit" type="button" @click="submitForm">次へ</button></li> -->
+                </ul>
+            </footer>
+
         </div>
+
+        
     </div> <!-- ================ END container =============== -->
 
-    <div>
-        <!-- フッターメニュー -->
-        <footer class="footer-menu_fixed">
-            <ul>
-                <?php $back_flg = 1; ?>
-                <?php $url = "./top_menu.php?back_menu=okok&id=" . $input_login_id; ?>
-                <li><a href="<?php print h($url); ?>">戻る</a></li>
-                <li><a href="#">更新</a></li>
-            </ul>
-        </footer>
-    </div>
 
 
     <!-- jQuery UI -->
-    <script src="./js/jquery-ui.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script type="text/javascript">
         (function($) {
@@ -174,19 +165,9 @@ $_SESSION['token_jim'] = $token_jim;
             });
 
 
-            // 現在の日付を取得
-            var today = new Date();
-            var day = String(today.getDate()).padStart(2, '0');
-            var month = String(today.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1する
-            var year = today.getFullYear();
-
-            // フォームに現在の日付を設定
-            var formattedDate = year + '年' + month + '月' + day + '日';
-            $("#datepicker").val(formattedDate);
-
-
             $("#day_search_submit").click(function() {
                 var selectedDate = $("#datepicker").val();
+                //var soukoFlg = <?php echo $GET_souko_Flg ?>;
                 // 日付をYYYY/MM/DD形式に整形
                 var formattedDate = selectedDate.replace(/年|月/g, '-').replace(/日/g, '');
 
@@ -194,7 +175,7 @@ $_SESSION['token_jim'] = $token_jim;
                     $(".error-message").show();
                 } else {
                     $(".error-message").hide();
-                    var url = "./second.php?selected_day=" + encodeURIComponent(formattedDate);
+                    var url = "./seven.php?selected_day=" + encodeURIComponent(formattedDate);
                     // リダイレクト
                     window.location.href = url;
                 }

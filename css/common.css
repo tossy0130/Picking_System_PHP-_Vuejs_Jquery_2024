@@ -247,8 +247,8 @@ body {
     
          .page_title {
              display: inline-block;
-             position: relative;
-             left: 5%;
+            position: relative;
+            left: -18%;
          }
     
          /*========== ヘッダー　01 END =========*/
@@ -265,11 +265,6 @@ body {
          .fa-thumbtack:before {
              content: "\f08d";
              color: #4b4b4b;
-         }
-    
-    
-         .page_title {
-             display: inline-block;
          }
     
          /* ピン　アイコン　span */
@@ -293,9 +288,30 @@ body {
              display: block;
              position: relative;top: 4px;
          }
-       
+         
+         /* =========== アイコン画像　home ========== */
+         /* アイコン画像 home a　*/
+         .home_icon_span > a {
+            display: inline-block;
+                position: relative;
+                left: -48%;
+         }
 
+        /* アイコン画像 home  img　*/
+        .home_icon_span > a > img {
+            width: 8%;
+            height: auto;
+        }
 
+        /* =========== アイコン画像　page ========== */
+        .home_sub_icon_span > a {
+
+        }
+
+        .home_sub_icon_span > a > img {
+                width: 6%;
+                height: auto;
+        }
 
 }
 
