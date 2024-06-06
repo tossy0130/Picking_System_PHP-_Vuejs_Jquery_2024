@@ -345,7 +345,11 @@ if (empty($session_id)) {
                     var count = values.length;
                     console.log("ボタンチェック:::" + count);
 
-                    if (count > 1) {
+                    // 同じ運送コードで複数対応
+                    var count_set_next_val = $('#selectedValues_set_next_val .set_next_val').length;
+                    console.log("個数を出力:::" + count_set_next_val); // コンソールに数を出力
+
+                    if (count > 1 || count_set_next_val > 1) {
                         $('#sendSelectedValues').attr('disabled', true).css({
                             'background-color': '#ccc',
                             'cursor': 'not-allowed'
@@ -396,8 +400,8 @@ if (empty($session_id)) {
                     var unsouCode = $(this).find('button').data('unsou-code');
                     var unsouName = $(this).find('button').data('unsou-name');
 
-                    $('#selectedUnsouCode').text(unsouCode);
-                    //  $('#selectedUnsouName').text(unsouName);
+                    $('#selectedUnsouCode').text(unsouCode); // 運送コード 
+                    $('#selectedUnsouName').text(unsouName); // 運送名
 
                     // 同じ値が存在する場合は処理を返す
                     // 運送コード表示

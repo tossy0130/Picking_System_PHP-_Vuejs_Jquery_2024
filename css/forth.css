@@ -226,6 +226,24 @@
                      display: none;
                  }
 
+                 /* 倉庫　画像 */
+                 .souko_icon_box img {
+                        width: 6%;
+                        height: auto;
+                 }
+
+                 /* 運送便 画像 */
+                 .unsou_icon_box img {
+                        width: 8%;
+                        height: auto;
+                 }  
+
+
+                 /* === ステータス判別 === */
+                 /* 作業中 */
+                 .sagyou_img_box > img {
+
+                 }
 
 
 } /* ================= END ================== */

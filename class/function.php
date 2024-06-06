@@ -89,7 +89,7 @@ function getCondition_Multiple($data)
 // === デバッグ用プリント
 function dprint($data)
 {
-    //    print($data);
+    print($data);
 }
 
 
