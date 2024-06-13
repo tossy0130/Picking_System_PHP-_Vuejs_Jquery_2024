@@ -54,6 +54,12 @@ oci_free_statement($stid);
 // 接続を閉じる
 oci_close($conn);
 
+// 2024/06/07
+$input_login_id = '';
+if (isset($_GET['back_index']) && $_GET['back_index'] === 'ok') {
+    $input_login_id = $_GET['id'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +117,9 @@ oci_close($conn);
                 <form id="loginForm" action="./top_menu.php" method="post">
                     <div class="top_input_box">
                         <div>
-                            <input type="number" class="index_text_box_01" name="input_login_id" id="input_login_id" placeholder="ログインIDを入力">
+                            <!-- 2024/06/07 -->
+                            <!-- <input type="number" class="index_text_box_01" name="input_login_id" id="input_login_id" placeholder="ログインIDを入力"> -->
+                            <input type="number" class="index_text_box_01" name="input_login_id" id="input_login_id" placeholder="ログインIDを入力" value="<?php echo htmlspecialchars($input_login_id, ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
 
 

@@ -35,10 +35,16 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
+        echo $selected_day;
     } else {
         // === トークンが無い場合
         header("Location: $err_url");
     }
+
+    // セッション削除
+    unset($_SESSION['souko_code']);
+    unset($_SESSION['souko_name']);
+    unset($_SESSION['selectedSouko']);
 
     // ============================= DB 処理 =============================
     // === 接続準備
@@ -97,7 +103,8 @@ if (empty($session_id)) {
     $souko_Flg = 0;
     if (empty($arr_souko_data)) {
         $souko_Flg = 0;
-        header("Location: ./first.php?souko_Flg={$souko_Flg}");
+        // 2024/06/12 該当しない出荷日をパラメータで渡す
+        header("Location: ./first.php?souko_Flg={$souko_Flg}&error_day={$selected_day}");
         exit(); // リダイレクト後にスクリプトの実行を終了するために必要
     } else {
         $souko_Flg = 1;
@@ -109,7 +116,12 @@ if (empty($session_id)) {
         // print($back_flg);
     }
 
-
+    // 戻るボタンを押したときに選択した日付を戻す
+    if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
+        $url = "first.php?back_first=ok&day=" . urlencode($selected_day);
+        header("Location: $url");
+        exit;
+    }
 
 
 
@@ -205,7 +217,7 @@ if (empty($session_id)) {
             <footer class="footer-menu_fixed">
                 <ul>
                     <?php $back_flg = 1; ?>
-                    <?php $url = "./first.php"; ?>
+                    <?php $url = "./first.php?back_first=ok&day=" . $selected_day; ?>
                     <li><a href="<?php print h($url); ?>">戻る</a></li>
                     <li><a href="#">更新</a></li>
                 </ul>
@@ -245,8 +257,7 @@ if (empty($session_id)) {
                     } else {
                         this.error = false; // エラーメッセージを非表示に
                         // get送信
-                        const url = `./third.
-php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}&souko_name=${selectedSouko_name}`; // リダイレクト
+                        const url = `./third.php?selectedSouko=${selectedSouko}&selected_day=${selectedDay}&souko_name=${selectedSouko_name}`; // リダイレクト
                         window.location.href = url;
                     }
                 }

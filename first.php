@@ -24,9 +24,8 @@ $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
 
     $souko_Flg = $_GET['souko_Flg'];
-
-
-
+    // 2024/06/12 該当しない出荷日を取得
+    $error_day = $_GET['error_day'];
 
     if ($souko_Flg == 0) {
         $GET_souko_Flg = 0;
@@ -40,7 +39,11 @@ $token_jim = uniqid('', true);
 //トークンをセッション変数にセット
 $_SESSION['token_jim'] = $token_jim;
 
-
+// 2024/06/07   戻るボタンを押した時に、日付を取得する。
+$selected_day = '';
+if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
+    $selected_day = $_GET['day'];
+}
 
 ?>
 
@@ -59,13 +62,19 @@ $_SESSION['token_jim'] = $token_jim;
     <link rel="stylesheet" href="./css/first.css">
 
     <link href="./css/all.css" rel="stylesheet">
+    <!-- <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet"> -->
 
     <!-- jQuery UI -->
+    <!-- <link rel="stylesheet" href="./css/jquery-ui.min.css"> -->
+<!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
+-->
     <link rel="stylesheet" href="./css/jquery-ui.min.css">
 
 
     <!-- jQuery cdn -->
     <script src="./js/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
 
     <title>出荷日選択</title>
 </head>
@@ -101,7 +110,7 @@ $_SESSION['token_jim'] = $token_jim;
         <div class="content_top" id="first_content">
 
 
-            <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01">
+            <input name="day_val" type="text" id="datepicker" class="text_box_tpl_01" value="<?php echo htmlspecialchars($selected_day, ENT_QUOTES, 'UTF-8'); ?>">
 
             <div class="btn_01" id="day_search_submit_box">
                 <button id="day_search_submit" class="button_01" type="button" @click="submitForm">開始</button>
@@ -114,6 +123,8 @@ $_SESSION['token_jim'] = $token_jim;
                     出荷指示されていません。
                 </p>
             <?php endif; ?>
+
+            <!-- <p id="error" style="color:red"></p> -->
         </div>
     </div> <!-- ================ END container =============== -->
 
@@ -122,9 +133,9 @@ $_SESSION['token_jim'] = $token_jim;
         <footer class="footer-menu_fixed">
             <ul>
                 <?php $back_flg = 1; ?>
-                <?php $url = "./top_menu.php?back_menu=okok&id=" . $input_login_id; ?>
+                <?php $url = "./top_menu.php?back_menu=ok&id=" . $input_login_id; ?>
                 <li><a href="<?php print h($url); ?>">戻る</a></li>
-                <li><a href="#">更新</a></li>
+                <li><a href="./first.php">更新</a></li>
             </ul>
         </footer>
     </div>
@@ -174,30 +185,74 @@ $_SESSION['token_jim'] = $token_jim;
             });
 
 
-            // 現在の日付を取得
-            var today = new Date();
-            var day = String(today.getDate()).padStart(2, '0');
-            var month = String(today.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1する
-            var year = today.getFullYear();
+            var login_id = "<?php echo isset($input_login_id) ? $input_login_id : ''; ?>";
+            var get_souko_flg = "<?php echo isset($GET_souko_Flg) ? $GET_souko_Flg : ''; ?>";
+            if (login_id != "" && get_souko_flg != 0) {
+                // 現在の日付を取得
+                var today = new Date();
+                var day = String(today.getDate()).padStart(2, '0');
+                var month = String(today.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1する
+                var year = today.getFullYear();
+                // フォームに現在の日付を設定
+                var formattedDate = year + '年' + month + '月' + day + '日';
+                $("#datepicker").val(formattedDate);
+            }
 
-            // フォームに現在の日付を設定
-            var formattedDate = year + '年' + month + '月' + day + '日';
-            $("#datepicker").val(formattedDate);
+
+            //2024/06/07    second.phpから戻ってきたときに元々設定していた日付を取得 
+            var back_date = "<?php echo isset($selected_day) ? $selected_day : ''; ?>";
+            if (back_date != "") {
+                // 日付文字列をDateオブジェクトに変換
+                var date = new Date(back_date);
+
+                // 年、月、日を取得
+                var year = date.getFullYear();
+                var month = String(date.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため+1
+                var day = String(date.getDate()).padStart(2, '0');
+
+                // フォームに現在の日付を設定
+                var formattedDate = year + '年' + month + '月' + day + '日';
+                $("#datepicker").val(formattedDate);
+            }
+
+            //2024/06/12    該当しない出荷日を入力した場合、入力した出荷日を設定しておく
+            var error_day = "<?php echo isset($error_day) ? $error_day : ''; ?>";
+            if (error_day != "") {
+                // 日付文字列をDateオブジェクトに変換
+                var date = new Date(error_day);
+
+                // 年、月、日を取得
+                var year = date.getFullYear();
+                var month = String(date.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため+1
+                var day = String(date.getDate()).padStart(2, '0');
+
+                // フォームに現在の日付を設定
+                var formattedDate = year + '年' + month + '月' + day + '日';
+                $("#datepicker").val(formattedDate);
+            }
 
 
             $("#day_search_submit").click(function() {
                 var selectedDate = $("#datepicker").val();
+
                 // 日付をYYYY/MM/DD形式に整形
                 var formattedDate = selectedDate.replace(/年|月/g, '-').replace(/日/g, '');
 
+                $("#datepicker").val(selectedDate);
                 if (selectedDate.trim() === '') {
                     $(".error-message").show();
+
                 } else {
                     $(".error-message").hide();
                     var url = "./second.php?selected_day=" + encodeURIComponent(formattedDate);
                     // リダイレクト
                     window.location.href = url;
                 }
+            });
+
+            // 「更新」ボタンを押した時の処理
+            $('#Kousin_Btn').on('click', function() {
+                location.reload();
             });
 
         })(jQuery);

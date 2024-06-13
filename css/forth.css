@@ -245,5 +245,22 @@
 
                  }
 
+                /* ============= リスト　表示 _default_root 用　=============*/
+
+                /* バラ数　など */
+                 .Font_Bold_default_root {
+                    font-size:14px;
+                    font-weight: 600;
+                    display: inline-block;
+                 }  
+
+                 /* 商品名 2 */
+                 .Shouhin_name_default_root {
+                    display: block;
+                        margin: 8px 0px;
+                        font-size: 13px;
+                        font-weight: 400;
+                 }
+
 
 } /* ================= END ================== */

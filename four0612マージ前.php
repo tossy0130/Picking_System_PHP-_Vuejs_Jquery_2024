@@ -299,9 +299,9 @@ if (empty($session_id)) {
         // === three.php からの 状態判別 用　パラメータ selectedToki_Code
     } else if ((isset($_GET['forth_pattern']) && $_GET['forth_pattern'] === "two")
         || isset($_SESSION['forth_pattern']) && $_SESSION['forth_pattern'] === "two"
-        //        || isset($_GET['five_back_button']) && !isset($_GET['sort_areaa']) && !isset($_GET['sort_areac'])
-        //        || isset($_GET['sort_key']) && isset($_GET['sort_areab']) || isset($_GET["show_all_flg"]) && $_GET["show_all_flg"] == 1
-        //        || isset($_GET["all_flg"]) && $_GET["all_flg"] == 1
+//        || isset($_GET['five_back_button']) && !isset($_GET['sort_areaa']) && !isset($_GET['sort_areac'])
+//        || isset($_GET['sort_key']) && isset($_GET['sort_areab']) || isset($_GET["show_all_flg"]) && $_GET["show_all_flg"] == 1
+//        || isset($_GET["all_flg"]) && $_GET["all_flg"] == 1
     ) {
 
         dprint("単数 運送コード 特記・備考あり" . "<br>");
@@ -560,10 +560,10 @@ if (empty($session_id)) {
     } else if ((isset($_GET['fukusuu_select']) && $_GET['fukusuu_select'] === '200')
         || isset($_SESSION['fukusuu_select']) && $_SESSION['fukusuu_select'] === '200'
         || isset($_GET['four_status']) && $_GET['four_status'] == 'multiple_sql_four'
-        //        || !isset($_GET['sort_areaa']) && !isset($_GET['sort_areab'])
-        //        || isset($_GET['sort_key']) && isset($_GET['sort_areac'])
-        //        || isset($_GET["show_all_flg"]) && $_GET["show_all_flg"] == 2
-        //        || isset($_GET["all_flg"]) && $_GET["all_flg"] == 2
+//        || !isset($_GET['sort_areaa']) && !isset($_GET['sort_areab'])
+//        || isset($_GET['sort_key']) && isset($_GET['sort_areac'])
+//        || isset($_GET["show_all_flg"]) && $_GET["show_all_flg"] == 2
+//        || isset($_GET["all_flg"]) && $_GET["all_flg"] == 2
     ) {
 
 
@@ -1369,7 +1369,7 @@ if (empty($session_id)) {
                                 }
 
                                 echo '<tr style="background: #99CCFF;">';
-                                echo '<td><span id="sagyou_now_text_ok" style="display:block;font-weight:bold;margin: 0 0 5px 0;">作業完了</span>' . $Picking_VAL['Tana_num'] . '</td>';
+                                echo '<td><span id="sagyou_now_text_ok">作業完了<i class="fa-regular fa-circle-stop"></i><br></span>' . $Picking_VAL['Tana_num'] . '</td>';
 
                                 echo '<td id="shouhin_num_box" class="shouhin_num_box">' .
                                     '<span class="Font_Bold_default_root">' . $Picking_VAL['Shouhin_num'] . '</span>' . "</td>";
@@ -1505,14 +1505,22 @@ if (empty($session_id)) {
                     var show_all_flg = "<?php echo isset($show_all_flg) ? $show_all_flg : ''; ?>";
                     var all_flg = "<?php echo isset($all_flg) ? $all_flg : ''; ?>";
 
-                    // 複数選択 2024/06/07
-                    var fukusuu_unsouo_num = "<?php echo isset($fukusuu_unsouo_num) ? $fukusuu_unsouo_num : ''; ?>";
+                    // 複数選択 2024/6/5
+                    var fukusuu_unsouo_num = "<?php echo isset($_GET['fukusuu_unsouo_num']) ? $fukusuu_unsouo_num : ''; ?>";
+                    //var fukusuu_select = "<?php echo isset($_GET['fukusuu_select']) ? $fukusuu_select : ''; ?>";
                     // 2024/06/12
                     var fukusuu_select = "<?php echo isset($fukusuu_select) ? $fukusuu_select : ''; ?>";
-                    var fukusuu_select_val = "<?php echo isset($fukusuu_select_val) ? $fukusuu_select_val : ''; ?>";
+                    var fukusuu_select_val = "<?php echo isset($_GET['fukusuu_select_val']) ? $fukusuu_select_val : ''; ?>";
+
+                    //var select_toki_code = "<?php echo isset($_GET['selectedToki_Code']) ? $selectedToki_Code : ''; ?>";
                     // 2024/06/12
                     var select_toki_code = "<?php echo isset($selectedToki_Code) ? $selectedToki_Code : ''; ?>";
-
+                    /* console.log("複数セレクト:" + fukusuu_select);
+                    console.log("特記:" + select_toki_code); */
+                    // === 戻ってきた　単数
+                    //return false;
+                    /* var default_root_sql_zensuu = "<?php echo isset($_GET['default_root_sql_zensuu']) ? $default_root_sql_zensuu : ''; ?>";
+                    console.log("出力01:::" + default_root_sql_zensuu); */
 
                     if (show_all_flg != "") {
                         // 選択条件分岐 2024/06/07 修正
@@ -1667,13 +1675,14 @@ if (empty($session_id)) {
                 var get_souko_name = '<?php echo $get_souko_name; ?>';
 
                 // 複数選択 2024/06/07
-                var fukusuu_unsouo_num = "<?php echo isset($fukusuu_unsouo_num) ? $fukusuu_unsouo_num : ''; ?>";
+                var fukusuu_unsouo_num = "<?php echo isset($_GET['fukusuu_unsouo_num']) ? $fukusuu_unsouo_num : ''; ?>";
+                //var fukusuu_select = "<?php echo isset($_GET['fukusuu_select']) ? $fukusuu_select : ''; ?>";
                 // 2024/06/12
                 var fukusuu_select = "<?php echo isset($fukusuu_select) ? $fukusuu_select : ''; ?>";
-                var fukusuu_select_val = "<?php echo isset($fukusuu_select_val) ? $fukusuu_select_val : ''; ?>";
+                var fukusuu_select_val = "<?php echo isset($_GET['fukusuu_select_val']) ? $fukusuu_select_val : ''; ?>";
                 // 2024/06/12
                 var select_toki_code = "<?php echo isset($selectedToki_Code) ? $selectedToki_Code : ''; ?>";
-
+                //var select_toki_code = "<?php echo isset($_GET['selectedToki_Code']) ? $selectedToki_Code : ''; ?>";
 
                 // 選択条件分岐 2024/06/07
                 if (fukusuu_select != "") {

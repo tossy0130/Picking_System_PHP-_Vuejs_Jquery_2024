@@ -2,9 +2,9 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "\conf.php";
-require_once(dirname(__FILE__) . "\class/init_val.php");
-require(dirname(__FILE__) . "\class/function.php");
+require __DIR__ . "/conf.php";
+require_once(dirname(__FILE__) . "/class/init_val.php");
+require(dirname(__FILE__) . "/class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -93,7 +93,8 @@ if (empty($session_id)) {
     $unsou_Flg = 0;
     if (empty($arr_unsou_data)) {
         $unsou_Flg = 0;
-        header("Location: ./six.php?unsou_Flg={$unsou_Flg}");
+        // 2024/06/12 該当しない出荷日をパラメータで渡す
+        header("Location: ./six.php?unsou_Flg={$unsou_Flg}&error_day={$selected_day}");
         exit(); // リダイレクト後にスクリプトの実行を終了するために必要
     } else {
         $unsou_Flg = 1;
@@ -115,7 +116,7 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会運送便選択</title>
 
@@ -126,7 +127,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><i class="fa-solid fa-house"></i></a>
+                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
@@ -139,11 +140,11 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <i class="fa-solid fa-thumbtack"></i>
+            <a href="#"><img src="./img/page_img.png"></a>
             </span>
 
             <span class="page_title">
-                ピッキング実績照会 運送便選択
+                運送便選択(ピッキング実績照会)
             </span>
         </div>
     </div>
@@ -179,15 +180,17 @@ if (empty($session_id)) {
             <!-- フッターメニュー -->
             <footer class="footer-menu_fixed">
                 <ul>
-                    <li><a href="six.php">戻る</a></li>
-                    <?php $url = "./seven.php?selected_day=" . urlencode($selected_day);?>
-                    <li><a href="<?php echo $url; ?>">更新</a></li>
+                    <?php $back_flg = 1; ?>
+                    <?php $url = "./six.php?back_six=ok&day=" . $selected_day; ?>
+                    <li><a href="<?php print h($url); ?>">戻る</a></li>
+                    <?php $url = "./seven.php?selected_day=" . UrlEncode_Val_Check($selected_day);?>
+                    <li><a href="<?php print $url; ?>">更新</a></li>
                 </ul>
             </footer>
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script>
         new Vue({

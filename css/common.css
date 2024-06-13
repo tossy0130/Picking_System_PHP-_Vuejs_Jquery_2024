@@ -1,5 +1,5 @@
 /* スマートフォンの場合 */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1500px) {
     html {
         font-size: 14px;
         /* スマートフォン用のルート要素のフォントサイズ */
@@ -8,18 +8,9 @@
     }
 }
 
-/* タブレットの場合 */
-@media only screen and (min-width: 601px) and (max-width: 1024px) {
-    html {
-        font-size: 15px;
-        /* タブレット用のルート要素のフォントサイズ */
-        letter-spacing: 0.12em;
-        line-height: 1.8em;
-    }
-}
 
 /* ====== スマホ ====== */
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1500px) {
 
 body {
     margin: 0;

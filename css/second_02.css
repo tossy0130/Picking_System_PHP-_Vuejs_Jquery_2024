@@ -1,3 +1,6 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 1500px) {
+
 .souko_box {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -24,7 +27,7 @@
 }
 
 .souko_box button:hover {
-    background-color: #ddd;
+    background-color: #666;
 }
 
 #syuka_day {
@@ -45,4 +48,6 @@
         cursor: pointer;
         margin: 2.2em 0 0 0;
         font-size: 1.12em;
+}
+
 }

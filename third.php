@@ -35,6 +35,20 @@ if (empty($session_id)) {
 
         $_SESSION['soko_name'] = $get_souko_name;
 
+        // === ********* four.php での　状態判別用　セッション削除 *********
+        // セッション変数を削除する
+
+        // 単数 , 特記・備考
+        unset($_SESSION['forth_pattern']); // four.php, five.php 状態判別用
+        unset($_SESSION['selectedToki_Code']);
+
+        // 複数
+        unset($_SESSION['back_multiple_sql']);
+        unset($_SESSION['fukusuu_select']); // four.php, five.php 状態判別用
+        unset($_SESSION['fukusuu_unsouo_num']);
+        unset($_SESSION['fukusuu_select_val']);
+        unset($_SESSION['back_multiple_sql']);
+
 
         // ============================= DB 処理 =============================
         // === 接続準備
@@ -43,36 +57,6 @@ if (empty($session_id)) {
         if (!$conn) {
             $e = oci_error();
         }
-
-        // 特記なし
-        /*
-        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-	                FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
-	                WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                        AND SK.倉庫Ｃ = SO.倉庫Ｃ
-                        AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                        AND SL.出荷元 = SM.出荷元Ｃ(+)
-	                    AND SJ.運送Ｃ = US.運送Ｃ
-	                    AND SJ.出荷日 = :GET_DATE
-                        AND SK.倉庫Ｃ = :GET_SOUKO
-                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                    ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名";
-        */
-
-        // 特記あり
-        //24/05/24
-        //        $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
-        //                    SM.出荷元名,SK.特記事項
-        //                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
-        //                  WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-        //                        AND SK.倉庫Ｃ = SO.倉庫Ｃ
-        //                        AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-        //                        AND SL.出荷元 = SM.出荷元Ｃ(+)
-        //                      AND SJ.運送Ｃ = US.運送Ｃ
-        //                      AND SJ.出荷日 = :GET_DATE
-        //                        AND SK.倉庫Ｃ = :GET_SOUKO
-        //                    GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
-        //                    ORDER BY SK.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US
@@ -254,13 +238,19 @@ if (empty($session_id)) {
             <hr>
 
             <!-- 選択した値表示 （備考・特記あり） -->
-            <div id="selectedValues_set_next_val_View_Tan">
-                <span style="display:inline-block;">■選択された値（単数便）</span>
+            <div id="selectedValues_set_next_val_View_Tan" style="margin: 15px 0 25px 0;">
+                <span class="third_view_midashi" style="display:block;">■選択(単数便)</span>
             </div>
 
+            <!-- 選択した値表示 運送便　複数 -->
+            <div id="selectedValues_set_next_val_View_UNSOU" style="margin: 15px 0 25px 0;">
+                <span class="third_view_midashi" style="display:block;">■選択(運送便 複数条件（特記・備考なし）)</span>
+            </div>
+
+
             <!-- 選択した値表示 （備考・特記あり） -->
-            <div id="selectedValues_set_next_val_View">
-                <span style="display:inline-block;">■選択された値</span>
+            <div id="selectedValues_set_next_val_View" style="margin: 15px 0 25px 0;">
+                <span class="third_view_midashi" style="display:block;">■選択(複数条件)</span>
             </div>
 
             <!--
@@ -269,6 +259,7 @@ if (empty($session_id)) {
             <div style="opacity: 0;">
                 <span id="op_01" style="display: inline-block;">複数選択</span>
                 <span id="fukusuu_select">：</span><br />
+                <span id="fukusuu_select_unsou"></span><br />
             </div>
 
             <!--
@@ -289,7 +280,7 @@ if (empty($session_id)) {
             <div id="selectedValues_set_next_val" style="opacity: 0;">
                 -->
             <div id="selectedValues_set_next_val">
-                <span style="display:inline-block;">■選択された値</span>
+                <span style="display:inline-block;">■選択(複数条件)</span>
             </div>
 
             <p id="err_text" style="color:red;text-align:center;"></p>
@@ -411,13 +402,20 @@ if (empty($session_id)) {
                         $('#fukusuu_select').append(unsouCode + ',');
                     }
 
-                    // 選択された、運送名を表示
-                    if ($('#selectedValues_set_next_val_View_Tan').text().includes(unsouName)) {
+                    // 運送名表示   2024/06/07
+                    if ($('#fukusuu_select_unsou').text().includes(unsouName)) {
                         return;
                     } else {
-                        $('#selectedValues_set_next_val_View_Tan').empty();
-                        $('#selectedValues_set_next_val_View_Tan').append('■選択された値（単数便）' +
-                            '<p><span class="tansou_select">運送便名</span>' + unsouName + '</p>');
+                        $('#fukusuu_select_unsou').append(unsouName + ' ');
+                    }
+
+
+
+                    // ******** 「表示」　選択された、運送便　複数表示 *******
+                    if ($('#selectedValues_set_next_val_View_UNSOU').text().includes(unsouName)) {
+                        return;
+                    } else {
+                        $('#selectedValues_set_next_val_View_UNSOU').append('<span class="unsou_name_v">' + unsouName + '</span>');
                     }
 
                     // === ボタンの状態を分岐
@@ -548,7 +546,8 @@ if (empty($session_id)) {
                             '&unsou_name=' + encodeURIComponent(unsou_name) +
                             '&day=' + encodeURIComponent(selectedDay) +
                             '&souko=' + encodeURIComponent(selectedSouko) +
-                            '&get_souko_name=' + encodeURIComponent(get_souko_name);
+                            '&get_souko_name=' + encodeURIComponent(get_souko_name) +
+                            '&forth_pattern=one';
                     } else {
                         // 特記・備考　あり
                         var url = './four.php?unsou_code=' + encodeURIComponent(unsou_code) +
@@ -556,7 +555,8 @@ if (empty($session_id)) {
                             '&day=' + encodeURIComponent(selectedDay) +
                             '&souko=' + encodeURIComponent(selectedSouko) +
                             '&get_souko_name=' + encodeURIComponent(get_souko_name) +
-                            '&selectedToki_Code=' + encodeURIComponent(tokiCode);
+                            '&selectedToki_Code=' + encodeURIComponent(tokiCode) +
+                            '&forth_pattern=two';
 
                     }
 
@@ -568,6 +568,7 @@ if (empty($session_id)) {
 
                     var unsou_code = $('#selectedUnsouCode').text();
                     var unsou_name = $('#selectedUnsouName').text();
+                    console.log(unsou_name);
 
                     // === エラー処理
                     if (unsou_code === "") {
@@ -576,7 +577,11 @@ if (empty($session_id)) {
                     }
 
                     var fukusuu_select_name = $('#fukusuu_select').text();
-                    console.log("fukusuu_select_name:::" + fukusuu_select_name)
+                    console.log(fukusuu_select_name);
+                    console.log("fukusuu_select_name:::" + fukusuu_select_name);
+
+                    var fukusuu_select_unsou_name = $('#fukusuu_select_unsou').text();
+                    console.log(fukusuu_select_unsou_name);
 
                     var arr_set_next_val = [];
                     // === 選択した値を取得
@@ -600,7 +605,8 @@ if (empty($session_id)) {
                     var selectedSouko = '<?php echo $selectedSouko; ?>';
                     var get_souko_name = '<?php echo $get_souko_name; ?>';
 
-                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name + '&fukusuu_unsouo_num=' + fukusuu_select_name + '&fukusuu_select=' + '200';
+                    //var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name + '&fukusuu_unsouo_num=' + fukusuu_select_name + '&fukusuu_unsouo_name=' + fukusuu_select_unsou_name + '&fukusuu_select=' + '200';
+                    var url = './four.php?unsou_code=' + unsou_code + '&unsou_name=' + fukusuu_select_unsou_name + '&day=' + selectedDay + '&souko=' + selectedSouko + '&get_souko_name=' + get_souko_name + '&fukusuu_unsouo_num=' + fukusuu_select_name + '&fukusuu_select=' + '200';
 
                     if (encodedValues != "") {
                         url += '&fukusuu_select_val=' + encodedValues; // 修正
@@ -618,7 +624,17 @@ if (empty($session_id)) {
                 $("#sendSelectedValues_clear").on('click', function() {
 
                     $("#selectedValues_set_next_val_View_Tan p").text("");
+                    $("#selectedValues_set_next_val_View_UNSOU .unsou_name_v").text("");
                     $("#selectedValues_set_next_val_View p").text("");
+
+                    // 隠しパラメータ
+                    $("#fukusuu_select").empty();
+                    $("#fukusuu_select_unsou").empty();
+                    $("#selectedValues_set_next_val").empty();
+                    $(".select_data_box").empty();
+
+                    // ボタンの背景色を元に戻す
+                    $('.dropdown_v button.color-changed').css('background-color', '#6d6666').removeClass('color-changed');
 
                     // === ボタンの状態を分岐
                     Button_Check();
@@ -627,6 +643,30 @@ if (empty($session_id)) {
                 });
 
             })
+
+            // ボタンがクリックされたときに色を変える
+            // ボタンがクリックされたときに色を変える
+            $('.dropdown_v button').on('click', function() {
+                var unsouCode = $(this).data('unsou-code');
+                var unsouName = $(this).data('unsou-name'); // 追加: 運送名を取得
+
+                // 既に選択されている場合は削除して色を元に戻す
+                if ($('#selectedValues_set_next_val_View_UNSOU').text().includes(unsouName)) {
+                    $('#selectedValues_set_next_val_View_UNSOU').find('p:contains(' + unsouName + ')').remove();
+                    $('button[data-unsou-code="' + unsouCode + '"]').css('background-color', '#6d6666'); // 色を元に戻す
+                    return;
+                } else {
+                    // 新しい選択を追加し、色を変更
+                    $('#selectedValues_set_next_val_View_UNSOU').empty();
+                    $('#selectedValues_set_next_val_View_UNSOU').append('<span class="third_view_midashi">■選択(単数便)</span>' +
+                        '<p><span class="tansou_select">運送便名</span>' + unsouName + '</p>');
+                    $('button[data-unsou-code="' + unsouCode + '"]').css('background-color', '#45a049'); // 色を変更
+                }
+            });
+
+
+
+
         })(jQuery);
     </script>
 

@@ -21,49 +21,6 @@
         color: #fff;
     }
 
-    /* ========== ヘッダーエリア 01 、倉庫、運送便  ============ */
-    /*========== ヘッダー　01 =========*/
-    /* .head_box {
-        background-color: #4b4b4b;
-        padding: 0.6em 0;
-        margin: 0;
-    }
-
-    .head_content {
-        text-align: center;
-        position: relative;
-    }
-
-    .head_01 {
-        display: flex;
-        margin: 0 0 1em 0;
-    }
-
-    .home_icon_span {
-        display: inline-block;
-        position: absolute;
-        left: 3%;
-    }
-
-    .fa-house:before {
-        content: "\f015";
-        color: #fff;
-    }
-
-    .App_name {
-        color: #fff;
-        font-weight: 800;
-        font-size: 1.2em;
-    }
-
-    .page_title {
-        display: inline-block;
-        position: relative;
-        left: 5%;
-    } */
-
-    /*========== ヘッダー　01 END =========*/
-
     /*========== ヘッダー　02 =========*/
     .head_box_02 {
         background-color: #D4D7D7;
@@ -87,16 +44,6 @@
         position: relative;
         left: 3%;
     }
-        
-    .souko_icon_box {
-        display: block;
-    }
-
-    .unsou_text_box {
-        display: block;
-    }
-
-    
 
     .bikotokki_box_v {
         display: grid;
@@ -113,7 +60,7 @@
 
     .bikotokki_box_v button {
         width: 100%;
-        padding: 10px;
+        padding: 0.5em 0 0.5em 0;
         font-size: 16px;
         border: none;
         background-color: #6d6666;
@@ -232,9 +179,18 @@
 
         }
 
-    .sousuu_NUM {
-
+    /* 倉庫　画像 */
+    .souko_icon_box img {
+        width: 6%;
+        height: auto;
     }
+
+    /* 運送便 画像 */
+    .unsou_icon_box img {
+            width: 8%;
+            height: auto;
+    }  
+
 
     /* 備考 */
     .nine_bikou_01 {
@@ -243,7 +199,7 @@
     }
 
     /* 特記 */
-    .nene_tokki_01 {
+    .nine_tokki_01 {
             font-size: 12px;
             padding: 0 0 0 15px;
     }

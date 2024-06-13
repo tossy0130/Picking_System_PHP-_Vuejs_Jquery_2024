@@ -2,10 +2,10 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "\conf.php";
+require __DIR__ . "/conf.php";
 
-require_once(dirname(__FILE__) . "\class/init_val.php");
-require(dirname(__FILE__) . "\class/function.php");
+require_once(dirname(__FILE__) . "/class/init_val.php");
+require(dirname(__FILE__) . "/class/function.php");
 
 // === 外部定数セット
 $err_url = Init_Val::ERR_URL;
@@ -155,7 +155,7 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="./css/all.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会倉庫選択</title>
 
@@ -167,7 +167,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><i class="fa-solid fa-house"></i></a>
+                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
@@ -180,11 +180,11 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-                <i class="fa-solid fa-thumbtack"></i>
+            <a href="#"><img src="./img/page_img.png"></a>
             </span>
 
             <span class="page_title">
-                ピッキング実績照会 倉庫選択
+                倉庫選択(ピッキング実績照会)
             </span>
         </div>
     </div>
@@ -230,7 +230,7 @@ if (empty($session_id)) {
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <script>
         new Vue({

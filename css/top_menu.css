@@ -1,5 +1,5 @@
 /* ====== スマホ ====== */
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1500px) {
 
     .login_view {
         border-bottom: 3px solid #ccc;

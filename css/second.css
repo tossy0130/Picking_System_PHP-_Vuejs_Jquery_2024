@@ -1,5 +1,5 @@
 /* ====== スマホ ====== */
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1500px) {
 
     .souko_box {
         display: flex;

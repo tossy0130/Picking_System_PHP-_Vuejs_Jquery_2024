@@ -2,10 +2,10 @@
 
 ini_set('display_errors', 1);
 
-require __DIR__ . "\conf.php";
+require __DIR__ . "/conf.php";
 
-require_once(dirname(__FILE__) . "\class/init_val.php");
-require(dirname(__FILE__) . "\class/function.php");
+require_once(dirname(__FILE__) . "/class/init_val.php");
+require(dirname(__FILE__) . "/class/function.php");
 
 
 // === 外部定数セット
@@ -317,12 +317,13 @@ if (empty($session_id)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="./css/nine.css">
+
     <link rel="stylesheet" href="./css/common.css">
 
+    
     <link href="./css/all.css" rel="stylesheet">
-
     <!-- jQuery cdn -->
-    <script src="./js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <title>ピッキング実績照会照会画面</title>
 
@@ -339,7 +340,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><i class="fa-solid fa-house"></i></a>
+                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
@@ -352,7 +353,7 @@ if (empty($session_id)) {
         <div class="head_box_02">
             <div class="head_content_02">
                 <span class="home_sub_icon_span">
-                    <i class="fa-solid fa-thumbtack"></i>
+                <a href="#"><img src="./img/page_img.png"></a>
                 </span>
 
                 <span class="page_title">
@@ -366,7 +367,9 @@ if (empty($session_id)) {
                 <div class="head_01">
 
                     <div>
-                        <i class="fa-solid fa-warehouse"></i>
+                        <span class="souko_icon_box">
+                            <img src="./img/souko_img.png">
+                        </span>
                         <span class="souko_icon_box">
                             <?php echo h($selected_soukoname); ?>
                         </span>
@@ -374,7 +377,7 @@ if (empty($session_id)) {
 
                     <div>
                         <span class="unsou_icon_box">
-                            <i class="fa-solid fa-truck"></i>
+                            <img src="./img/unsou_img.png">
                         </span>
 
                         <span class="unsou_text_box">
@@ -439,33 +442,48 @@ if (empty($session_id)) {
                         <?php
                         if (!isset($_GET['detail_biko']) || !isset($_GET['detail_tokki'])) {
                             foreach ($arr_Picking_DATA as $Picking_VAL) {
+                                if (mb_strlen($Shouhin_name) >= 60) {
+                                    // === 40バイトで分ける
+                                    // 商品名
+                                    $shouhin_name_part1 = mb_substr($Shouhin_name, 0, 20);
+                                    // 品番
+                                    $shouhin_name_part2 = mb_substr($Shouhin_name, 20);
                                     echo '<tr>';
-                                    echo '<td>品名: ' . $Picking_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
+                                    //echo '<td><span>品名:' . '</span>' . '<span class="shouhin_name">' . $Picking_VAL['Shouhin_name'] . '</span>' . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
+                                    echo '<td>品名: ' . $shouhin_name_part1 . '<br>' . $shouhin_name_part2 . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
                                     echo '</tr>';
+                                } else {
+                                    echo '<tr>';
+                                    echo '<td><span>品名:' . '</span>' . '<span class="shouhin_name">' . $Picking_VAL['Shouhin_name'] . '</span>' . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
+                                    //echo '<td>品名: ' . $shouhin_name_part1 . '<br>' . $shouhin_name_part2 . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
+                                    echo '</tr>';
+                                }
+                                
+                                
                             }
                         } else {
                             if ($_GET['detail_biko'] != 'ー' && $_GET['detail_tokki'] != 'ーーー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {
                                     echo '<tr>';
-                                    echo '<td>品名: ' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span><span style="display:inline-block;position:relative;left:32%"> 備考:</span>' . '<span style="display:inline-block;position:relative;left:32%">' . $Get_VAL['shipping_moto_name'] . '</span></span>' . '<span style=float:right;>特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
+                                    echo '<td>品名:' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span><span style="display:inline-block;position:relative;left:32%"> 備考:</span>' . '<span style="display:inline-block;position:relative;left:32%">' . $Get_VAL['shipping_moto_name'] . '</span></span>' . '<span style=float:right;>特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
                             } else if ($_GET['detail_biko'] != 'ー' && $_GET['detail_tokki'] == 'ーーー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {    
                                     echo '<tr>';
-                                    echo '<td>品名: ' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 備考:' . $Get_VAL['shipping_moto_name'] . '</span>' . '</td>';
+                                    echo '<td>品名:' . $Get_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 備考:' . $Get_VAL['shipping_moto_name'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
                             } else if ($_GET['detail_tokki'] != 'ーーー' && $_GET['detail_biko'] == 'ー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {
                                     echo '<tr>';
-                                    echo '<td>品名: ' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
+                                    echo '<td>品名:' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>' . '<span style="float: right;"> 特記:' . $Get_VAL['Toki_Zikou'] . '</span>' . '</td>';
                                     echo '</tr>';
                                 }
                             } else if ($_GET['detail_biko'] == 'ー' && $_GET['detail_tokki'] == 'ーーー') {
                                 foreach ($arr_Picking_DATA as $Get_VAL) {
                                     echo '<tr>';
-                                    echo '<td>品名: ' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>';
+                                    echo '<td>品名:' . $Get_VAL['Shouhin_name']  . '<span style="float: right;"> 総数:' . $Get_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Get_VAL['shouhin_JAN'] . '</span>';
                                     echo '</tr>';
                                 }
                             }
@@ -486,10 +504,10 @@ if (empty($session_id)) {
         <footer class="footer-menu">
             <ul>
                 <?php $back_flg = 1; ?>
-                <?php $url = "./eight.php?selected_day=" . urlencode($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . urlencode($selected_shippingcode); ?>
+                <?php $url = "./eight.php?selected_day=" . UrlEncode_Val_Check($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . UrlEncode_Val_Check($selected_shippingcode); ?>
                 <li><a href="<?php echo $url; ?>">戻る</a></li>
                 <!-- <li><a href="" id="Kousin_Btn">更新</a></li> -->
-                <?php $url = "./nine.php?selected_day=" . urlencode($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . urlencode($selected_shippingcode) . "&selected_soukocode=" . urlencode($selected_soukocode) . "&selected_soukoname=" . urlencode($selected_soukoname); ?>
+                <?php $url = "./nine.php?selected_day=" . UrlEncode_Val_Check($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . UrlEncode_Val_Check($selected_shippingcode) . "&selected_soukocode=" . UrlEncode_Val_Check($selected_soukocode) . "&selected_soukoname=" . UrlEncode_Val_Check($selected_soukoname); ?>
                 <li><a href="<?php echo $url; ?>">更新</a></li>
             </ul>
         </footer>
@@ -497,7 +515,7 @@ if (empty($session_id)) {
 
     </div> <!-- ======== END app ========= -->
 
-    <script src="./js/vue@2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script>
         new Vue({
             el: '#app',
@@ -655,11 +673,6 @@ if (empty($session_id)) {
                         //$(this).focus();
                     }
                 });
-
-                // 「更新」ボタンを押した時の処理
-                /* $('#Kousin_Btn').on('click', function() {
-                    location.reload();
-                }); */
 
             });
         })(jQuery);

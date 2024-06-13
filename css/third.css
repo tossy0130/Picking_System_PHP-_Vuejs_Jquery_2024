@@ -1,6 +1,6 @@
 
 /* スマホ */
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1500px) {
 
             .souko_box_v {
                     display: grid;
@@ -208,5 +208,22 @@
                                 font-size: 0.3px;
                                 display: none;
                         }
+
+                       /* ======== 表示用 =========== */ 
+
+                        /*  表示用　運送名 */
+                        .unsou_name_v {
+                            margin: 0 5px;
+                            display: inline-block;
+                        }
+
+                    /* 表示用　見出し */
+                    .third_view_midashi {
+                        padding: 0px 0 5px 10px;
+                            border-left: 10px solid rgb(69, 160, 73);
+                            margin: 10px 0 10px 10px;
+                            border-bottom: 2px solid rgb(69, 160, 73);
+                            width: 65%;
+                    }   
 
 }
