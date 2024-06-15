@@ -75,8 +75,6 @@ if (empty($session_id)) {
     dprintBR($_SESSION['forth_pattern']);
     dprintBR($_SESSION['fukusuu_select']);
 
-
-
     // 2024/06/07 修正
     // ==========================================================
     // ================= 通常処理　（運送単数） =================
@@ -904,8 +902,12 @@ if (empty($session_id)) {
             $_SESSION['soko_name'] = $get_souko_name;
             //    print($_SESSION['soko_name'] . "02");
         }
+    } else {
+      //状態異常 24/06/15
+      //警告表示(未設定)
+      header("Location: index.php");
+      exit;
     } // ================================================== END 
-
 
     if (isset($_GET['back_flg'])) {
         $back_flg = $_GET['back_flg'];
@@ -920,7 +922,7 @@ if (empty($session_id)) {
         //    print($_GET['scan_b'] . "ここ");
     }
 
-
+/*** 不要のため削除 24/06/15
     // ============================= HTPK テーブル 処理 =============================
     // === 接続準備
     $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
@@ -955,10 +957,11 @@ if (empty($session_id)) {
         );
     }
 
-    // var_dump($arr_Zumi_DATA);
+    //var_dump($arr_Zumi_DATA);
 
     oci_free_statement($stid);
     oci_close($conn);
+***/
 }
 
 ?>

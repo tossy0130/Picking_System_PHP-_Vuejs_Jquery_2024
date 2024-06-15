@@ -16,7 +16,6 @@ if (!isset($_SESSION["sid"])) {
 // === ログイン ID
 if (isset($_SESSION['input_login_id'])) {
     $input_login_id = $_SESSION['input_login_id'];
-    dprint($input_login_id);
 }
 
 //出荷指示日時があるかどうかの判定
@@ -24,7 +23,6 @@ $GET_souko_Flg = 200;
 if (isset($_GET['souko_Flg'])) {
 
     $souko_Flg = $_GET['souko_Flg'];
-    // 2024/06/12 該当しない出荷日を取得
     $error_day = $_GET['error_day'];
 
     if ($souko_Flg == 0) {
@@ -39,7 +37,6 @@ $token_jim = uniqid('', true);
 //トークンをセッション変数にセット
 $_SESSION['token_jim'] = $token_jim;
 
-// 2024/06/07   戻るボタンを押した時に、日付を取得する。
 $selected_day = '';
 if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
     $selected_day = $_GET['day'];
@@ -62,19 +59,11 @@ if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
     <link rel="stylesheet" href="./css/first.css">
 
     <link href="./css/all.css" rel="stylesheet">
-    <!-- <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet"> -->
-
-    <!-- jQuery UI -->
-    <!-- <link rel="stylesheet" href="./css/jquery-ui.min.css"> -->
-<!--
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
--->
+    
     <link rel="stylesheet" href="./css/jquery-ui.min.css">
-
 
     <!-- jQuery cdn -->
     <script src="./js/jquery.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
 
     <title>出荷日選択</title>
 </head>
@@ -124,7 +113,6 @@ if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
                 </p>
             <?php endif; ?>
 
-            <!-- <p id="error" style="color:red"></p> -->
         </div>
     </div> <!-- ================ END container =============== -->
 
@@ -198,8 +186,6 @@ if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
                 $("#datepicker").val(formattedDate);
             }
 
-
-            //2024/06/07    second.phpから戻ってきたときに元々設定していた日付を取得 
             var back_date = "<?php echo isset($selected_day) ? $selected_day : ''; ?>";
             if (back_date != "") {
                 // 日付文字列をDateオブジェクトに変換
@@ -215,7 +201,6 @@ if (isset($_GET['back_first']) && $_GET['back_first'] === 'ok') {
                 $("#datepicker").val(formattedDate);
             }
 
-            //2024/06/12    該当しない出荷日を入力した場合、入力した出荷日を設定しておく
             var error_day = "<?php echo isset($error_day) ? $error_day : ''; ?>";
             if (error_day != "") {
                 // 日付文字列をDateオブジェクトに変換

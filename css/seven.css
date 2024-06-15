@@ -1,3 +1,6 @@
+/* ====== スマホ ====== */
+@media only screen and (max-width: 1500px) {
+    
 .unsou_box {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -29,6 +32,10 @@
 
 #next_btn {
     text-align: center;
+    position: fixed;
+    z-index: 999999;
+    bottom: 70px;
+    left: 42%;
 }
 
 #next_btn > button{
@@ -39,8 +46,6 @@
         border-radius: 5px;
         cursor: pointer;
         margin: 2.2em 0 0 0;
-        font-size: 1.12em;
+        font-size: 1.10em;
 }
-
-
-
+}

@@ -41,17 +41,6 @@ if (empty($session_id)) {
         $e = oci_error();
     }
 
-    // 2024/05/28
-    /* $sql = "SELECT SK.出荷日,SK.運送Ｃ,US.運送略称
-                FROM SJTR SJ,SKTR SK,USMF US, HTPK PK
-                WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                AND SK.運送Ｃ = US.運送Ｃ
-                AND SK.運送Ｃ = PK.運送Ｃ
-                AND SK.出荷日 = :POST_DATE
-                AND PK.処理Ｆ = 9
-                GROUP BY SK.出荷日,SK.運送Ｃ,US.運送略称
-                ORDER BY SK.運送Ｃ"; */
-    // 2024/05/29
     $sql = "SELECT SJ.出荷日,SJ.運送Ｃ,US.運送略称
             FROM SJTR SJ,SKTR SK,USMF US, HTPK PK, SLTR SL
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -93,7 +82,7 @@ if (empty($session_id)) {
     $unsou_Flg = 0;
     if (empty($arr_unsou_data)) {
         $unsou_Flg = 0;
-        // 2024/06/12 該当しない出荷日をパラメータで渡す
+
         header("Location: ./six.php?unsou_Flg={$unsou_Flg}&error_day={$selected_day}");
         exit(); // リダイレクト後にスクリプトの実行を終了するために必要
     } else {
@@ -116,7 +105,7 @@ if (empty($session_id)) {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    <link href="./css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会運送便選択</title>
 
@@ -190,7 +179,7 @@ if (empty($session_id)) {
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="./js/vue@2.js"></script>
 
     <script>
         new Vue({
@@ -205,8 +194,6 @@ if (empty($session_id)) {
                 handleButtonClick(value, code_val) {
                     this.selectedValue = value; // 選択した値を格納
                     this.selectedCode = code_val;
-                    console.log("選択した値:::" + this.selectedValue);
-                    console.log("選択した値:::" + this.selectedCode);
                 },
                 // フォームを送信する
                 submitForm() {

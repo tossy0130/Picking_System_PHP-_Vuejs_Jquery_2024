@@ -238,19 +238,27 @@ if (empty($session_id)) {
             <hr>
 
             <!-- 選択した値表示 （備考・特記あり） -->
+
+            <div id="selectedValues_set_next_val_View_Tan" style="margin: 15px 0 25px 0;">
+                <span class="third_view_midashi_01" style="display:block;">■選択(単数選択)</span>
+                <div id="singleSelectionContent"></div>
+            </div>
+
+            <!--
             <div id="selectedValues_set_next_val_View_Tan" style="margin: 15px 0 25px 0;">
                 <span class="third_view_midashi" style="display:block;">■選択(単数便)</span>
             </div>
+                -->
 
             <!-- 選択した値表示 運送便　複数 -->
             <div id="selectedValues_set_next_val_View_UNSOU" style="margin: 15px 0 25px 0;">
-                <span class="third_view_midashi" style="display:block;">■選択(運送便 複数条件（特記・備考なし）)</span>
+                <span class="third_view_midashi" style="display:block;">■選択(複数条件, 運送便 )</span>
             </div>
 
 
             <!-- 選択した値表示 （備考・特記あり） -->
             <div id="selectedValues_set_next_val_View" style="margin: 15px 0 25px 0;">
-                <span class="third_view_midashi" style="display:block;">■選択(複数条件)</span>
+                <span class="third_view_midashi" style="display:block;">■選択(複数条件, 備考・特記)</span>
             </div>
 
             <!--
@@ -329,9 +337,9 @@ if (empty($session_id)) {
 
                 // === ボタンの状態判別
                 function Button_Check() {
-                    var text = $('#fukusuu_select').text();
+                    var text = $('#fukusuu_select').text().trim();
                     // 末尾のカンマを削除して分割
-                    var values = text.replace(/,$/, '').split(',');
+                    var values = text.replace(/,$/, '').split(',').filter(Boolean);
                     // 配列の長さを取得
                     var count = values.length;
                     console.log("ボタンチェック:::" + count);
@@ -354,6 +362,12 @@ if (empty($session_id)) {
                         // エラーメッセージを非表示
                         $("#err_text").text("");
 
+                        // === 表示エリア　表示　非表示
+                        $('#selectedValues_set_next_val_View_UNSOU').show();
+                        $('#selectedValues_set_next_val_View').show();
+                        $('#selectedValues_set_next_val_View_Tan').hide();
+
+                        // ==================== 単層便  有効 =====================
                     } else {
                         $('#sendSelectedValues').attr('disabled', false).css({
                             'background-color': '#3498db',
@@ -367,9 +381,56 @@ if (empty($session_id)) {
 
                         $("#err_text").text("");
 
+                        // === 表示エリア　表示　非表示
+                        $('#selectedValues_set_next_val_View_Tan').show();
+                        $('#selectedValues_set_next_val_View_UNSOU').hide();
+                        $('#selectedValues_set_next_val_View').hide();
+
                     }
 
-                }
+                    // =================================================
+                    // ========== 色が変え残った、ボタン対策  & 初期化==============
+                    // ==================================================
+                    // === 運送便が選択されていない状態の時は、初期化
+                    if ($("#selectedValues_set_next_val_View_UNSOU p").length == 0 && $('#selectedValues_set_next_val_View p').length == 0) {
+
+                        // 隠しパラメータをクリア
+                        $("#fukusuu_select").empty();
+                        $("#fukusuu_select_unsou").empty();
+
+                        $(".select_data_box").empty();
+
+                        $("#fukusuu_select").text("");
+                        $("#selectedUnsouCode").text("");
+                        $("#selectedUnsouName").text("");
+
+                        // 親のボタンの色を戻す
+                        $('.dropdown_v').find('button.dropbtn_v').each(function() {
+                            $(this).css('background-color', '#6d6666').removeClass('color-changed');
+                        });
+
+                    }
+                    /*else if ($("#selectedValues_set_next_val_View_UNSOU p").length == 0 && $('#selectedValues_set_next_val_View p').length != 0) {
+
+                                           // === ボックスに残っている　値
+                                           $("#selectedValues_set_next_val_View > div > p > span.view_item_02_val").each(function() {
+                                               var unsouCode = $(this).text().trim(); // 運送便コードを取得
+
+                                               // 対応する運送便コードのボタンの色を変える
+                                               $('.dropdown_v[data-menuid]').each(function() {
+                                                   var menuId = $(this).data('menuid');
+                                                   if (menuId == unsouCode) {
+                                                       $(this).find('button.dropbtn_v').css('background-color', '#45a049').addClass('color-changed');
+                                                   }
+                                               });
+                                           });
+                                       } else {
+                                        
+
+                                       }
+                                       */
+
+                } // =============================== END function
 
                 // === ボタンの状態を分岐
                 Button_Check();
@@ -391,32 +452,29 @@ if (empty($session_id)) {
                     var unsouCode = $(this).find('button').data('unsou-code');
                     var unsouName = $(this).find('button').data('unsou-name');
 
-                    $('#selectedUnsouCode').text(unsouCode); // 運送コード 
-                    $('#selectedUnsouName').text(unsouName); // 運送名
-
-                    // 同じ値が存在する場合は処理を返す
-                    // 運送コード表示
+                    // 運送名表示   2024/06/07
+                    // 運送コードの表示と重複削除
                     if ($('#fukusuu_select').text().includes(unsouCode)) {
-                        return;
+                        // 既に選択されている場合は削除
+                        var fukusuuText = $('#fukusuu_select').text();
+                        var newText = fukusuuText.replace(new RegExp(unsouCode + ',', 'g'), '');
+                        $('#fukusuu_select').text(newText);
                     } else {
+                        // 新しい選択を追加
                         $('#fukusuu_select').append(unsouCode + ',');
                     }
 
-                    // 運送名表示   2024/06/07
+                    // 運送名の表示と重複削除
                     if ($('#fukusuu_select_unsou').text().includes(unsouName)) {
-                        return;
+                        // 既に選択されている場合は削除
+                        var unsouNameText = $('#fukusuu_select_unsou').text();
+                        var newUnsouText = unsouNameText.replace(new RegExp(unsouName + ' ', 'g'), '');
+                        $('#fukusuu_select_unsou').text(newUnsouText);
                     } else {
+                        // 新しい選択を追加
                         $('#fukusuu_select_unsou').append(unsouName + ' ');
                     }
 
-
-
-                    // ******** 「表示」　選択された、運送便　複数表示 *******
-                    if ($('#selectedValues_set_next_val_View_UNSOU').text().includes(unsouName)) {
-                        return;
-                    } else {
-                        $('#selectedValues_set_next_val_View_UNSOU').append('<span class="unsou_name_v">' + unsouName + '</span>');
-                    }
 
                     // === ボタンの状態を分岐
                     Button_Check();
@@ -427,6 +485,7 @@ if (empty($session_id)) {
                 var selectedValues = [];
                 var selectedValues_view = [];
 
+                // ====================================================== プルダウン タップ
                 $('.dropdown-content_v button').on('click', function() {
 
                     var data_value = $(this).attr("data-value");
@@ -442,15 +501,19 @@ if (empty($session_id)) {
                     var unsouCode_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-code');
                     var unsouName_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-name');
 
-                    console.log("詳細コード:", selected_Detail_Code);
-                    console.log("詳細名:", selectedUnsou_Detail_Name);
-                    console.log("特記事項:", selectedUnsou_Detail_tokki);
-                    console.log("運送コード:", unsouCode_m);
-                    console.log("運送名:", unsouName_m);
+                    // 親のボタンの色を変える
+                    $(this).closest('.dropdown_v').find('button.dropbtn_v').css('background-color', '#45a049').addClass('color-changed');
 
-
+                    // === 単数、特記・備考
                     $('#selectedToki_Code').text(unsouName_m + ":" + unsouCode_m + ":" +
                         selected_Detail_Code + ":" + selectedUnsou_Detail_tokki);
+
+                    console.log("テスト：：：特記コード取得：：：" + $('#selectedToki_Code').text());
+
+                    // === 上の階層の、ボタンを押した時の リセット
+                    // 倉庫コードを空にする
+                    $("#selectedUnsouCode").empty();
+                    $("#selectedUnsouName").empty();
 
 
                     var newValue = unsouName_m + ':' + unsouCode_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_tokki + ',';
@@ -463,10 +526,13 @@ if (empty($session_id)) {
                         '<span class="view_item_03">備考</span><span class="view_item_03_val">' + selected_Detail_Code + '</span>' +
                         '<span class="view_item_04">特記</span><span class="view_item_04_val">' + selectedUnsou_Detail_tokki + '</span></p>';
 
+                    console.log("selectedValues_set_next_valへ値を入れる");
+
 
                     // 重複を削除
+                    var arr_fukusu_cut_hantei_val = [];
                     $("#selectedValues_set_next_val .set_next_val").each(function() {
-                        var currentText = $(this).text();
+                        var currentText = $(this).text().trim();
                         if (currentText === newValue) {
                             $(this).remove();
                             selectedValues = selectedValues.filter(function(value) {
@@ -486,10 +552,48 @@ if (empty($session_id)) {
                     }
 
 
+                    // *********「複数用」 データ処理 　単層便 削除処理　追加 24_0614 *********
+                    // 最初の:から次の:までの文字列を取得する
+                    $("#selectedValues_set_next_val .set_next_val").each(function() {
+                        var currentText = $(this).text().trim();
+                        var startIndex = currentText.indexOf(':');
+                        if (startIndex !== -1) {
+                            startIndex++; // :の次の文字の位置
+                            var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+                            if (endIndex !== -1) {
+                                var extractedString = currentText.substring(startIndex, endIndex);
+                                arr_fukusu_cut_hantei_val.push(extractedString);
+                                console.log("最初の:から次の:までの文字列:", arr_fukusu_cut_hantei_val);
+                            }
+                        }
+                    });
+
+                    // *************************** 複数セレクト　用　 処理　追加 24_0614
+                    // === 24, 33, 56, データ形式
+                    var fukusuu_values = $('#fukusuu_select').text().trim().split(',').filter(Boolean);
+
+                    arr_fukusu_cut_hantei_val.forEach(function(code) {
+                        code = code.trim();
+
+                        // fukusuu_values 配列内の各値でループ処理して一致する値を削除
+                        fukusuu_values = fukusuu_values.filter(function(fukusuu_val) {
+                            return fukusuu_val.trim() !== code;
+                        });
+                    });
+
+                    // 削除後の値を再度fukusuu_selectにセット
+                    $('#fukusuu_select').text(fukusuu_values.join(',') + (fukusuu_values.length > 0 ? ',' : ''));
+
+                    console.log("追加 削除処理後:::" + $('#fukusuu_select').text());
+                    // *************************** 複数セレクト　用　 処理　追加 24_0614 END
+
+
+                    // *********「複数用」 データ処理 　単層便 削除処理　追加 24_0614 END *********
+                    // 最初の:から次の:までの文字列を取得する
 
                     // === 表示用 （重複を削除）
                     var valueFound_02 = false;
-                    $("#selectedValues_set_next_val_View .set_next_val_view").each(function() {
+                    $('#selectedValues_set_next_val_View .set_next_val_view').each(function() {
                         var currentText = $(this).html();
                         if (currentText === newValue_VIEW) {
                             $(this).remove();
@@ -509,17 +613,82 @@ if (empty($session_id)) {
                         console.log("selectedValues_viewに既に存在:", newValue_VIEW);
                     }
 
+
+                    // ********** 表示用　削除処理 追加 24_0614 **********
+                    $('#selectedValues_set_next_val_View .view_item_01_val').each(function() {
+
+                        var itemName = $(this).text().trim();
+
+                        $('#selectedValues_set_next_val_View_UNSOU p').each(function() {
+                            var tansouName = $(this).find('.tansou_select_VAL').text().trim();
+                            console.log("表示用、複数 tansouName:::" + tansouName);
+
+                            // 一致した場合
+                            if (itemName === tansouName) {
+                                $('#selectedValues_set_next_val_View_UNSOU').find('p:contains(' + itemName + ')').remove();
+                            }
+                        });
+                        console.log("表示用、複数 view 01:::" + itemName);
+                    });
+
+
+                    // ************************ 単数用　データを、表示 追加 24_0614 *********************
+
+                    var selectedUnsouCode = $('#selectedUnsouCode').text();
+                    var selectedUnsouName = $('#selectedUnsouName').text();
+                    var selectedTokiCode = $('#selectedToki_Code').text();
+
+                    console.log("値更新前、値確認：：：" + selectedTokiCode);
+
+
+                    // 複数、特記ありの最後のデータ <p> エレメントを 取得
+                    var lastPElement = $('#selectedValues_set_next_val_View').find('.set_next_val_view:last').children('p');
+                    // テキスト内容をコンソールに表示する例
+                    console.log("ラストぴーや:::" + lastPElement.text());
+
+
+
+                    // #singleSelectionContent に表示する文字列を作成
+
+                    // ******************* 単層便　処理　追加 24_0615 
+                    // === 単層便 処理 
+                    $('#selectedValues_set_next_val_View_Tan').find('p:contains(' + unsouName_m + ')').remove();
+                    $('#selectedUnsouCode').empty(); // 運送コード 
+                    $('#selectedUnsouName').empty(); // 運送名
+
+                    if ($('#selectedValues_set_next_val_View_Tan').children('p').length == 0) {
+                        // 子要素がない場合、追加
+                        $('#selectedValues_set_next_val_View_Tan').append('<p><span class="tansou_select">運送コード、特記・備考</span>' +
+                            '<span class="tansou_select_VAL">' + selectedTokiCode + '</span>' + '</p>');
+
+                        $('#selectedUnsouCode').empty(); // 運送コード 
+                        $('#selectedUnsouName').empty(); // 運送名
+
+                    } else {
+                        // 子要素がある場合、クリアしてから追加
+                        $('#selectedValues_set_next_val_View_Tan p').empty().append('<p><span class="tansou_select">運送コード、特記・備考</span>' +
+                            '<span class="tansou_select_VAL">' + selectedTokiCode + '</span>' + '</p>');
+
+                        $('#selectedUnsouCode').empty(); // 運送コード 
+                        $('#selectedUnsouName').empty(); // 運送名
+                    }
+                    console.log("singleSelectionContent: " + $('#singleSelectionContent').html());
+                    // ************************ 単数用　データを、表示 追加 24_0614 *********************
+
+
                     // === ボタンの状態を分岐
                     Button_Check();
 
                 });
 
 
+                // ==== ドロップダウン　以外　なにもない箇所の、タップ対応 =====
                 // ドロップダウン以外 クリックされたら ドロップダウンメニューを閉じる
                 $(document).on('click', function(event) {
                     if (!$(event.target).closest('.dropdown_v').length) {
                         $('.dropdown-content_v').removeClass('show');
                     }
+
                 });
 
                 // 「次へボタンを押した時の処理
@@ -620,51 +789,114 @@ if (empty($session_id)) {
 
                 });
 
-                // === 「クリア ボタン」
-                $("#sendSelectedValues_clear").on('click', function() {
 
+                // 「クリア ボタン」がクリックされたときの処理
+                $("#sendSelectedValues_clear").on('click', function() {
+                    // ボタンの背景色を元に戻す
+                    $('.dropdown_v button.color-changed').each(function() {
+                        $(this).css('background-color', '#6d6666').removeClass('color-changed');
+                    });
+
+                    // 選択された要素をリセット
                     $("#selectedValues_set_next_val_View_Tan p").text("");
                     $("#selectedValues_set_next_val_View_UNSOU .unsou_name_v").text("");
                     $("#selectedValues_set_next_val_View p").text("");
+                    $("#selectedValues_set_next_val_View_UNSOU p").text("");
 
-                    // 隠しパラメータ
+                    // 隠しパラメータをクリア
                     $("#fukusuu_select").empty();
                     $("#fukusuu_select_unsou").empty();
                     $("#selectedValues_set_next_val").empty();
                     $(".select_data_box").empty();
 
-                    // ボタンの背景色を元に戻す
-                    $('.dropdown_v button.color-changed').css('background-color', '#6d6666').removeClass('color-changed');
+                    // ボタンの状態を再評価
+                    Button_Check();
+                });
+
+
+                // ボタンがクリックされたときに色を変える
+                $('.dropdown_v button').on('click', function() {
+
+                    var unsouCode = $(this).data('unsou-code');
+                    var unsouName = $(this).data('unsou-name'); // 運送名を取得
+
+                    // unsouCode または unsouName が undefined の場合は処理を中断
+                    if (typeof unsouCode === 'undefined' || typeof unsouName === 'undefined') {
+                        return;
+                    }
+
+                    // === データ　複数セレクト　運送便のみ
+                    var fukusuu_select = $('#fukusuu_select');
+                    var fukusuu_select_unsou = $('#fukusuu_select_unsou');
+
+
+                    if ($(this).hasClass('color-changed')) {
+                        // 色を元に戻す
+                        $(this).css('background-color', '#6d6666').removeClass('color-changed');
+
+                        // 既に選択されている場合は削除して色を元に戻す
+                        /*
+                        var fukusuuText = fukusuu_select.text();
+                        var newText = fukusuuText.replace(new RegExp(unsouCode + ',', 'g'), '');
+                        fukusuu_select.text(newText);
+
+                        var unsouNameText = fukusuu_select_unsou.text();
+                        var newUnsouText = unsouNameText.replace(new RegExp(unsouName + ' ', 'g'), '');
+                        fukusuu_select_unsou.text(newUnsouText);
+                        */
+
+                        $('#selectedValues_set_next_val_View_UNSOU').find('p:contains(' + unsouName + ')').remove();
+
+                        // ******************* 単層便　処理　追加 24_0615 
+                        // === 単層便 処理 
+                        $('#selectedValues_set_next_val_View_Tan').find('p:contains(' + unsouName + ')').remove();
+                        $('#selectedUnsouCode').empty(); // 運送コード 
+                        $('#selectedUnsouName').empty(); // 運送名
+
+
+                    } else {
+                        // 色を変更
+                        $(this).css('background-color', '#45a049').addClass('color-changed');
+
+                        // 新しい選択を追加
+                        $('#selectedValues_set_next_val_View_UNSOU').append('<p><span class="tansou_select">運送便名</span>' +
+                            '<span class="tansou_select_VAL">' + unsouName + '</span>' + '</p>');
+
+                        // ******************* 単層便　処理　追加 24_0615 
+                        if ($('#selectedValues_set_next_val_View_Tan p').length == 0) {
+
+                            // === 単層便 処理
+                            // === 単層便 処理 - 最新の1件のみ表示
+                            $('#selectedValues_set_next_val_View_Tan').append('<p><span class="tansou_select">運送便名</span>' +
+                                '<span class="tansou_select_VAL">' + unsouName + '</span>' + '</p>');
+                            $('#selectedUnsouCode').text(unsouCode); // 運送コード 
+                            $('#selectedUnsouName').text(unsouName); // 運送名
+                            // 備考・特記　クリア
+                            $('#selectedToki_Code').empty();
+
+                        } else {
+
+                            // === 単層便 処理
+                            // === 単層便 処理 - 最新の1件のみ表示
+                            $('#selectedValues_set_next_val_View_Tan p').empty().append('<p><span class="tansou_select">運送便名</span>' +
+                                '<span class="tansou_select_VAL">' + unsouName + '</span>' + '</p>');
+                            $('#selectedUnsouCode').text(unsouCode); // 運送コード 
+                            $('#selectedUnsouName').text(unsouName); // 運送名
+                            // 備考・特記　クリア
+                            $('#selectedToki_Code').empty();
+
+                        }
+
+                    }
+
 
                     // === ボタンの状態を分岐
                     Button_Check();
 
-
                 });
 
-            })
 
-            // ボタンがクリックされたときに色を変える
-            // ボタンがクリックされたときに色を変える
-            $('.dropdown_v button').on('click', function() {
-                var unsouCode = $(this).data('unsou-code');
-                var unsouName = $(this).data('unsou-name'); // 追加: 運送名を取得
-
-                // 既に選択されている場合は削除して色を元に戻す
-                if ($('#selectedValues_set_next_val_View_UNSOU').text().includes(unsouName)) {
-                    $('#selectedValues_set_next_val_View_UNSOU').find('p:contains(' + unsouName + ')').remove();
-                    $('button[data-unsou-code="' + unsouCode + '"]').css('background-color', '#6d6666'); // 色を元に戻す
-                    return;
-                } else {
-                    // 新しい選択を追加し、色を変更
-                    $('#selectedValues_set_next_val_View_UNSOU').empty();
-                    $('#selectedValues_set_next_val_View_UNSOU').append('<span class="third_view_midashi">■選択(単数便)</span>' +
-                        '<p><span class="tansou_select">運送便名</span>' + unsouName + '</p>');
-                    $('button[data-unsou-code="' + unsouCode + '"]').css('background-color', '#45a049'); // 色を変更
-                }
-            });
-
-
+            }) // =============================== END
 
 
         })(jQuery);

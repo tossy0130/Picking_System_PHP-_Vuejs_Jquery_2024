@@ -145,9 +145,9 @@ if (empty($session_id)) {
             // === ******** four.php の状態判別パラメーター　を渡す 
             // === 複数選択
         } else if (
-            isset($_GET['four_status']) && $_GET['four_status'] == 'multiple_sql_four' ||
-            isset($_SESSION['fukusuu_select']) && $_SESSION['fukusuu_select'] === "200"
-            && $_GET['four_status'] == 'multiple_sql_four'
+            (isset($_GET['four_status']) && $_GET['four_status'] == 'multiple_sql_four') ||
+            (isset($_SESSION['fukusuu_select']) && $_SESSION['fukusuu_select'] === "200")
+            //&& $_GET['four_status'] == 'multiple_sql_four'
         ) {
 
             $_SESSION['fukusuu_unsouo_num'] = $_SESSION['fukusuu_unsouo_num'];
@@ -323,6 +323,7 @@ if (empty($session_id)) {
         }
 
         // === カウント（入力された値を取得）
+        //$Count_Num_Val = "0";
         if (isset($_GET['count_num_val']) && $_GET['count_num_val'] != "") {
             $Count_Num_Val = $_GET['count_num_val'];
             $_SESSION["count_num_val"] = $Count_Num_Val;
@@ -330,7 +331,7 @@ if (empty($session_id)) {
         }
 
         // デバッグ用
-        dprint("Debug: arr_kakutei_Syukka_Yotei_Num = " . print_r($arr_kakutei_Syukka_Yotei_Num, true));
+        //dprint("Debug: arr_kakutei_Syukka_Yotei_Num = " . print_r($arr_kakutei_Syukka_Yotei_Num, true));
 
         $Syuka_Yotei_SUM = array_sum($arr_kakutei_Syukka_Yotei_Num);
         dprint("ここ array_sum :::" . $Syuka_Yotei_SUM . "<br>");
@@ -414,8 +415,8 @@ if (empty($session_id)) {
                 $Syuka_Yotei_Num = $arr_kakutei_Syukka_Yotei_Num[$idx];
                 $Syouhin_Code_Num = $arr_kakutei_shouhin_code[$idx];
 
-                print($Syuka_Yotei_Num . "<br>");
-                print($Syouhin_Code_Num . "<br>");
+                //print($Syuka_Yotei_Num . "<br>");
+                //print($Syouhin_Code_Num . "<br>");
 
                 // 数値にキャスト
                 $Syuka_Yotei_Num = (int)$Syuka_Yotei_Num;
@@ -524,7 +525,11 @@ if (empty($session_id)) {
                             unset($_SESSION[$key]);
                         }
                     }
-
+                    //24/06/13 SQLからフラグに変更 設定値 $get_now_sql > $pFlg
+                    $pFlg = "";
+                    if ($get_now_sql != "") {
+                        $pFlg = "1";
+                    }
                     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
             $("#kakuteiSuccessModal").modal("show");
@@ -539,7 +544,7 @@ if (empty($session_id)) {
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
                         '&default_root_sql_zensuu=' .
-                        UrlEncode_Val_Check($get_now_sql) .
+                        UrlEncode_Val_Check($pFlg) .
                         '";
                 }, 1100);
 
@@ -791,6 +796,12 @@ if (empty($session_id)) {
                 // === 処理 SEQ 削除
                 unset($_SESSION['five_back_Syori_SEQ']);
 
+                //24/06/13 SQLからフラグに変更 設定値 $get_now_sql > $pFlg
+                $pFlg = "";
+                if ($get_now_sql != "") {
+                    $pFlg = "1";
+                }
+
                 echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
                 $("#successModal").modal("show");
@@ -801,7 +812,7 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
                     . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . '&default_root_sql_zensuu=' .
-                    UrlEncode_Val_Check($get_now_sql) . '";
+                    UrlEncode_Val_Check($pFlg) . '";
                     }, 500);
                    
 
@@ -2501,7 +2512,10 @@ if (empty($session_id)) {
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
                         <input type="hidden" name="one_now_sql_zensuu" id="one_now_sql_zensuu" value="<?php echo $_GET['now_sql']; ?>">
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
+<!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
+-->
+                        <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'multiple_sql_four') : ?>
                         <input type="hidden" name="multiple_sql_four_sql_zensuu" id="multiple_sql_four_sql_zensuu" value="<?php echo isset($_SESSION['multiple_sql']) ? $_SESSION['multiple_sql'] : ''; ?>">
                     <?php endif; ?>
@@ -2571,7 +2585,10 @@ if (empty($session_id)) {
 
                         <!-- 通常処理 （運送便 単数） -->
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
+<!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
+-->
+                        <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">
 
                         <!-- 複数運送便 -->
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'multiple_sql_four') : ?>

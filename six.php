@@ -23,7 +23,6 @@ $GET_unsou_Flg = 200;
 if (isset($_GET['unsou_Flg'])) {
 
     $unsou_Flg = $_GET['unsou_Flg'];
-    // 2024/06/12 該当しない出荷日を取得
     $error_day = $_GET['error_day'];
 
     if ($unsou_Flg == 0) {
@@ -38,7 +37,7 @@ $token_jim = uniqid('', true);
 //トークンをセッション変数にセット
 $_SESSION['token_jim'] = $token_jim;
 
-// 2024/06/10
+
 $selected_day = '';
 if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
     $selected_day = $_GET['day'];
@@ -59,15 +58,14 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/six.css">
 
-    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    <link href="./css/all.css" rel="stylesheet">
 
     <!-- jQuery UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
-
+    <link rel="stylesheet" href="./css/jquery-ui.min.css">
 
     <!-- jQuery cdn -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
+    <script src="./js/jquery.min.js"></script>
+    
     <title>ピッキング実績照会出荷日指定</title>
 </head>
 
@@ -115,27 +113,27 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
                 </p>
             <?php endif; ?>
 
-            <!-- フッターメニュー -->
-            <footer class="footer-menu_fixed">
-                <ul>
-                    <?php $back_flg = 1; ?>
-                    <?php $url = "./top_menu.php?back_menu=ok&id=" . $input_login_id; ?>
-                    <li><a href="<?php print h($url); ?>">戻る</a></li>
-                    <li><a href="./six.php">更新</a></li>
-                </ul>
-            </footer>
-
         </div>
 
         
-    </div> <!-- ================ END container =============== -->
+    </div> <!-- ================ END container =============== -->    
+
+    <div>
+        <!-- フッターメニュー -->
+        <footer class="footer-menu_fixed">
+            <ul>
+                <?php $back_flg = 1; ?>
+                <?php $url = "./top_menu.php?back_menu=ok&id=" . $input_login_id; ?>
+                <li><a href="<?php print h($url); ?>">戻る</a></li>
+                <li><a href="./six.php">更新</a></li>
+            </ul>
+        </footer>
+    </div>
 
 
 
     <!-- jQuery UI -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <!-- Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="./js/jquery-ui.min.js"></script>
 
     <script type="text/javascript">
         (function($) {
@@ -189,7 +187,6 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
                 $("#datepicker").val(formattedDate);
             }
 
-            //2024/06/10    seven.phpから戻ってきたときに元々設定していた日付を取得 
             var back_date = "<?php echo isset($selected_day) ? $selected_day : ''; ?>";
             if (back_date != "") {
                 // 日付文字列をDateオブジェクトに変換
@@ -205,7 +202,6 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
                 $("#datepicker").val(formattedDate);
             }
 
-            //2024/06/12    該当しない出荷日を入力した場合、入力した出荷日を設定しておく
             var error_day = "<?php echo isset($error_day)? $error_day : ''; ?>";
             if (error_day != "") {
                 // 日付文字列をDateオブジェクトに変換

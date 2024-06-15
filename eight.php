@@ -50,34 +50,6 @@ if (empty($session_id)) {
         $e = oci_error();
     }
 
-    // 2024/05/27
-    /* $sql = "SELECT SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-            FROM SJTR SJ, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                AND SK.倉庫Ｃ = SO.倉庫Ｃ
-                AND SK.倉庫Ｃ = PK.倉庫Ｃ
-                AND SK.運送Ｃ = US.運送Ｃ
-                AND SK.出荷日 = :POST_DATE
-                AND SK.運送Ｃ = :POST_CODE
-                AND PK.処理Ｆ = 9
-            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名
-            ORDER BY SK.倉庫Ｃ,SO.倉庫名"; */
-    // 2024/05/28
-    /* $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
-            FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
-            WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
-            AND SL.伝票番号 = PK.伝票番号
-            AND SL.伝票行番号 = PK.伝票行番号
-            AND SL.伝票行枝番 = PK.伝票行枝番
-            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-            AND SL.倉庫Ｃ = PK.倉庫Ｃ
-            AND SJ.出荷日 = :POST_DATE
-            AND PK.処理Ｆ = 9
-            GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称"; */
-
-    // 2024/05/29
     $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
             FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -146,16 +118,12 @@ if (empty($session_id)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="./css/common.css">
-
-    <!--
-    <link rel="stylesheet" href="./css/second.css">
--->
     <link rel="stylesheet" href="./css/second_02.css">
 
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/forth.css">
 
-    <link href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    <link href="./css/all.css" rel="stylesheet">
 
     <title>ピッキング実績照会倉庫選択</title>
 
@@ -193,11 +161,9 @@ if (empty($session_id)) {
         <div class="container">
             <div class="content_02">
 
-                <!-- <p id="syuka_day">出荷日：<?= $selected_day; ?></p> -->
                 <p id="syuka_day">出荷日：<?= $arr_souko_data[0]["syuka_day"]; ?></p>
                 <div class="souko_box">
                     <?php
-                    // 配列内の要素をループしてボタンを生成
                     $idx = 0;
                     foreach ($arr_souko_data as $souko) {
                         echo '<div><button type="button" value="' . $souko["souko_code"] . '" @click="handleButtonClick(\'' . $souko["souko_name"] . '\', \'' . $souko["souko_code"] . '\')" :class="{\'selected_souko\' : selectedValue === \'' . $souko["souko_name"] . '\'}">' . $souko["souko_name"] . '</button></div>';
@@ -230,7 +196,8 @@ if (empty($session_id)) {
         </div> <!-- END container -->
     </div> <!-- END app -->
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="./js/vue@2.js"></script>
+    
 
     <script>
         new Vue({
@@ -245,8 +212,6 @@ if (empty($session_id)) {
                 handleButtonClick(value, code_val) {
                     this.selectedValue = value; // 選択した値を格納
                     this.selectedCode =code_val;
-                    console.log("選択した値:::" + this.selectedValue);
-                    console.log("選択した値:::" + this.selectedCode);
                 },
                 // フォームを送信する
                 submitForm() {
@@ -260,7 +225,6 @@ if (empty($session_id)) {
 
                     } else {
                         this.error = false; // エラーメッセージを非表示に
-                        // get送信
                         const url = `./nine.php?selected_day=${selectedDay}&selected_shippingname=${selectedShippingName}&selected_shippingcode=${selectedShippingCode}&selected_soukocode=${selectedSoukoCode}&selected_soukoname=${selectedSoukoName}`; // リダイレクト
                         window.location.href = url;
                     }

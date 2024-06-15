@@ -15,7 +15,6 @@ $top_url = Init_Val::TOP_URL;
 session_start();
 
 
-
 // セッションIDが一致しない場合はログインページにリダイレクト
 if (!isset($_SESSION["sid"])) {
     header("Location: index.php");
@@ -35,7 +34,7 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
-        echo $selected_day;
+        //echo $selected_day;
     } else {
         // === トークンが無い場合
         header("Location: $err_url");

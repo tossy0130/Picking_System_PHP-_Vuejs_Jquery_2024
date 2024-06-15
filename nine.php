@@ -320,10 +320,10 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/common.css">
 
-    
     <link href="./css/all.css" rel="stylesheet">
+
     <!-- jQuery cdn -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="./js/jquery.min.js"></script>
 
     <title>ピッキング実績照会照会画面</title>
 
@@ -442,24 +442,9 @@ if (empty($session_id)) {
                         <?php
                         if (!isset($_GET['detail_biko']) || !isset($_GET['detail_tokki'])) {
                             foreach ($arr_Picking_DATA as $Picking_VAL) {
-                                if (mb_strlen($Shouhin_name) >= 60) {
-                                    // === 40バイトで分ける
-                                    // 商品名
-                                    $shouhin_name_part1 = mb_substr($Shouhin_name, 0, 20);
-                                    // 品番
-                                    $shouhin_name_part2 = mb_substr($Shouhin_name, 20);
-                                    echo '<tr>';
-                                    //echo '<td><span>品名:' . '</span>' . '<span class="shouhin_name">' . $Picking_VAL['Shouhin_name'] . '</span>' . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
-                                    echo '<td>品名: ' . $shouhin_name_part1 . '<br>' . $shouhin_name_part2 . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
-                                    echo '</tr>';
-                                } else {
-                                    echo '<tr>';
-                                    echo '<td><span>品名:' . '</span>' . '<span class="shouhin_name">' . $Picking_VAL['Shouhin_name'] . '</span>' . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
-                                    //echo '<td>品名: ' . $shouhin_name_part1 . '<br>' . $shouhin_name_part2 . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
-                                    echo '</tr>';
-                                }
-                                
-                                
+                                echo '<tr>';
+                                echo '<td>品名:' . $Picking_VAL['Shouhin_name'] . '<span style="float: right;"> 総数:' . $Picking_VAL['Picking_num'] . '</span>' . '<br>' . '<span>JAN:</span>' . '<span class="shouhin_JAN">' . $Picking_VAL['shouhin_JAN'] . '</span>' . '</td>';
+                                echo '</tr>';
                             }
                         } else {
                             if ($_GET['detail_biko'] != 'ー' && $_GET['detail_tokki'] != 'ーーー') {
@@ -506,7 +491,6 @@ if (empty($session_id)) {
                 <?php $back_flg = 1; ?>
                 <?php $url = "./eight.php?selected_day=" . UrlEncode_Val_Check($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . UrlEncode_Val_Check($selected_shippingcode); ?>
                 <li><a href="<?php echo $url; ?>">戻る</a></li>
-                <!-- <li><a href="" id="Kousin_Btn">更新</a></li> -->
                 <?php $url = "./nine.php?selected_day=" . UrlEncode_Val_Check($selected_day) . "&selected_shippingname=" . urlencode($selected_shippingname) . "&selected_shippingcode="  . UrlEncode_Val_Check($selected_shippingcode) . "&selected_soukocode=" . UrlEncode_Val_Check($selected_soukocode) . "&selected_soukoname=" . UrlEncode_Val_Check($selected_soukoname); ?>
                 <li><a href="<?php echo $url; ?>">更新</a></li>
             </ul>
@@ -515,7 +499,8 @@ if (empty($session_id)) {
 
     </div> <!-- ======== END app ========= -->
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="./js/vue@2.js"></script>
+
     <script>
         new Vue({
             el: '#app',
@@ -549,8 +534,6 @@ if (empty($session_id)) {
                     var menuId = $(this).data('menuid');
                     var dropdownContent = $('.dropdown-contents_v[data-menuid=' + menuId + ']');
 
-                    console.log("メニューID:" + menuId);
-                    console.log("ドロップダウンコンテンツ:" + dropdownContent);
                     dropdownContent.toggleClass('show');
 
                     // 運送コード, 運送便名, 取得
@@ -566,7 +549,6 @@ if (empty($session_id)) {
                 var selectedValues = [];
                 
                 $('.dropdown-contents_v button').on('click', function() {
-                    console.log("選択された項目:" + selectedValues);
                     var data_value = $(this).attr("data-value");
                     var data_tokki = $(this).attr("data-tokki");
                     var selectedDay = '<?php echo $selected_day; ?>';
@@ -587,10 +569,6 @@ if (empty($session_id)) {
                     // 親要素の、運送コード, 運送名を取得
                     var unsouCode_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-code');
                     var unsouName_m = $(this).closest('.dropdown_v').find('button.dropbtn_v').data('unsou-name');
-
-                    console.log("詳細コード:", selected_Detail_Code);
-                    console.log("詳細名:", selectedUnsou_Detail_Name);
-                    console.log("備考・特記事項:", selectedUnsou_Detail_tokki);
                     
                     var url = window.location.pathname + '?selected_day=' + selectedDay + '&selected_shippingname=' + unsouName_m  + '&selected_shippingcode=' + unsouCode_m + '&selected_soukocode=' + selectedSoukoCode + '&selected_soukoname=' + selectedSoukoName + '&detail_biko=' + selectedUnsou_Detail_Name + '&detail_tokki=' + selectedUnsou_Detail_tokki;
                     window.location.href = url;
@@ -599,11 +577,10 @@ if (empty($session_id)) {
                     // 要素を追加
                     if (selectedValues.indexOf(data_value) === -1 && selectedValues.indexOf(unsouCode_m) === -1) {
                         selectedValues.push(unsouCode_m + data_value);
-                        console.log("selectedValuesに追加:", data_value);
+                        
                         $("#selectedValues_set_next_val").append('<div class="set_next_val">' + unsouName_m + ':' +
                             unsouCode_m + ':' + selected_Detail_Code + ':' + selectedUnsou_Detail_tokki + ',' + '</div>');
                     } else {
-                        console.log("selectedValuesに既に存在:", data_value);
                     }
 
                 });
@@ -635,14 +612,11 @@ if (empty($session_id)) {
 
                     var input_JAN = $('#get_JAN').val();
                     var convertedValue_JAN = convertToHalfWidth(input_JAN);
-                    console.log("読み込んだ値：" + convertedValue_JAN);
                     $(this).val(convertedValue_JAN);
 
                     // JAN コード判定
                     $(".shouhin_JAN").each(function() {
-                        console.log("item:::" + $(this).text() + "\n");
                         var shouhin_JAN = $(this).text();
-                        console.log(shouhin_JAN);
 
                         // JAN
                         if (shouhin_JAN === input_JAN) {
@@ -670,7 +644,6 @@ if (empty($session_id)) {
                     } else if (Jan_Flg === 1) {
                         $('#err_JAN').html("JAN コードと一致している商品があります。<br>値:(" + $('#get_JAN').val() + ")");
                         $('#get_JAN').val("");
-                        //$(this).focus();
                     }
                 });
 

@@ -82,7 +82,7 @@
                     margin-top: 20px;
                     /*暫定処理*/
                     font-size: 0.3px;
-                    display: none;
+                    opacity: 0;
                 }
                 
                 /* 次へボタンのスタイル */
@@ -225,5 +225,17 @@
                             border-bottom: 2px solid rgb(69, 160, 73);
                             width: 65%;
                     }   
+
+                    .third_view_midashi_01 {
+                                            padding: 0px 0 5px 10px;
+                                            border-left: 10px solid rgb(69, 160, 73);
+                                            margin: 10px 0 15px 10px;
+                                            border-bottom: 2px solid rgb(69, 160, 73);
+                                            width: 65%;
+                                        }
+
+                    .color-changed {
+                        background-color: #45a049;
+                    }
 
 }
