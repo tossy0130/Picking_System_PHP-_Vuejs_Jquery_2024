@@ -122,6 +122,8 @@ if (empty($session_id)) {
     }
 
     if (isset($_GET['five_back_button'])) {
+
+
         // GET パラメータをセッションに格納
         $_SESSION['five_back_params'] = $_GET;
 
@@ -154,7 +156,6 @@ if (empty($session_id)) {
             $_SESSION['fukusuu_select_val'] = $_SESSION['fukusuu_select_val'];
             $_SESSION['fukusuu_select'] = $_SESSION['fukusuu_select'];
         }
-
 
 
         // モーダル表示用のJavaScriptを追加
@@ -855,8 +856,8 @@ if (empty($session_id)) {
 
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . 
-                     '";
+                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
+                    '";
                     }, 500);
                    
 
@@ -2512,7 +2513,7 @@ if (empty($session_id)) {
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
                         <input type="hidden" name="one_now_sql_zensuu" id="one_now_sql_zensuu" value="<?php echo $_GET['now_sql']; ?>">
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
-<!-- 24/06/13
+                        <!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
 -->
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">
@@ -2585,7 +2586,7 @@ if (empty($session_id)) {
 
                         <!-- 通常処理 （運送便 単数） -->
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
-<!-- 24/06/13
+                        <!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
 -->
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">

@@ -57,10 +57,12 @@
                     outline: none;
                     cursor: pointer;
                 }
-            
+                
+                /*
                 .dropdown-content_v button:hover {
                     background-color: #ddd;
                 }
+                */
             
                 /* ボタンのスタイル */
                 .dropbtn_v {
@@ -71,11 +73,13 @@
                     border: none;
                     cursor: pointer;
                 }
-            
+                
+                /*
                 .dropbtn_v:hover,
                 .dropbtn_v:focus {
                     background-color: #3e8e41;
                 }
+                */
             
                 /* 選択した値を表示する部分のスタイル */
                 .selected-value {
@@ -235,7 +239,27 @@
                                         }
 
                     .color-changed {
-                        background-color: #45a049;
+                        background-color: #45a049 !important;
                     }
 
-}
+                    .color-changed-sub {
+                        background-color: #ffe272 !important;
+                    }
+
+                                     
+                     .show {
+                        display: block;
+                     }
+
+                     /*
+                    .dropdown-content_v.show {
+                        display: block;
+                    }
+                        */
+
+                    .single_select_title {
+                        margin: 5px 5px 5px 15px;padding: 5px 5px;
+                        background: #ddd;display: inline-block;
+                    }
+
+}   
