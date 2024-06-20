@@ -1024,6 +1024,7 @@ if (empty($session_id)) {
                             <img src="./img/souko_img.png">
                         </span>
                         <span class="souko_icon_box">
+                            
                             <?php echo h($get_souko_name); ?>
                         </span>
                     </div>

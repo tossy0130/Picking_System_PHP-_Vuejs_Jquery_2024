@@ -83,10 +83,7 @@
             
                 /* 選択した値を表示する部分のスタイル */
                 .selected-value {
-                    margin-top: 20px;
-                    /*暫定処理*/
-                    font-size: 0.3px;
-                    opacity: 0;
+                   
                 }
                 
                 /* 次へボタンのスタイル */
@@ -209,8 +206,10 @@
 
                         #selectedValues_set_next_val {
                             /*暫定処理*/
+                            /*
                                 font-size: 0.3px;
                                 display: none;
+                            */
                         }
 
                        /* ======== 表示用 =========== */ 
@@ -261,5 +260,17 @@
                         margin: 5px 5px 5px 15px;padding: 5px 5px;
                         background: #ddd;display: inline-block;
                     }
+
+                    .single_select_title_2 {
+                        margin: 5px 5px 5px 15px;
+                            padding: 5px 5px;
+                            background: #FFE1A8;
+                            display: inline-block;
+                    }
+
+                    .set_next_val {
+                        margin: 5px 0 10px 15px;
+                    }
+
 
 }   
