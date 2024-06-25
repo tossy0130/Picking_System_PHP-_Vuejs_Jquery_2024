@@ -1021,6 +1021,8 @@ if (empty($session_id)) {
         // 品番
         $Shouhin_name_part2 = mb_substr($Shouhin_name, 20);
 
+        $result = split_string_by_byte($Shouhin_name, 40);
+
         // === 得意先  コメントアウト
         /*
         $arr_Tokuisaki_name = [];

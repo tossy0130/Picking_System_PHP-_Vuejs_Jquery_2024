@@ -40,7 +40,7 @@ if (empty($session_id)) {
     if (!$conn) {
         $e = oci_error();
     }
-
+/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
     $sql = "SELECT SJ.出荷日,SJ.運送Ｃ,US.運送略称
             FROM SJTR SJ,SKTR SK,USMF US, HTPK PK, SLTR SL
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -52,7 +52,18 @@ if (empty($session_id)) {
             AND PK.処理Ｆ = 9
             GROUP BY SJ.出荷日,SJ.運送Ｃ,US.運送略称
             ORDER BY SJ.運送Ｃ";
-
+*/
+    $sql = "SELECT SK.出荷日,SK.運送Ｃ,US.運送略称
+              FROM SJTR SJ,SKTR SK,USMF US, HTPK PK, SLTR SL
+             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+               AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+               AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
+               AND SK.運送Ｃ = US.運送Ｃ
+               AND SK.運送Ｃ = PK.運送Ｃ
+               AND SK.出荷日 = :POST_DATE
+               AND PK.処理Ｆ = 9
+             GROUP BY SK.出荷日,SK.運送Ｃ,US.運送略称
+             ORDER BY SK.運送Ｃ";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {

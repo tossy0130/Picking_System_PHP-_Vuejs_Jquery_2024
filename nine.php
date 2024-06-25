@@ -49,7 +49,7 @@ if (empty($session_id)) {
         echo "接続エラー: " . $e['message'];
         exit;
     }
-
+/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
         $sql_select = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.商品Ｃ,SH.品名 
         ,SUM(SL.数量) AS 数量
         ,SUM(PK.ピッキング数量) AS ピッキング数量
@@ -75,6 +75,33 @@ if (empty($session_id)) {
         AND PK.処理Ｆ = 9
         GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.商品Ｃ,SH.品名,SH.ＪＡＮ
         ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.商品Ｃ";
+*/
+        $sql_select = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.商品Ｃ,SH.品名 
+                             ,SUM(SL.数量) AS 数量
+                             ,SUM(PK.ピッキング数量) AS ピッキング数量
+                             ,SH.ＪＡＮ
+                         FROM SJTR SJ, SKTR SK, SOMF SO, USMF US,SHMF SH
+                             ,RZMF RZ,HTPK PK
+                             ,SLTR SL
+                        WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                          AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                          AND SK.伝票行番号 = SL.伝票行番号
+                          AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
+                          AND SL.伝票番号   = PK.伝票番号(+)
+                          AND SL.伝票行番号 = PK.伝票行番号(+)
+                          AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                          AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                          AND SK.運送Ｃ = US.運送Ｃ
+                          AND SL.商品Ｃ = SH.商品Ｃ
+                          AND SL.倉庫Ｃ = RZ.倉庫Ｃ
+                          AND SL.商品Ｃ = RZ.商品Ｃ
+                          AND SK.出荷日 = :SELECT_DATE
+                          AND SL.倉庫Ｃ = :SELECT_SOUKO
+                          AND SK.運送Ｃ = :SELECT_UNSOU
+                          AND PK.処理Ｆ = 9
+                        GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.商品Ｃ,SH.品名,SH.ＪＡＮ
+                        ORDER BY SL.倉庫Ｃ,SK.運送Ｃ,SL.商品Ｃ";
+
         $stid_select = oci_parse($conn, $sql_select);
         if (!$stid_select) {
             $e = oci_error($stid_select);
@@ -105,7 +132,7 @@ if (empty($session_id)) {
 
             // 取得した値を配列に追加
             $arr_Picking_DATA[] = array(
-                'syuka_day' => $syuka_day,                  // SJ.出荷日
+                'syuka_day' => $syuka_day,                  // SK.出荷日
                 'souko_code' => $souko_code,                // SK.倉庫Ｃ
                 'souko_name' => $souko_name,                // SO.倉庫名
                 'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
@@ -120,6 +147,7 @@ if (empty($session_id)) {
         }
 
         // 特記あり
+/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                 FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
@@ -138,6 +166,25 @@ if (empty($session_id)) {
                 AND PK.処理Ｆ = 9
                 GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                 ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
+*/
+        $sql = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
+                       SM.出荷元名,SK.特記事項
+                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SL.伝票行番号 = PK.伝票行番号
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SL.倉庫Ｃ = PK.倉庫Ｃ
+                   AND SL.出荷元 = SM.出荷元Ｃ(+)
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND SK.出荷日 = :SELECT_DATE
+                   AND US.運送略称 = :SELECT_UNSOUNAME
+                   AND SL.倉庫Ｃ = :SELECT_SOUKO
+                   AND PK.処理Ｆ = 9
+                 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
+                 ORDER BY SL.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
@@ -213,7 +260,7 @@ if (empty($session_id)) {
             if (!$conn) {
                 $e = oci_error();
             }
-
+/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
             $sql = "SELECT SJ.出荷日,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
                     ,SUM(SL.数量) AS 数量    
                     ,SUM(PK.ピッキング数量) AS ピッキング数量
@@ -239,6 +286,32 @@ if (empty($session_id)) {
                     AND SJ.出荷日 = :SELECT_DATE
                     AND SL.倉庫Ｃ = :SELECT_SOUKO
                     AND SJ.運送Ｃ = :SELECT_UNSOU ";
+*/
+            $sql = "SELECT SK.出荷日,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
+                    ,SUM(SL.数量) AS 数量    
+                    ,SUM(PK.ピッキング数量) AS ピッキング数量
+                    ,SH.ＪＡＮ
+                    ,SK.特記事項
+                    FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+                    ,RZMF RZ
+                    ,HTPK PK
+                    WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                    AND SK.伝票行番号 = SL.伝票行番号
+                    AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                    AND SK.伝票行番号 = SL.伝票行番号
+                    AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                    AND SL.伝票番号   = PK.伝票番号(+)
+                    AND SL.伝票行番号 = PK.伝票行番号(+)
+                    AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                    AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                    AND SL.出荷元 = SM.出荷元Ｃ(+)
+                    AND SK.運送Ｃ = US.運送Ｃ
+                    AND SL.商品Ｃ = SH.商品Ｃ
+                    AND SL.倉庫Ｃ = RZ.倉庫Ｃ
+                    AND SL.商品Ｃ = RZ.商品Ｃ
+                    AND SK.出荷日 = :SELECT_DATE
+                    AND SL.倉庫Ｃ = :SELECT_SOUKO
+                    AND SK.運送Ｃ = :SELECT_UNSOU ";
                     
             if ($detailBiko != "ー") {
                 $sql .= "AND SM.出荷元名 = :SELECT_BIKO ";
@@ -251,11 +324,14 @@ if (empty($session_id)) {
             } else {
                 $sql .= "AND SK.特記事項 IS NULL ";
             }
-
+/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
             $sql .= " AND PK.処理Ｆ = 9
                     GROUP BY SJ.出荷日,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名,SH.ＪＡＮ,SK.特記事項
                     ORDER BY SJ.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 ";
-
+*/
+            $sql .= " AND PK.処理Ｆ = 9
+                    GROUP BY SK.出荷日,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名,SH.ＪＡＮ,SK.特記事項
+                    ORDER BY SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 ";
             $stid = oci_parse($conn, $sql);
             if (!$stid) {
                 $e = oci_error($stid);
@@ -291,7 +367,7 @@ if (empty($session_id)) {
 
                 // 取得した値を配列に追加
                 $arr_Picking_DATA[] = array(
-                    'syuka_day' => $syuka_day,                  // SJ.出荷日
+                    'syuka_day' => $syuka_day,                  // SK.出荷日
                     'Unsou_code' => $Unsou_code,                // SK.運送Ｃ
                     'Unsou_name' => $Unsou_name,                // US.運送略称
                     'shipping_moto' => $shipping_moto,          // 出荷元

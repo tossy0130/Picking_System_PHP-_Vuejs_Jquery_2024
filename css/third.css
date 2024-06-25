@@ -17,7 +17,7 @@
                 }
             
                 .souko_box_v button {
-                    width: 100%;
+                    width: 85%;
                     /* ボタンの幅を100%に */
                     padding: 10px;
                     font-size: 16px;
@@ -25,6 +25,7 @@
                     background-color: #6d6666;
                     cursor: pointer;
                     transition: background-color 0.3s ease;
+                    border-bottom: solid 1px #fff;
                 }
             
                 .souko_box_v button:hover {
@@ -44,14 +45,13 @@
                     background-color: #c47e7e;
                     min-width: 160px;
                     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-                    padding: 12px 16px;
+                    padding: 8px 4px;
                     z-index: 1;
                 }
             
                 .dropdown-content_v button {
                     width: 100%;
-                    padding: 8px 0;
-                    text-align: left;
+                    padding: 12px 0;
                     background-color: transparent;
                     border: none;
                     outline: none;
@@ -245,6 +245,16 @@
                         background-color: #ffe272 !important;
                     }
 
+                    .color-changed-drop{
+                        background-color: #05668D !important;
+                        color: #fff !important;
+                    }
+
+                    .color-changed-oya {
+                        background-color: #ffe272 !important;
+                        color: #000 !important;
+                    }
+
                                      
                      .show {
                         display: block;
@@ -270,7 +280,23 @@
 
                     .set_next_val {
                         margin: 5px 0 10px 15px;
+                            letter-spacing: 0.3em;
+                            font-weight: 500;
+                            font-size: 15px;
+                            border-bottom: solid 2px #05668D;
+                            color: #646E78;
+                            width: 35%;
+                            padding: 0 0px 5px 0;
                     }
+
+
+            #fukusuu_select, #fukusuu_select_unsou , #selectedUnsouCode, #selectedUnsouName, #selectedToki_Code{
+                        font-size: 15px;
+                            letter-spacing: 0.3em;
+                            color: #646E78;
+                            font-weight: 500;
+                    }
+
 
 
 }   

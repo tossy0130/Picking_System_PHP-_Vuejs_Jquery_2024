@@ -277,7 +277,8 @@ body {
 
          .unsou_text_box {
              display: block;
-             position: relative;top: -2px;
+             position: relative;
+             top: 8px;
          }
          
          /* =========== アイコン画像　home ========== */

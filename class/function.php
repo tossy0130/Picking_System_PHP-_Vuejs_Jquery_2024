@@ -52,7 +52,7 @@ function getCondition($data)
     if (preg_match($pattern, $data, $matches)) {
         return $matches[0];
     } else {
-//      return "運送便（単数）No match found.";
+        //      return "運送便（単数）No match found.";
         return "";
     }
 }
@@ -84,7 +84,7 @@ function getCondition_Multiple($data)
         // 結果を返します
         return trim($result_multi_sql);
     } else {
-//      return "運送便（複数）No match found.";
+        //      return "運送便（複数）No match found.";
         return "";
     }
 }
@@ -126,13 +126,13 @@ function getCondition_Multiple_zen($data)
 // === デバッグ用プリント
 function dprint($data)
 {
-    print($data);
+    //   print($data);
 }
 
 // === デバッグ用プリント改行付
 function dprintBR($data)
 {
-    print($data."<br>");
+    //  print($data."<br>");
 }
 
 // === PHP 8 対応 urlencode
@@ -144,4 +144,54 @@ function UrlEncode_Val_Check($data)
     } else {
         return $data = "";
     }
+}
+
+/*
+
+文字列　バイト数　でカット
+
+*/
+
+function split_string_by_byte($str, $byte_limit)
+{
+    $result = [];
+    $current_str = '';
+    $current_len = 0;
+
+    // 文字列の長さを取得（マルチバイト対応）
+    $length = mb_strlen($str, 'UTF-8');
+
+    for (
+        $i = 0;
+        $i < $length;
+        $i++
+    ) {
+        // 1文字ずつ取得
+        $char = mb_substr(
+            $str,
+            $i,
+            1,
+            'UTF-8'
+        );
+        // 文字のバイト長を取得
+        $char_len = strlen($char);
+
+        if ($current_len + $char_len > $byte_limit) {
+            $result[] = $current_str;
+            $current_str = '';
+            $current_len = 0;
+        }
+
+        // 現在の文字に追加
+        $current_str .= $char;
+        // 現在のバイト長に追加
+        $current_len += $char_len;
+    }
+
+    // 最後に残った文字列を追加
+    if ($current_str !== '') {
+        $result[] = $current_str;
+    }
+
+    return $result;
 }

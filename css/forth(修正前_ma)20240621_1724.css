@@ -1,0 +1,266 @@
+/* ====== スマホ ====== */
+@media only screen and (min-width: 10px) {
+
+    
+    .head_01 > div:nth-child(1) {
+                width: 50%;
+                    background: transparent;
+                    text-align: center;
+                    color: #5CBCE0;
+                    padding: 0.5em 0 0.5em 0;
+                    height: 2.82em;
+                    border: 3px solid #5CBCE0;
+                    font-size: 1em;
+    }
+
+    .head_01 > div:nth-child(2) {
+        width: 48%;text-align: center;
+        background: #5CBCE0;padding: 0.5em 0 0.5em 0;
+        height: 3.2em;color: #fff;
+    }
+
+    /* ヘッドエリア 02  「並替」「全表示」ボタン */
+    .head_02 {
+            text-align: right;
+            width: 98%;
+    }
+
+    .dropdown_02 {
+            position: relative;
+            display: inline-block;
+            width: 44%;
+    }
+
+    #order_btn_box {
+        width: 100%;
+    }
+    
+    #order_btn {
+        background: #F08A00;border: none;
+        width: 100%;color: #fff;
+        margin: 0 0 0em 2.5em;padding: 1.12em 0;
+    }
+
+    #all_select_btn {
+        background: #82dcb8;border: none;
+        width: 90%;color: #333;
+        padding: 1.5em 0;
+    }
+    
+    /* テーブル全体のスタイル */
+    table {
+            border-collapse: collapse;width: 100%; 
+            border-color: #4b4b4b;
+
+        }
+    
+        /* テーブルのボーダー */
+      th, td {
+    border: 1px solid grey; /* セルの境界線をグレーに設定 */
+}
+    
+        /* テーブルヘッダーのスタイル */
+        th {
+            background-color: #5CBCE0;
+            text-align: center;
+            padding: 12px 0px;
+            font-size: 0.82em !important;
+            color: #fff;
+        }
+    
+        /* テーブルセルのスタイル */
+        td {
+            padding: 8px;text-align: left;
+            font-size: 0.65em;
+        }
+
+
+        .four_flex {
+            display: flex;
+        }
+
+        .four_flex > div:nth-of-type(1) {
+            width: 35%;
+        }
+        
+        #login_id_view {
+            border-bottom: 3px solid #ccc;
+                font-weight: 600;
+                font-size: 1.02em;
+                width: 80%;
+                margin: 1.5em 0 0 0.5em;
+        }
+
+        #menu_btn_box {
+            text-align: right;
+            width: 60%;
+            display: flex;
+            position: relative;
+            left: 38%;
+        }
+
+        #menu_btn_box>div:nth-child(2) {
+                width: 48%;
+                margin: 0 0 0 2.5em;
+        }
+
+        /* 作業中 */
+        #sagyou_now_text {
+            color: #fff;background: red;
+            padding: 5px 1px;border-radius: 2px;
+        }
+
+        /* 作業完了 */
+        #sagyou_now_text_ok {
+            color: #333;
+            background: aquamarine;
+            padding: 5px 1px;
+            border-radius: 2px;
+        }
+
+
+
+        /*　特記 一覧 */
+        .toki_list {
+            margin: 0;padding: 0;
+            position: relative;top: -5px;
+            display: block;
+        }
+
+        /* 備考　一覧 */
+        .bikou_list {
+            margin: 0;padding: 0;
+            display: inline-block;position: relative;
+            top: 10px;
+        }
+
+        /*========== END ========*/
+
+        /* スキャンした JAN */
+                .cp_iptxt_03 {
+                    position: relative;
+                    width: 80%;
+                    margin: 20px 3%;
+                }
+        
+                .cp_iptxt_03 input[type='number'] {
+                    font: 15px/24px sans-serif;
+                    box-sizing: border-box;
+                    width: 50%;
+                    padding: 0.3em;
+                    transition: 0.3s;
+                    letter-spacing: 1px;
+                    color: #aaaaaa;
+                    border: none;
+                    border-bottom: 1px solid #dedede;
+                    background: transparent;
+                }
+        
+                .ef_03 input[type='number']:focus {
+                    border-bottom: 2px solid #da3c41;
+                    outline: none;
+                }
+
+        /* === スキャンした JAN === END */
+
+                 /* ドロップダウンリスト */
+                 .dropdown_02 {
+                     position: relative;
+                     display: inline-block;
+                 }
+        
+                 .dropbtn {
+                     background-color: #4CAF50;
+                     color: white;
+                     padding: 10px;
+                     font-size: 16px;
+                     border: none;
+                     cursor: pointer;
+                 }
+        
+                 .dropdown-content {
+                     display: none;
+                     position: absolute;
+                     background-color: #f9f9f9;
+                     min-width: 160px;
+                     overflow: auto;
+                     border: 1px solid #ddd;
+                     z-index: 1;
+                     left: 0%;
+                 }
+        
+                 .dropdown-content button {
+                     color: black;
+                     padding: 10px 12px;
+                     text-decoration: none;
+                     display: block;
+                     cursor: pointer;
+                     width: 100%;
+                     text-align: center;
+                 }
+        
+                 .dropdown-content button:hover {
+                     background-color: #f1f1f1;
+                 }
+        
+                 .show {
+                     display: block;
+                 }
+        
+                 /* テーブル要素　ホバー */
+                 tr:hover {
+                     background: gray;
+                 }
+        
+                 /* 全表示 */
+                 .picking-row1 {
+                     background-color: tomato;
+                     /* pointer-events: none; */
+        
+                 }
+        
+                 /*  作業中 */
+                 .picking-row2 {
+                     background-color: tomato;
+                     /* pointer-events: none; */
+                     display: none;
+                 }
+
+                 /* 倉庫　画像 */
+                 .souko_icon_box img {
+                        width: 6%;
+                        height: auto;
+                 }
+
+                 /* 運送便 画像 */
+                 .unsou_icon_box img {
+                        width: 8%;
+                        height: auto;
+                 }  
+
+
+                 /* === ステータス判別 === */
+                 /* 作業中 */
+                 .sagyou_img_box > img {
+
+                 }
+
+                /* ============= リスト　表示 _default_root 用　=============*/
+
+                /* バラ数　など */
+                 .Font_Bold_default_root {
+                    font-size:14px;
+                    font-weight: 600;
+                    display: inline-block;
+                 }  
+
+                 /* 商品名 2 */
+                 .Shouhin_name_default_root {
+                    display: block;
+                        margin: 8px 0px;
+                        font-size: 13px;
+                        font-weight: 400;
+                 }
+
+
+} /* ================= END ================== */

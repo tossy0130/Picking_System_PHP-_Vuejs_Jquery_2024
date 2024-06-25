@@ -39,13 +39,25 @@ if (empty($session_id)) {
         dprint("02:::" . $_SESSION['soko_name']);
     }
 
+
     if (isset($_GET['day'])) {
         $select_day = $_GET['day'];
     }
 
-    if (isset($_GET['unsou_name'])) {
+    if (isset($_GET['unsou_name']) && (isset($_GET['forth_pattern']) || isset($_GET['fukusuu_select']))) {
         $get_unsou_name = $_GET['unsou_name'];
+        //echo "3から受け取った運送名は" . $get_unsou_name . "<br>";
         $_SESSION['unsou_name'] = $get_unsou_name;
+        //$_SESSION['unsou_icon_name'] = $_SESSION['unsou_name'];
+        $get_unsou_name = $_SESSION['unsou_name'];
+
+        //echo "画面遷移したときの運送名は:" . $get_unsou_name . "<br>";
+    }
+    
+
+    if ($_SESSION['unsou_name']) {
+        $get_unsou_name = $_SESSION['unsou_name'];
+        //$_SESSION['unsou_icon'] = $_SESSION['unsou_name'];
     }
 
     if (isset($_GET['unsou_code'])) {
@@ -55,6 +67,7 @@ if (empty($session_id)) {
     // 2024/06/05
     if (isset($_GET['selectedToki_Code'])) {
         $selectedToki_Code = $_GET['selectedToki_Code'];
+        
     }
 
     if (isset($_GET['fukusuu_unsouo_num'])) {
@@ -922,46 +935,6 @@ if (empty($session_id)) {
         //    print($_GET['scan_b'] . "ここ");
     }
 
-/*** 不要のため削除 24/06/15
-    // ============================= HTPK テーブル 処理 =============================
-    // === 接続準備
-    $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
-
-    if (!$conn) {
-        $e = oci_error();
-    }
-
-    //   $sql = "SELECT 商品Ｃ,処理Ｆ,商品名 FROM HTPK WHERE 処理Ｆ = 2 and 登録日時 = :syuka_day";
-    $sql = "SELECT 商品Ｃ,処理Ｆ,商品名 FROM HTPK WHERE 処理Ｆ = 2 OR 処理Ｆ = 8 OR 処理Ｆ = 9";
-    $stid = oci_parse($conn, $sql);
-    if (!$stid) {
-        $e = oci_error($stid);
-    }
-
-    // oci_bind_by_name($select_seq_stid, ':syuka_day', $syuka_day);
-
-    oci_execute($stid);
-
-    $arr_Zumi_DATA = array();
-    while ($row = oci_fetch_assoc($stid)) {
-        // カラム名を指定して値を取得
-        $HTPK_Souhin_Code = $row['商品Ｃ'];
-        $HTPK_Sori_Flg = $row['処理Ｆ'];
-        $HTPK_Souhin_Name = $row['商品名'];
-
-        // 取得した値を配列に追加
-        $arr_Zumi_DATA[] = array(
-            'HTPK_Souhin_Code' => $HTPK_Souhin_Code,
-            'HTPK_Sori_Flg' => $HTPK_Sori_Flg,
-            'HTPK_Souhin_Name' => $HTPK_Souhin_Name,
-        );
-    }
-
-    //var_dump($arr_Zumi_DATA);
-
-    oci_free_statement($stid);
-    oci_close($conn);
-***/
 }
 
 ?>
@@ -990,7 +963,7 @@ if (empty($session_id)) {
 
 <body>
 
-    <div class="head_box">
+    <!-- <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
                 <a href="#"><img src="./img/home_img.png"></a>
@@ -1000,50 +973,19 @@ if (empty($session_id)) {
                 グリーンライフ ピッキング
             </span>
         </div>
-    </div>
+    </div> -->
 
     <div id="app">
-        <div class="head_box_02">
-            <div class="head_content_02">
-                <span class="home_sub_icon_span">
-                    <a href="#"><img src="./img/page_img.png"></a>
-                </span>
-
-                <span class="page_title">
-                    ピッキング対象選択
-                </span>
-            </div>
-        </div>
-
         <div class="container">
             <div class="content_04">
                 <div class="head_01">
-
-                    <div>
-                        <span class="souko_icon_box">
-                            <img src="./img/souko_img.png">
-                        </span>
-                        <span class="souko_icon_box">
-                            
-                            <?php echo h($get_souko_name); ?>
-                        </span>
-                    </div>
-
-                    <div>
-                        <span class="unsou_icon_box">
-                            <img src="./img/unsou_img.png">
-                        </span>
-
+                    <div class="">
                         <span class="unsou_text_box">
                             <?php echo h($get_unsou_name); ?>
                         </span>
                     </div>
 
-                </div>
-
-                <div class="" id="menu_btn_box">
-
-                    <div class="dropdown_02" @click="toggleDropdown(1)">
+                    <div class="" @click="toggleDropdown(1)">
                         <button class="dropbtn" id="order_btn" value="並替">並替</button>
                         <div class="dropdown-content" :class="{show: isOpen[1]}">
                             <button type="button" @click="handleButtonClick('location_note')">ロケ順</button>
@@ -1053,7 +995,7 @@ if (empty($session_id)) {
                         </div>
                     </div>
 
-                    <div>
+                    <div class="">
 
                         <button type="button" id="all_select_btn">
                             全表示
@@ -1062,6 +1004,10 @@ if (empty($session_id)) {
                     </div>
 
                 </div>
+
+            </div>
+
+                
 
 
                 <div class="cp_iptxt_03">
@@ -1125,34 +1071,22 @@ if (empty($session_id)) {
 
                             $Sagyou_NOW_Flg = 0;
 
+                            //$shouhin_name_part1 = mb_substr($Picking_VAL['Shouhin_name'], 0, 20);
+                            //$shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20);
+                            //$result1 = rtrim(mb_substr($Picking_VAL['Shouhin_name'], 0 , 40));
+                            //$result2 = rtrim(mb_substr($Picking_VAL['Shouhin_name'], 41 , 40));
                             $shouhin_name_part1 = mb_substr($Picking_VAL['Shouhin_name'], 0, 20);
-                            $shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20);
+                            $shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20, null);
+                            //echo $shouhin_name_part1;
+                            //$shouhin_name_part1 = JStrCopy($Picking_VAL['Shouhin_name'], 0, 20);
+                            //$shouhin_name_part2 = JStrCopy($Picking_VAL['Shouhin_name'], 20, 40);
 
+                            //$shouhin_name_part1 = rtrim(mb_substr($Picking_VAL['Shouhin_name'], 0, 20, 'UTF-8'));
+                            //$shouhin_name_part2 = rtrim(mb_substr($Picking_VAL['Shouhin_name'], 20, null, 'UTF-8'));
 
-                            // print("処理F:::" . $Picking_VAL['Shori_Flg']);
-
-                            /*
-                            foreach ($arr_Zumi_DATA as $Zumi_DATA) {
-
-                                if ($Picking_VAL['Shouhin_code'] == $Zumi_DATA['HTPK_Souhin_Code'] && $Picking_VAL['Shouhin_name'] == $Zumi_DATA['HTPK_Souhin_Name'] && $Zumi_DATA['HTPK_Sori_Flg'] == 2) {
-                                    $Sagyou_NOW_Flg = 1;
-                                    //print("Sagyou_NOW_Flg" . $Sagyou_NOW_Flg);
-                                    break;
-                                } else if ($Picking_VAL['Shouhin_code'] == $Zumi_DATA['HTPK_Souhin_Code'] && $Picking_VAL['Shouhin_name'] == $Zumi_DATA['HTPK_Souhin_Name'] && $Zumi_DATA['HTPK_Sori_Flg'] == 8) {
-                                    $Sagyou_NOW_Flg = 2;
-                                    //print("Sagyou_NOW_Flg" . $Sagyou_NOW_Flg);
-                                    break;
-                                } else if ($Picking_VAL['Shouhin_code'] == $Zumi_DATA['HTPK_Souhin_Code'] && $Picking_VAL['Shouhin_name'] == $Zumi_DATA['HTPK_Souhin_Name'] && $Zumi_DATA['HTPK_Sori_Flg'] == 9 && isset($_GET["show_all"])) {
-                                    $Sagyou_NOW_Flg = 3;
-                                    //print("Sagyou_NOW_Flg" . $Sagyou_NOW_Flg);
-                                    break;
-                                } else if ($Zumi_DATA['HTPK_Souhin_Code'] == $Picking_VAL['Shouhin_code'] && $Zumi_DATA['HTPK_Souhin_Name'] == $Picking_VAL['Shouhin_name'] && $Zumi_DATA['HTPK_Sori_Flg'] == 9) {
-                                    $Sagyou_NOW_Flg = 4;
-                                    //print("Sagyou_NOW_Flg" . $Sagyou_NOW_Flg);
-                                    break;
-                                }
-                            } // =========== END arr_Zumi_DATA
-                             */
+                            //echo $shouhin_name_part1 . "<br>";
+                            //echo $shouhin_name_part2;
+                            //echo $Picking_VAL['Shouhin_name'] . "<br>";
 
 
                             // ケース薄 計算
@@ -1194,10 +1128,10 @@ if (empty($session_id)) {
                                     $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
 
                                     if (isset($Picking_VAL['tokki_zikou'])) {
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     } else {
                                         $Picking_VAL['tokki_zikou'] = "";
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                     }
 
 
@@ -1206,7 +1140,7 @@ if (empty($session_id)) {
 
                                     dprint("ここ:複数");
                                     $Multiple_Sql_Url = UrlEncode_Val_Check($Picking_VAL['sql_multiple_tokki']);
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '">';
 
                                     // *** 複数が最初に通る ルート ***
                                     // four.php => five.php へ　運送便（複数） , 備考・特記あり,　※備考・特記ありも複数
@@ -1215,8 +1149,9 @@ if (empty($session_id)) {
                                     dprint("ここ:複数 最初のルート third.php => four.php => five.php");
 
                                     echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' .
-                                        UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&shipping_moto='
-                                        . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name'])
+                                        //UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&shipping_moto='
+                                        UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name)
+                                        . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name'])
                                         . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
                                         . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num'])
                                         . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' .
@@ -1227,11 +1162,11 @@ if (empty($session_id)) {
                                     // === 通常処理　特記事項 あり
                                     if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] != "" || $Picking_VAL['shipping_moto'] != "") {
                                         //    dprint("koko,// === 通常処理　特記事項 あり");
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '">';
                                     } else if ($Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] == "" && $Picking_VAL['shipping_moto'] == "") {
                                         // dprint("koko,// === 通常処理　特記事項 あり else");
                                         // === 通常処理　特記事項 あり
-                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '&status_sub=default' . '">';
+                                        echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '&status_sub=default' . '">';
                                     }
                                 }
 
@@ -1242,11 +1177,23 @@ if (empty($session_id)) {
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Bara_num_View . '</span>' . '</td>';
 
-                                echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                if (!$shouhin_name_part2 == null) {
+                                    //echo $Picking_VAL['Shouhin_name'] . "<br>";
+                                    echo '<td>' . $shouhin_name_part2 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>";
+                                } else {
+                                    //echo "false" . "<br>";
+                                    //echo $Picking_VAL['Shouhin_name'] . "<br>";
+                                    //echo $shouhin_name_part1 . "<br>";
+                                    echo '<td>' . $shouhin_name_part1 . '<br />' .
                                     '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
                                     "</td>";
+                                }
+                                
 
                                 // === 特記がある
                                 if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
@@ -1274,11 +1221,27 @@ if (empty($session_id)) {
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Bara_num_View . '</span>' . '</td>';
 
-                                echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                if (isset($shouhin_name_part2)) {
+                                    echo "true" . "<br>";
+                                    //echo $shouhin_name_part2 . "<br>";
+                                    echo '<td>' . $shouhin_name_part2 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>";
+                                } else {
+                                    //echo $shouhin_name_part1 . "<br>";
+                                    echo "false" . "<br>";
+                                    echo '<td>' . $shouhin_name_part1 . '<br />' .
                                     '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
                                     "</td>";
+                                }
+                                /* echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                    '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>"; */
 
                                 // === 特記
                                 if ((isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") || (isset($Picking_VAL['shipping_moto']) && $Picking_VAL['shipping_moto'] != "")) {
@@ -1299,7 +1262,7 @@ if (empty($session_id)) {
                                         echo '<tr style="background: green;" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) .
                                             '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
                                             '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) .
-                                            '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) .
+                                            '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                                             '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
                                             '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
                                             '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
@@ -1319,7 +1282,7 @@ if (empty($session_id)) {
                                         echo '<tr style="background: green;" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) .
                                             '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
                                             '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) .
-                                            '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) .
+                                            '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                                             '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
                                             '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
                                             '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
@@ -1334,7 +1297,7 @@ if (empty($session_id)) {
                                     }
                                 } else {
 
-                                    echo '<tr style="background: green"; data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($Picking_VAL['Unsou_name']) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) . '">';
+                                    echo '<tr style="background: green"; data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) . '">';
                                 }
 
                                 echo '<td><span id="sagyou_now_text">残<i class="fa-regular fa-circle-stop"></i></span>' . $Picking_VAL['Tana_num'] . '</td>';
@@ -1344,11 +1307,23 @@ if (empty($session_id)) {
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Bara_num_View . '</span>' . '</td>';
 
-                                echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                if (isset($shouhin_name_part2)) {
+                                    echo '<td>' . $shouhin_name_part2 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>";
+                                } else {
+                                    echo '<td>' . $shouhin_name_part1 . '<br />' .
                                     '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
                                     "</td>";
+                                }
+                                /* echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                    '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>"; */
 
                                 // === 特記
                                 if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
@@ -1379,12 +1354,23 @@ if (empty($session_id)) {
                                     '<span class="Font_Bold_default_root">' . $Picking_VAL['Shouhin_num'] . '</span>' . "</td>";
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
                                 echo '<td>' . '<span class="Font_Bold_default_root">' . $Bara_num_View . '</span>' . '</td>';
-
-                                echo '<td>' . $shouhin_name_part1 . '<br />' .
-                                    '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
+                                
+                                if (!$shouhin_name_part2 == null) {
+                                    echo '<td>' . $shouhin_name_part2 .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
                                     "</td>";
+                                } else {
+                                    echo '<td>' . $shouhin_name_part1 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>";
+                                }
+                                /* echo '<td>' . $shouhin_name_part1 . '<br />' .
+                                    '<span class="Shouhin_name_default_root">' . $shouhin_name_part2 . '</span>' .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>"; */
 
                                 echo '<td><span class="toki_list">' . $Picking_VAL['tokki_zikou'] . '</span>' .
                                     '<span class="bikou_list">' . $Picking_VAL['shipping_moto_name'] . '</span></td>';
@@ -1393,16 +1379,27 @@ if (empty($session_id)) {
                             } else if ($Sagyou_NOW_Flg == 4) {
                                 // 「確定」
                                 $row_class = 'picking-row2';
-                                echo '<tr class="' . $row_class . '" data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $Picking_VAL['Unsou_name'] . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '&shouhin_jan=' . $shouhin_JAN . '">';
+                                echo '<tr class="' . $row_class . '" data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $get_unsou_name . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '&shouhin_jan=' . $shouhin_JAN . '">';
                                 echo '<td><span id="sagyou_now_text_ok">作業完了<i class="fa-regular fa-circle-stop"></i><br></span>' . $Picking_VAL['Tana_num'] . '</td>';
                                 echo '<td id="shouhin_num_box" class="shouhin_num_box">' . $Picking_VAL['Shouhin_num'] . "</td>";
                                 echo '<td>' .  $Case_num_View . '</td>';
                                 echo '<td>' . $Bara_num_View . '</td>';
 
-                                echo '<td>' . $shouhin_name_part1 . '<br />' . $shouhin_name_part2 .
+                                if (!$shouhin_name_part2 == null) {
+                                    echo '<td>' . $shouhin_name_part2 .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
                                     "</td>";
+                                } else {
+                                    echo '<td>' . $shouhin_name_part1 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>";
+                                }
+                                /* echo '<td>' . $shouhin_name_part1 . '<br />' . $shouhin_name_part2 .
+                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
+                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
+                                    "</td>"; */
 
                                 // === 特記
                                 if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
@@ -1516,7 +1513,6 @@ if (empty($session_id)) {
                     var fukusuu_select_val = "<?php echo isset($fukusuu_select_val) ? $fukusuu_select_val : ''; ?>";
                     // 2024/06/12
                     var select_toki_code = "<?php echo isset($selectedToki_Code) ? $selectedToki_Code : ''; ?>";
-
 
                     if (show_all_flg != "") {
                         // 選択条件分岐 2024/06/07 修正
