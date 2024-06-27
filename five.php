@@ -67,6 +67,21 @@ if (empty($session_id)) {
         dprintBR($_SESSION['fukusuu_select']);
     }
 
+    if (isset($_GET['index'])) {
+        $_SESSION['selected_index'] = $_GET['index'];
+        $_SESSION['selected_jan'] = $_GET['shouhin_jan'];
+        echo $_SESSION['selected_index'] . " " . $_SESSION['selected_jan'];
+    }
+
+    /* if (isset($_SESSION['unsou_name'])) {
+        $get_unsou_name = $_SESSION['unsou_name'];
+
+        $_SESSION['unsou_name'] = $get_unsou_name;
+    } else {
+        $_SESSION['unsou_name'] = $get_unsou_name;
+    }
+    echo $_SESSION['unsou_name']; */
+
     // ================================================================
     // =================== 戻る を押した場合 ========================
     // ================================================================
@@ -119,14 +134,14 @@ if (empty($session_id)) {
 
         oci_free_statement($stid);
         oci_close($conn);
+        
+        
     }
 
     if (isset($_GET['five_back_button'])) {
-
-
         // GET パラメータをセッションに格納
         $_SESSION['five_back_params'] = $_GET;
-
+        
         // === ******** four.php の状態判別パラメーター　を渡す 
         // === 通常用　（単層便）
         if (isset($_SESSION['forth_pattern']) && $_SESSION['forth_pattern'] === "one") {
@@ -151,7 +166,8 @@ if (empty($session_id)) {
             (isset($_SESSION['fukusuu_select']) && $_SESSION['fukusuu_select'] === "200")
             //&& $_GET['four_status'] == 'multiple_sql_four'
         ) {
-
+            print_r($_SESSION['five_back_params']);
+            //return false;
             $_SESSION['fukusuu_unsouo_num'] = $_SESSION['fukusuu_unsouo_num'];
             $_SESSION['fukusuu_select_val'] = $_SESSION['fukusuu_select_val'];
             $_SESSION['fukusuu_select'] = $_SESSION['fukusuu_select'];
@@ -462,7 +478,8 @@ if (empty($session_id)) {
                         if (
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'selectedToki_Code'
-                            && $key != 'souko_code'
+                            && $key != 'souko_code' && $key != 'unsou_name'
+                            && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -514,7 +531,7 @@ if (empty($session_id)) {
                     //   $_SESSION['third_default_sql'] = $_SESSION['third_default_sql'];
 
                     // === ******** four.php からの 状態判別用 パラメーター
-                    $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                    //$_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
 
                     // セッション削除
                     foreach ($_SESSION as $key => $value) {
@@ -522,6 +539,7 @@ if (empty($session_id)) {
                             // ===  $key != 'forth_pattern' で four.php の判別セッションは削除しない
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'souko_code'
+                            && $key != 'unsou_name' && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -571,6 +589,8 @@ if (empty($session_id)) {
                 if ($commit_success) {
                     oci_commit($conn);
                     // コミットが成功した場合
+                    // === ******** four.php からの 状態判別用 パラメーター
+                    //$_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
 
                     // セッション削除
                     // ========== four.php での SQL再構築の為に　特記・備考の値
@@ -580,11 +600,15 @@ if (empty($session_id)) {
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id' &&
                             $key != 'back_multiple_sql' && $key != 'fukusuu_select'
                             && $key != 'fukusuu_unsouo_num' && $key != 'fukusuu_select_val'
-                            && $key != 'souko_code'
+                            && $key != 'souko_code' && $key != 'unsou_name'
+                            && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
                     }
+                    
+                    // === 処理 SEQ 削除
+                //unset($_SESSION['five_back_Syori_SEQ']);
 
                     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -658,10 +682,6 @@ if (empty($session_id)) {
         $get_souko = $_GET['souko'];
         $get_unsou_code = $_GET['unsou_code'];
         $get_one_op_tokki = $_GET['one_op_tokki'];
-
-        if (isset($_GET['unsou_name'])) {
-            $get_unsou_name = $_GET['unsou_name'];
-        }
 
         if (isset($_SESSION['unsou_name'])) {
             $get_unsou_name = $_SESSION['unsou_name'];
@@ -856,8 +876,8 @@ if (empty($session_id)) {
 
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '";
+                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . 
+                     '";
                     }, 500);
                    
 
@@ -957,6 +977,7 @@ if (empty($session_id)) {
         } else {
             $unsou_name = "";
         }
+        
 
         $shipping_moto = $_GET['shipping_moto'];
         $shipping_moto_name = $_GET['shipping_moto_name'];
@@ -968,24 +989,6 @@ if (empty($session_id)) {
         $case_num = $_GET['case_num'];
         $bara_num = $_GET['bara_num'];
         $shouhin_jan = $_GET['shouhin_jan'];
-
-        /*
-        dprint("GETデータ出力:::" . "<br>");
-        dprint("select_day:::" . $select_day . "<br>");
-        dprint("souko_code:::" . $souko_code . "<br>");
-        dprint("unsou_code:::" . $unsou_code . "<br>");
-        dprint("unsou_name:::" . $unsou_name . "<br>");
-        dprint("shipping_moto:::" . $shipping_moto . "<br>");
-        dprint("shipping_moto_name:::" . $shipping_moto_name . "<br>");
-        dprint("Shouhin_code:::" . $Shouhin_code . "<br>");
-        dprint("Shouhin_name:::" . $Shouhin_name . "<br>");
-        dprint("Shouhin_num:::" . $Shouhin_num . "<br>");
-
-        dprint("Tana_num:::" . $Tana_num . "<br>");
-        dprint("case_num:::" . $case_num . "<br>");
-        dprint("bara_num:::" . $bara_num . "<br>");
-        dprint("shouhin_jan:::" . $shouhin_jan . "<br>");
-        */
 
         // 特記
         if (isset($_GET['tokki_zikou'])) {
@@ -1020,8 +1023,6 @@ if (empty($session_id)) {
         $Shouhin_name_part1 = mb_substr($Shouhin_name, 0, 20);
         // 品番
         $Shouhin_name_part2 = mb_substr($Shouhin_name, 20);
-
-        $result = split_string_by_byte($Shouhin_name, 40);
 
         // === 得意先  コメントアウト
         /*
@@ -2407,15 +2408,18 @@ if (empty($session_id)) {
 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" name="five_back_btn_form_get" id="five_back_btn_form_get">
                     <input type="hidden" name="unsou_code" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['unsou_code'] ?? $unsou_code); ?>">
-                    <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['unsou_name'] ?? $unsou_name); ?>">
+                    <!-- 2024/06/19 変更 -->
+                    <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
+                    <!-- <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['unsou_name']) ?>"> -->
+
                     <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>">
 
                     <input type="hidden" name="souko" value="<?php echo htmlspecialchars($souko_code); ?>">
 
                     <input type="hidden" name="shouhin_code" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['shouhin_code'] ?? $Shouhin_code); ?>">
-                    <input type="hidden" name="shouhin_name" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['shouhin_name'] ?? $Shouhin_name); ?>">
+                    <input type="hidden" name="shouhin_name" value="<?php echo htmlspecialchars($Shouhin_name); ?>">
                     <input type="hidden" name="shouhin_num" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['shouhin_num'] ?? $Shouhin_num); ?>">
-                    <input type="hidden" name="shipping_moto_name" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['shipping_moto_name'] ?? $shipping_moto_name); ?>">
+                    <input type="hidden" name="shipping_moto_name" value="<?php echo htmlspecialchars($shipping_moto_name); ?>">
                     <input type="hidden" name="get_souko_name" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['get_souko_name'] ?? $get_souko_name); ?>">
 
                     <!-- 品番 -->
@@ -2475,9 +2479,11 @@ if (empty($session_id)) {
                     <input type="hidden" name="day" value="<?php echo isset($_SESSION['kakutei_btn_params']['day']) ? $_SESSION['kakutei_btn_params']['day'] : $select_day; ?>">
 
                     <input type="hidden" name="souko_code" value="<?php echo $souko_code; ?>">
-
-                    <input type="hidden" name="unsou_code" value="<?php echo isset($_SESSION['kakutei_btn_params']['unsou_code']) ? $_SESSION['kakutei_btn_params']['unsou_code'] : $unsou_code; ?>">
-                    <input type="hidden" name="unsou_name" value="<?php echo isset($_SESSION['kakutei_btn_params']['unsou_name']) ? $_SESSION['kakutei_btn_params']['unsou_name'] : $unsou_name; ?>">
+                    <input type="hidden" name="unsou_code" value="<?php echo $unsou_code; ?>">
+                    <!-- <input type="hidden" name="unsou_code" value="<?php echo isset($_SESSION['kakutei_btn_params']['unsou_code']) ? $_SESSION['kakutei_btn_params']['unsou_code'] : $unsou_code; ?>"> -->
+                    <!-- <input type="hidden" name="unsou_name" value="<?php echo isset($_SESSION['kakutei_btn_params']['unsou_name']) ? $_SESSION['kakutei_btn_params']['unsou_name'] : $unsou_name; ?>"> -->
+                    <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
+                    <!-- <input type="hidden" name="unsou_name" value="<?php echo $_SESSION['unsou_name']; ?>";> -->
                     <input type="hidden" name="souko_name" value="<?php echo isset($_SESSION['kakutei_btn_params']['souko_name']) ? $_SESSION['kakutei_btn_params']['souko_name'] : $_SESSION['soko_name']; ?>">
                     <input type="hidden" name="shouhin_jan" value="<?php echo isset($_SESSION['kakutei_btn_params']['shouhin_jan']) ? $_SESSION['kakutei_btn_params']['shouhin_jan'] : $Shouhin_Detail_DATA[4]; ?>">
                     <input type="hidden" name="shouhin_code" value="<?php echo isset($_SESSION['kakutei_btn_params']['shouhin_code']) ? $_SESSION['kakutei_btn_params']['shouhin_code'] : $Shouhin_Detail_DATA[5]; ?>">
@@ -2515,7 +2521,7 @@ if (empty($session_id)) {
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
                         <input type="hidden" name="one_now_sql_zensuu" id="one_now_sql_zensuu" value="<?php echo $_GET['now_sql']; ?>">
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
-                        <!-- 24/06/13
+<!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
 -->
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">
@@ -2588,7 +2594,7 @@ if (empty($session_id)) {
 
                         <!-- 通常処理 （運送便 単数） -->
                     <?php elseif (isset($_GET['four_status']) && $_GET['four_status'] == 'default_root') : ?>
-                        <!-- 24/06/13
+<!-- 24/06/13
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? $_SESSION['four_five_default_SQL'] : ''; ?>">
 -->
                         <input type="hidden" name="default_root_sql_zensuu" id="default_root_sql_zensuu" value="<?php echo isset($_SESSION['four_five_default_SQL']) ? '1' : ''; ?>">

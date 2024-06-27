@@ -85,14 +85,15 @@
         background-color: #5CBCE0;
         text-align: center;
         padding: 12px 0px;
-        font-size: 0.82em !important;
+        /* font-size: 0.82em !important; */
         color: #fff;
     }
 
     /* テーブルセルのスタイル */
     td {
-        padding: 5px;text-align: left;
-        font-size: 0.65em;
+        padding: 8px;text-align: left;
+        /* font-size: 0.65em; */
+        font-size: 1em;
     }
 
 
@@ -144,15 +145,23 @@
     /*　特記 一覧 */
     .toki_list {
         margin: 0;padding: 0;
-        position: relative;top: -5px;
+        position: relative;
+        /* top: -5px; */
         display: block;
     }
 
     /* 備考　一覧 */
     .bikou_list {
         margin: 0;padding: 0;
-        display: inline-block;position: relative;
+        display: inline-block;
+        /* position: relative; */
         top: 10px;
+    }
+
+    .tokkibikou_cell {
+        /* width: 15%; */
+        width: 18%;
+        font-size: 10px;
     }
 
     /*========== END ========*/
@@ -160,21 +169,26 @@
     /* スキャンした JAN */
     .cp_iptxt_03 {
         position: relative;
-        width: 80%;
-        margin: -10px 1%;
+        /* width: 80%; */
+        width: 10%;
+        /* margin: -10px 1%; */
+        margin: -10px 0px -25px 0px;
     }
 
     .cp_iptxt_03 input[type='number'] {
-        font: 15px/24px sans-serif;
+        /* font: 15px/24px sans-serif; */
         box-sizing: border-box;
-        width: 50%;
-        padding: 0.3em;
+        /* width: 9%; */
+        /* width: 100%; */
+        width: 115%;
+        /* padding: 0.3em; */
         transition: 0.3s;
-        letter-spacing: 1px;
+        /* letter-spacing: 1px; */
         color: #aaaaaa;
         border: none;
         border-bottom: 1px solid #dedede;
         background: transparent;
+        /* display: none; */
     }
 
     .ef_03 input[type='number']:focus {
@@ -269,6 +283,10 @@
 
     /* ============= リスト　表示 _default_root 用　=============*/
 
+    .tana_num {
+        font-weight: 600;
+    }
+
     /* バラ数　など */
     .Font_Bold_default_root {
     font-size:14px;
@@ -282,6 +300,11 @@
         margin: 8px 0px;
         font-size: 13px;
         font-weight: 400;
+    }
+
+    /* 品名 */
+    .shouhin_name {
+    font-size: 15px;
     }
 
 

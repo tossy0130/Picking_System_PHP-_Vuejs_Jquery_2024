@@ -6,6 +6,7 @@
                     display: grid;
                     grid-template-columns: repeat(2, 1fr);
                     gap: 10px;
+                    margin: 0 0 0 20px;
                     /* ボタン間の間隔 */
                 }
             
@@ -17,7 +18,7 @@
                 }
             
                 .souko_box_v button {
-                    width: 85%;
+                    width: 98%;
                     /* ボタンの幅を100%に */
                     padding: 10px;
                     font-size: 16px;
