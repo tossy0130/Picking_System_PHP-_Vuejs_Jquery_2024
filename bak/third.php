@@ -73,7 +73,6 @@ if (empty($session_id)) {
                  GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                  ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 */
-/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
@@ -92,25 +91,7 @@ if (empty($session_id)) {
                    AND SL.倉庫Ｃ = :GET_SOUKO
                  GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                  ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
-*/
-        $sql = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
-                       SM.出荷元名,SK.特記事項
-                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
-                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                   AND SK.伝票行番号 = SL.伝票行番号
-                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                   AND SL.伝票番号   = PK.伝票番号(+)
-                   AND SL.伝票行番号 = PK.伝票行番号(+)
-                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                   AND SK.運送Ｃ = US.運送Ｃ
-                   AND NVL(PK.処理Ｆ,0) <> 9
-                   AND SK.出荷日 = :GET_DATE
-                   AND SL.倉庫Ｃ = :GET_SOUKO
-                 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
-                 ORDER BY SL.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
+
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
             $e = oci_error($stid);

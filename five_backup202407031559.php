@@ -67,17 +67,21 @@ if (empty($session_id)) {
         dprintBR($_SESSION['fukusuu_select']);
     }
 
-
+    /*
     if (isset($_GET['index'])) {
         $_SESSION['selected_index'] = $_GET['index'];
         $_SESSION['selected_jan'] = $_GET['shouhin_jan'];
     }
-	// 2024/07/04 追加
-    if (isset($_GET['sort_key'])) {
-        $sortKey = $_GET['sort_key'];
+        */
+
+    /* if (isset($_SESSION['unsou_name'])) {
+        $get_unsou_name = $_SESSION['unsou_name'];
+
+        $_SESSION['unsou_name'] = $get_unsou_name;
+    } else {
+        $_SESSION['unsou_name'] = $get_unsou_name;
     }
-
-
+    echo $_SESSION['unsou_name']; */
 
     // ================================================================
     // =================== 戻る を押した場合 ========================
@@ -474,7 +478,7 @@ if (empty($session_id)) {
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'selectedToki_Code'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            && $key != 'selected_index' && $key != 'selected_jan'
+                            //   && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -494,8 +498,8 @@ if (empty($session_id)) {
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
                         '&souko_c=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
-                        '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) .
+                        '&one_now_sql_zensuu=' .
+                        UrlEncode_Val_Check($get_now_sql) .
                         '";
                 }, 1100);
 
@@ -534,7 +538,8 @@ if (empty($session_id)) {
                             // ===  $key != 'forth_pattern' で four.php の判別セッションは削除しない
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'souko_code'
-                            && $key != 'unsou_name' && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'unsou_name'
+                            //  && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -557,8 +562,8 @@ if (empty($session_id)) {
                         '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
-                        '&default_root_sql_zensuu=' . UrlEncode_Val_Check($pFlg) .
+                        '&default_root_sql_zensuu=' .
+                        UrlEncode_Val_Check($pFlg) .
                         '";
                 }, 1100);
 
@@ -596,7 +601,7 @@ if (empty($session_id)) {
                             $key != 'back_multiple_sql' && $key != 'fukusuu_select'
                             && $key != 'fukusuu_unsouo_num' && $key != 'fukusuu_select_val'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            && $key != 'selected_index' && $key != 'selected_jan'
+                            //    && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -618,7 +623,6 @@ if (empty($session_id)) {
                         '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
                         '";
                 }, 1100);
 
@@ -778,8 +782,8 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . urldecode($get_unsou_code)
                     . '&unsou_name=' . urldecode($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) .
-                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) .  '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) . '";
+                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) . '&one_now_sql_zensuu=' .
+                    UrlEncode_Val_Check($get_now_sql) . '";
                     }, 500);
                    
 
@@ -828,8 +832,8 @@ if (empty($session_id)) {
 
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '&default_root_sql_zensuu=' . UrlEncode_Val_Check($pFlg) . '";
+                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . '&default_root_sql_zensuu=' .
+                    UrlEncode_Val_Check($pFlg) . '";
                     }, 500);
                    
 
@@ -873,7 +877,7 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
                     . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '";
+                    '";
                     }, 500);
                    
 
@@ -1051,7 +1055,7 @@ if (empty($session_id)) {
         // *******************************
         // === 可変の SQL 取得
         // *******************************
-        if (isset($_GET['now_sql']) || (isset($_GET['four_status']) && $_GET['four_status'] == 'one_bikou_tokki')) {
+        if (isset($_GET['now_sql']) || $_GET['four_status'] == 'one_bikou_tokki') {
 
             // === 全数完了　ルートで完了後、 four.phpから来た場合
             if (empty($_GET['now_sql'])) {
@@ -1429,7 +1433,7 @@ if (empty($session_id)) {
             $sql_Sel_TkNm .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                       ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
             $flg_TkNm_Unso = 0;
-        } else if (isset($_GET['now_sql']) || (isset($_GET['four_status']) && $_GET['four_status'] == 'one_bikou_tokki')) {
+        } else if (isset($_GET['now_sql']) || $_GET['four_status'] == 'one_bikou_tokki') {
             //【運送便（単数）,備考・特記あり】 処理
             //運送便（単数） 条件
             //    $sql_ins_HTPK .= "     AND SJ.運送Ｃ = :unsou_code ";
@@ -2222,9 +2226,8 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/sweetalert2.css">
 
-    <!--
     <link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.min.css">
--->
+
 
 
     <title>ピッキング</title>
@@ -2538,9 +2541,8 @@ if (empty($session_id)) {
                     <!-- 2024/06/19 変更 -->
                     <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
                     <!-- <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['unsou_name']) ?>"> -->
-					<!-- 2024/07/04 変更 -->
-					<input type="hidden" name="day" value="<?php echo $select_day; ?>">
-                    <!-- <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>"> -->
+
+                    <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>">
 
                     <input type="hidden" name="souko" value="<?php echo htmlspecialchars($souko_code); ?>">
 
@@ -2570,8 +2572,6 @@ if (empty($session_id)) {
                     <!-- 備考 -->
                     <input type="hidden" name="one_op_bikou" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['one_op_bikou'] ?? $Shouhin_Detail_DATA[10]); ?>">
 
-					<!-- 並替 2024/07/04 追加 -->
-                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う ============= -->
                     <!-- 処理ＳＥＱ  -->
                     <input type="hidden" name="five_back_Syori_SEQ" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['five_back_Syori_SEQ'] ?? $syori_SEQ_value); ?>">
@@ -2623,8 +2623,6 @@ if (empty($session_id)) {
                     <input type="hidden" name="Dennpyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_num'] : $IN_Dennpyou_num; ?>">
                     <input type="hidden" name="Dennpyou_Gyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num'] : $IN_Dennpyou_Gyou_num; ?>">
                     <input type="hidden" name="count_num_val" id="count_num_val" value="<?php echo isset($_SESSION['kakutei_btn_params']['count_num_val']) ? $_SESSION['kakutei_btn_params']['count_num_val'] : $count_num; ?>">
-                    <!-- 24/07/03 -->
-                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
 
                     <?php if (isset($_SESSION['Syuka_Yotei_SUM']) && !empty($_SESSION['Syuka_Yotei_SUM'])) : ?>
                         <input type="hidden" name="Syuka_Yotei_SUM" id="Syuka_Yotei_SUM" value="<?php echo $_SESSION['Syuka_Yotei_SUM']; ?>">
@@ -2719,8 +2717,6 @@ if (empty($session_id)) {
                     <!-- 商品コード -->
                     <input type="hidden" name="one_op_shouhin_code" value="<?php print $strs_Shouhin_Code; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う END ============= -->
-                    <!-- 24/07/03 -->
-                    <input type="hidden" name="sort_key" value="<?php print $sortKey; ?>">
 
                     <!-- 備考・特記 , & 複数処理 -->
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
@@ -2756,9 +2752,7 @@ if (empty($session_id)) {
     <script src="./js//popper.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
 
-    <!--
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.all.min.js"></script>
-    -->
     <script src="./js/sweetalert2.min.js"></script>
 
     <script type="text/javascript">

@@ -1,8 +1,8 @@
 /* ====== スマホ ====== */
 @media only screen and (min-width: 10px) {
 
-    
-    .head_01 > div:nth-child(1) {
+
+    .head_01>div:nth-child(1) {
         width: 50%;
         text-align: center;
         background: #5CBCE0;
@@ -13,7 +13,7 @@
 
 
 
-    .head_01 > div:nth-child(2) {
+    .head_01>div:nth-child(2) {
         background: #F08A00;
         border: none;
         color: #fff;
@@ -26,7 +26,7 @@
         cursor: pointer;
     }
 
-    .head_01 > div:nth-child(3) {
+    .head_01>div:nth-child(3) {
         background: #82dcb8;
         border: none;
         color: #333;
@@ -47,7 +47,7 @@
     #order_btn_box {
         width: 100%;
     }
-    
+
     /* #order_btn {
         background: #F08A00;
         border: none;
@@ -67,19 +67,22 @@
         cursor: pointer;
         outline: inherit;
     }
-    
+
     /* テーブル全体のスタイル */
     table {
-            border-collapse: collapse;width: 100%; 
-            border-color: #4b4b4b;
+        border-collapse: collapse;
+        width: 100%;
+        border-color: #4b4b4b;
 
-        }
-    
-    /* テーブルのボーダー */
-    th, td {
-    border: 1px solid grey; /* セルの境界線をグレーに設定 */
     }
-    
+
+    /* テーブルのボーダー */
+    th,
+    td {
+        border: 1px solid grey;
+        /* セルの境界線をグレーに設定 */
+    }
+
     /* テーブルヘッダーのスタイル */
     th {
         background-color: #5CBCE0;
@@ -91,7 +94,8 @@
 
     /* テーブルセルのスタイル */
     td {
-        padding: 8px;text-align: left;
+        padding: 8px;
+        text-align: left;
         /* font-size: 0.65em; */
         font-size: 1em;
     }
@@ -101,16 +105,16 @@
         display: flex;
     }
 
-    .four_flex > div:nth-of-type(1) {
+    .four_flex>div:nth-of-type(1) {
         width: 35%;
     }
-    
+
     #login_id_view {
         border-bottom: 3px solid #ccc;
-            font-weight: 600;
-            font-size: 1.02em;
-            width: 80%;
-            margin: 1.5em 0 0 0.5em;
+        font-weight: 600;
+        font-size: 1.02em;
+        width: 80%;
+        margin: 1.5em 0 0 0.5em;
     }
 
     #menu_btn_box {
@@ -122,14 +126,16 @@
     }
 
     #menu_btn_box>div:nth-child(2) {
-            width: 48%;
-            margin: 0 0 0 2.5em;
+        width: 48%;
+        margin: 0 0 0 2.5em;
     }
 
     /* 作業中 */
     #sagyou_now_text {
-        color: #fff;background: red;
-        padding: 5px 1px;border-radius: 2px;
+        color: #fff;
+        background: red;
+        padding: 5px 1px;
+        border-radius: 2px;
     }
 
     /* 作業完了 */
@@ -138,13 +144,15 @@
         background: aquamarine;
         padding: 5px 1px;
         border-radius: 2px;
+        font-size: 10px;
     }
 
 
 
     /*　特記 一覧 */
     .toki_list {
-        margin: 0;padding: 0;
+        margin: 0;
+        padding: 0;
         position: relative;
         /* top: -5px; */
         display: block;
@@ -152,7 +160,8 @@
 
     /* 備考　一覧 */
     .bikou_list {
-        margin: 0;padding: 0;
+        margin: 0;
+        padding: 0;
         display: inline-block;
         /* position: relative; */
         top: 10px;
@@ -205,7 +214,7 @@
     }
 
     .dropbtn {
-        
+
         color: white;
         padding: 10px;
         font-size: 16px;
@@ -272,31 +281,30 @@
     .unsou_icon_box img {
         width: 8%;
         height: auto;
-    }  
+    }
 
 
     /* === ステータス判別 === */
     /* 作業中 */
-    .sagyou_img_box > img {
-
-    }
+    .sagyou_img_box>img {}
 
     /* ============= リスト　表示 _default_root 用　=============*/
 
     .tana_num {
         font-weight: 600;
+        font-size: 14px;
     }
 
     /* バラ数　など */
     .Font_Bold_default_root {
-    font-size:14px;
-    font-weight: 600;
-    display: inline-block;
-    }  
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+    }
 
     /* 商品名 2 */
     .Shouhin_name_default_root {
-    display: block;
+        display: block;
         margin: 8px 0px;
         font-size: 13px;
         font-weight: 400;
@@ -304,8 +312,36 @@
 
     /* 品名 */
     .shouhin_name {
-    font-size: 15px;
+        font-size: 15px;
     }
 
 
-} /* ================= END ================== */
+    /* ========== 追加 24_0704
+    /* jan 切替ボタン */
+    .toggle_button {
+        margin: 0 0 0 10px;
+        padding: 5px 10px;
+        outline: none;
+        border: 2px solid #BBACC1;
+        background: #fff;
+        border-radius: 5px;
+        color: #BBACC1;
+    }
+
+    #toggle_all_button {
+        margin: 5px 0 0 10px;
+        padding: 7px 20px;
+        outline: none;
+                border: 2px solid #666;
+        background: #BBACC1;
+        border-radius: 5px;
+        color: #333;
+        font-weight: 600;
+            letter-spacing: 0.2em;
+        }
+    }
+
+
+}
+
+/* ================= END ================== */

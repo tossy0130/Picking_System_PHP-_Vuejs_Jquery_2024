@@ -98,15 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- フッターメニュー -->
         <footer class="footer-menu_fixed">
             <ul>
-                <?php $back_flg = 1; ?>
-                <?php $url = "./index.php?back_index=ok&id=" . UrlEncode_Val_Check($_SESSION['input_login_id']); ?>
-                <li><a href="<?php print h($url); ?>">戻る</a></li>
+            <?php $back_flg = 1; ?>
+            <?php $url = "./index.php?back_index=ok&id=" . UrlEncode_Val_Check($_SESSION['input_login_id']); ?>
+            <li><a href="<?php print h($url); ?>">戻る</a></li>
             </ul>
         </footer>
     </div>
-
-
-
 
 </body>
 

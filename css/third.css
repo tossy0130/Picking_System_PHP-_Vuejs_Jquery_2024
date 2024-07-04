@@ -225,7 +225,7 @@
                     .third_view_midashi {
                         padding: 0px 0 5px 10px;
                             border-left: 10px solid rgb(69, 160, 73);
-                            margin: 10px 0 10px 10px;
+                            margin: 10px 0 0px 10px;
                             border-bottom: 2px solid rgb(69, 160, 73);
                             width: 65%;
                     }   
@@ -233,7 +233,7 @@
                     .third_view_midashi_01 {
                                             padding: 0px 0 5px 10px;
                                             border-left: 10px solid rgb(69, 160, 73);
-                                            margin: 10px 0 15px 10px;
+                                            margin: 10px 0 0px 10px;
                                             border-bottom: 2px solid rgb(69, 160, 73);
                                             width: 65%;
                                         }
@@ -267,6 +267,10 @@
                     }
                         */
 
+                    .single_select_title_0 {
+                        display: none;
+                    }
+
                     .single_select_title {
                         margin: 5px 5px 5px 15px;padding: 5px 5px;
                         background: #ddd;display: inline-block;
@@ -286,17 +290,39 @@
                             font-size: 15px;
                             border-bottom: solid 2px #05668D;
                             color: #646E78;
-                            width: 35%;
+                            width: 75%;
                             padding: 0 0px 5px 0;
                     }
 
+                        /* シングル　セレクト 運送コード */
+                        #selectedUnsouCode {
+                            display: none;
+                        }
 
-            #fukusuu_select, #fukusuu_select_unsou , #selectedUnsouCode, #selectedUnsouName, #selectedToki_Code{
+                        /* 複数 セレクト 運送コード */
+                        #fukusuu_select {
+                            display: none;
+                        }
+                
+            #fukusuu_select, #fukusuu_select_unsou , #selectedUnsouName{
                         font-size: 15px;
                             letter-spacing: 0.3em;
                             color: #646E78;
                             font-weight: 500;
                     }
+
+                    
+            #selectedToki_Code {
+                    margin: 5px 0 10px 15px;
+                        letter-spacing: 0.3em;
+                        font-weight: 500;
+                        font-size: 15px;
+                        border-bottom: solid 2px #05668D;
+                        color: #646E78;
+                        width: 75%;
+                        padding: 0 0px 5px 0;
+                 
+            }
 
 
 

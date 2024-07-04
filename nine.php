@@ -452,9 +452,9 @@ if (empty($session_id)) {
                     </div>
 
                     <div>
-                        <span class="unsou_icon_box">
+                        <!-- <span class="unsou_icon_box">
                             <img src="./img/unsou_img.png">
-                        </span>
+                        </span> -->
 
                         <span class="unsou_text_box">
                             <?php echo h($selected_shippingname); ?>

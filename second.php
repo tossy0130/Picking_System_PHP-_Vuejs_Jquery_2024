@@ -15,6 +15,7 @@ $top_url = Init_Val::TOP_URL;
 session_start();
 
 
+
 // セッションIDが一致しない場合はログインページにリダイレクト
 if (!isset($_SESSION["sid"])) {
     header("Location: index.php");
@@ -59,6 +60,7 @@ if (empty($session_id)) {
     //	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
     //	               AND SJ.出荷日 = :POST_DATE
     //	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
+/* 24/07/01
     $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
               FROM SJTR SJ,SKTR SK,SLTR SL,SOMF SO
              WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -67,6 +69,15 @@ if (empty($session_id)) {
                AND SL.倉庫Ｃ = SO.倉庫Ｃ
                AND SJ.出荷日 = :POST_DATE
              GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
+*/
+    $sql = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
+              FROM SJTR SJ,SKTR SK,SLTR SL,SOMF SO
+             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+               AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+               AND SK.伝票行番号 = SL.伝票行番号
+               AND SL.倉庫Ｃ = SO.倉庫Ｃ
+               AND SK.出荷日 = :POST_DATE
+             GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称";
 
     $stid = oci_parse($conn, $sql);
     if (!$stid) {

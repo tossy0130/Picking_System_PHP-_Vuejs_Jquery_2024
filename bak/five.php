@@ -67,17 +67,21 @@ if (empty($session_id)) {
         dprintBR($_SESSION['fukusuu_select']);
     }
 
-
+    /*
     if (isset($_GET['index'])) {
         $_SESSION['selected_index'] = $_GET['index'];
         $_SESSION['selected_jan'] = $_GET['shouhin_jan'];
     }
-	// 2024/07/04 追加
-    if (isset($_GET['sort_key'])) {
-        $sortKey = $_GET['sort_key'];
+        */
+
+    /* if (isset($_SESSION['unsou_name'])) {
+        $get_unsou_name = $_SESSION['unsou_name'];
+
+        $_SESSION['unsou_name'] = $get_unsou_name;
+    } else {
+        $_SESSION['unsou_name'] = $get_unsou_name;
     }
-
-
+    echo $_SESSION['unsou_name']; */
 
     // ================================================================
     // =================== 戻る を押した場合 ========================
@@ -161,7 +165,7 @@ if (empty($session_id)) {
             (isset($_SESSION['fukusuu_select']) && $_SESSION['fukusuu_select'] === "200")
             //&& $_GET['four_status'] == 'multiple_sql_four'
         ) {
-            //print_r($_SESSION['five_back_params']);
+            print_r($_SESSION['five_back_params']);
             //return false;
             $_SESSION['fukusuu_unsouo_num'] = $_SESSION['fukusuu_unsouo_num'];
             $_SESSION['fukusuu_select_val'] = $_SESSION['fukusuu_select_val'];
@@ -474,7 +478,7 @@ if (empty($session_id)) {
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'selectedToki_Code'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            && $key != 'selected_index' && $key != 'selected_jan'
+                         //   && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -494,8 +498,8 @@ if (empty($session_id)) {
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
                         '&souko_c=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
-                        '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) .
+                        '&one_now_sql_zensuu=' .
+                        UrlEncode_Val_Check($get_now_sql) .
                         '";
                 }, 1100);
 
@@ -534,7 +538,8 @@ if (empty($session_id)) {
                             // ===  $key != 'forth_pattern' で four.php の判別セッションは削除しない
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'souko_code'
-                            && $key != 'unsou_name' && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'unsou_name'
+                          //  && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -557,8 +562,8 @@ if (empty($session_id)) {
                         '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
-                        '&default_root_sql_zensuu=' . UrlEncode_Val_Check($pFlg) .
+                        '&default_root_sql_zensuu=' .
+                        UrlEncode_Val_Check($pFlg) .
                         '";
                 }, 1100);
 
@@ -596,7 +601,7 @@ if (empty($session_id)) {
                             $key != 'back_multiple_sql' && $key != 'fukusuu_select'
                             && $key != 'fukusuu_unsouo_num' && $key != 'fukusuu_select_val'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            && $key != 'selected_index' && $key != 'selected_jan'
+                        //    && $key != 'selected_index' && $key != 'selected_jan'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -618,7 +623,6 @@ if (empty($session_id)) {
                         '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
-                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
                         '";
                 }, 1100);
 
@@ -778,8 +782,8 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . urldecode($get_unsou_code)
                     . '&unsou_name=' . urldecode($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) .
-                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) .  '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) . '";
+                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) . '&one_now_sql_zensuu=' .
+                    UrlEncode_Val_Check($get_now_sql) . '";
                     }, 500);
                    
 
@@ -828,8 +832,8 @@ if (empty($session_id)) {
 
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '&default_root_sql_zensuu=' . UrlEncode_Val_Check($pFlg) . '";
+                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . '&default_root_sql_zensuu=' .
+                    UrlEncode_Val_Check($pFlg) . '";
                     }, 500);
                    
 
@@ -873,7 +877,7 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
                     . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '";
+                    '";
                     }, 500);
                    
 
@@ -1051,7 +1055,7 @@ if (empty($session_id)) {
         // *******************************
         // === 可変の SQL 取得
         // *******************************
-        if (isset($_GET['now_sql']) || (isset($_GET['four_status']) && $_GET['four_status'] == 'one_bikou_tokki')) {
+        if (isset($_GET['now_sql']) || $_GET['four_status'] == 'one_bikou_tokki') {
 
             // === 全数完了　ルートで完了後、 four.phpから来た場合
             if (empty($_GET['now_sql'])) {
@@ -1182,7 +1186,6 @@ if (empty($session_id)) {
         oci_free_statement($syori_SEQ_stid);
 
         //HTPK 作成 SQL
-        /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
         $sql_ins_HTPK = "INSERT INTO HTPK(
                                   処理ＳＥＱ     ,
                                   伝票ＳＥＱ     ,
@@ -1244,68 +1247,6 @@ if (empty($session_id)) {
                                      AND SJ.出荷日 = :select_day
                                      AND SL.倉庫Ｃ = :souko_Code 
                                      AND SL.商品Ｃ = :syouhin_Code ";
-*/
-        $sql_ins_HTPK = "INSERT INTO HTPK(
-                                  処理ＳＥＱ     ,
-                                  伝票ＳＥＱ     ,
-                                  伝票番号       ,
-                                  伝票行番号     ,
-                                  伝票行枝番     ,
-                                  入力担当       ,
-                                  商品Ｃ         ,
-                                  倉庫Ｃ         ,
-                                  運送Ｃ         ,
-                                  出荷元         ,
-                                  特記事項       ,
-                                  出荷予定数量   ,
-                                  ピッキング数量 ,
-                                  出荷日         ,
-                                  処理開始日時   ,
-                                  処理終了日時   ,
-                                  登録日         ,
-                                  登録端末       ,
-                                  処理Ｆ         )
-                                  SELECT
-                                        :syori_SEQ     ,
-                                        SL.伝票ＳＥＱ  ,
-                                        SL.伝票番号    ,
-                                        SL.伝票行番号  ,
-                                        SL.伝票行枝番  ,
-                                        :input_tantou  ,
-                                        SL.商品Ｃ      ,
-                                        SL.倉庫Ｃ      ,
-                                        SK.運送Ｃ      ,
-                                        SL.出荷元      ,
-                                        SK.特記事項    ,
-                                        SL.数量        ,
-                                        0              ,
-                                        SK.出荷日      ,
-                                        TO_DATE(:start_time, 'YYYY-MM-DD HH24:MI:SS'),
-                                        NULL           ,
-                                        TO_DATE(:touroku_date, 'YYYY-MM-DD HH24:MI:SS'),
-                                        :tanmatu_id    ,
-                                        2             
-                                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-                                        ,RZMF RZ
-                                        ,HTPK PK
-                                   WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                                     AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                                     AND SK.伝票番号   = SL.伝票番号
-                                     AND SK.伝票行番号 = SL.伝票行番号
-                                     AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                                     AND SL.伝票番号   = PK.伝票番号(+)
-                                     AND SL.伝票行番号 = PK.伝票行番号(+)
-                                     AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                                     AND PK.伝票ＳＥＱ IS NULL
-                                     AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                                     AND SL.出荷元 = SM.出荷元Ｃ(+)
-                                     AND SK.運送Ｃ = US.運送Ｃ
-                                     AND SL.商品Ｃ = SH.商品Ｃ
-                                     AND SL.倉庫Ｃ = RZ.倉庫Ｃ
-                                     AND SL.商品Ｃ = RZ.商品Ｃ
-                                     AND SK.出荷日 = :select_day
-                                     AND SL.倉庫Ｃ = :souko_Code 
-                                     AND SL.商品Ｃ = :syouhin_Code ";
 
         //得意先名情報取得SQL作成
         /* 得意先別
@@ -1326,7 +1267,6 @@ if (empty($session_id)) {
                             AND SL.倉庫Ｃ = :souko_Code 
                             AND SL.商品Ｃ = :syouhin_Code ";
 */
-        /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
         $sql_Sel_TkNm = "SELECT COUNT(CM2.得意先名) AS CNT,CM.集計得意先Ｃ,CM2.得意先名 AS 集計得意先名
                            FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, USMF US, HTPK PK, CMMF CM, CMMF CM2
                           WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -1345,25 +1285,7 @@ if (empty($session_id)) {
                             AND SJ.出荷日 = :select_day
                             AND SL.倉庫Ｃ = :souko_Code 
                             AND SL.商品Ｃ = :syouhin_Code ";
-*/
-        $sql_Sel_TkNm = "SELECT COUNT(CM2.得意先名) AS CNT,CM.集計得意先Ｃ,CM2.得意先名 AS 集計得意先名
-                           FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, USMF US, HTPK PK, CMMF CM, CMMF CM2
-                          WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                            AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                            AND SK.伝票番号   = SL.伝票番号
-                            AND SK.伝票行番号 = SL.伝票行番号
-                            AND SJ.得意先Ｃ = CM.得意先Ｃ
-                            AND CM.集計得意先Ｃ = CM2.得意先Ｃ
-                            AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                            AND SL.伝票番号   = PK.伝票番号(+)
-                            AND SL.伝票行番号 = PK.伝票行番号(+)
-                            AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                            AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                            AND SK.運送Ｃ = US.運送Ｃ
-                            AND PK.処理ＳＥＱ = :syori_SEQ_value
-                            AND SK.出荷日 = :select_day
-                            AND SL.倉庫Ｃ = :souko_Code 
-                            AND SL.商品Ｃ = :syouhin_Code ";
+
         $flg_TkNm_Unso = 0;
 
         //条件作成
@@ -1406,12 +1328,7 @@ if (empty($session_id)) {
                 $sql_ins_HTPK .= $sql_tmp;
                 $sql_Sel_TkNm .= $sql_tmp;
             }
-            /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
             $sql_ins_HTPK .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                                      ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
-                                      ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
-*/
-            $sql_ins_HTPK .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                                       ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
                                       ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
             /*
@@ -1422,14 +1339,10 @@ if (empty($session_id)) {
             $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                       ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
 */
-            /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
             $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                       ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
-*/
-            $sql_Sel_TkNm .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
-                                      ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
             $flg_TkNm_Unso = 0;
-        } else if (isset($_GET['now_sql']) || (isset($_GET['four_status']) && $_GET['four_status'] == 'one_bikou_tokki')) {
+        } else if (isset($_GET['now_sql']) || $_GET['four_status'] == 'one_bikou_tokki') {
             //【運送便（単数）,備考・特記あり】 処理
             //運送便（単数） 条件
             //    $sql_ins_HTPK .= "     AND SJ.運送Ｃ = :unsou_code ";
@@ -1441,20 +1354,12 @@ if (empty($session_id)) {
                 $sql_ins_HTPK .= $one_condition;
                 $sql_Sel_TkNm .= $one_condition;
             } else {
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
                 $sql_ins_HTPK .= "     AND SJ.運送Ｃ = :unsou_code ";
                 $sql_Sel_TkNm .= "     AND SJ.運送Ｃ = :unsou_code ";
-*/
-                $sql_ins_HTPK .= "     AND SK.運送Ｃ = :unsou_code ";
-                $sql_Sel_TkNm .= "     AND SK.運送Ｃ = :unsou_code ";
                 $flg_TkNm_Unso = 1;
             }
-            /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+
             $sql_ins_HTPK .= "GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                                      ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
-                                      ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
-*/
-            $sql_ins_HTPK .= "GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                                       ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
                                       ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
             /*
@@ -1465,11 +1370,7 @@ if (empty($session_id)) {
             $sql_Sel_TkNm .= "GROUP BY SJ.出荷日,SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                       ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
 */
-            /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
             $sql_Sel_TkNm .= "GROUP BY SJ.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
-                                      ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
-*/
-            $sql_Sel_TkNm .= "GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                       ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
         } else if (isset($_GET['four_status']) && $_GET['four_status'] = 'default_root') {
             //【通常】 処理
@@ -1484,10 +1385,8 @@ if (empty($session_id)) {
 
                 // 可変部分の条件を生成
                 $conditions = [];
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+
                 $conditionSet[0] = "SJ.運送Ｃ = '{$unsou_code}'";
-*/
-                $conditionSet[0] = "SK.運送Ｃ = '{$unsou_code}'";
                 //24/06/07 出荷元の抽出ミス
                 //              if ($shipping_moto !== '-' || $shipping_moto != "") {
                 if ($shipping_moto != "" && $shipping_moto != "-") {
@@ -1517,12 +1416,8 @@ if (empty($session_id)) {
                 $flg_TkNm_Unso = 0;
 
                 // dprint($sql_ins_HTPK);
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+
                 $sql_ins_HTPK .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                                          ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
-                                          ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
-*/
-                $sql_ins_HTPK .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                                           ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
                                           ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
                 /*
@@ -1533,11 +1428,7 @@ if (empty($session_id)) {
                 $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
 */
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
                 $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
-                                          ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
-*/
-                $sql_Sel_TkNm .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
                 // 出力 OK
                 //  dprint($four_five_default_SQL);
@@ -1545,19 +1436,12 @@ if (empty($session_id)) {
             } else if (isset($_GET['status_sub'])) {
 
                 $four_five_default_SQL = $_SESSION['four_five_default_SQL'];
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+
                 $sql_ins_HTPK .= "     AND SJ.運送Ｃ = :unsou_code ";
                 $sql_Sel_TkNm .= "     AND SJ.運送Ｃ = :unsou_code ";
-*/
-                $sql_ins_HTPK .= "     AND SK.運送Ｃ = :unsou_code ";
-                $sql_Sel_TkNm .= "     AND SK.運送Ｃ = :unsou_code ";
                 $flg_TkNm_Unso = 1;
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+
                 $sql_ins_HTPK .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                                          ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
-                                          ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
-*/
-                $sql_ins_HTPK .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
                                           ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項
                                           ,SL.伝票ＳＥＱ,SL.伝票番号,SL.伝票行番号,SL.伝票行枝番,SL.数量";
                 /*
@@ -1568,11 +1452,7 @@ if (empty($session_id)) {
                 $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
 */
-                /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
                 $sql_Sel_TkNm .= " GROUP BY SJ.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
-                                          ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
-*/
-                $sql_Sel_TkNm .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
                 // 出力 OK
                 //  dprint($four_five_default_SQL);
@@ -2220,13 +2100,6 @@ if (empty($session_id)) {
     <!-- Bootstrap CSS 読み込み -->
     <link rel="stylesheet" href="./css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="./css/sweetalert2.css">
-
-    <!--
-    <link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.min.css">
--->
-
-
     <title>ピッキング</title>
 
     <style>
@@ -2538,9 +2411,8 @@ if (empty($session_id)) {
                     <!-- 2024/06/19 変更 -->
                     <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
                     <!-- <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['unsou_name']) ?>"> -->
-					<!-- 2024/07/04 変更 -->
-					<input type="hidden" name="day" value="<?php echo $select_day; ?>">
-                    <!-- <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>"> -->
+
+                    <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>">
 
                     <input type="hidden" name="souko" value="<?php echo htmlspecialchars($souko_code); ?>">
 
@@ -2570,8 +2442,6 @@ if (empty($session_id)) {
                     <!-- 備考 -->
                     <input type="hidden" name="one_op_bikou" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['one_op_bikou'] ?? $Shouhin_Detail_DATA[10]); ?>">
 
-					<!-- 並替 2024/07/04 追加 -->
-                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う ============= -->
                     <!-- 処理ＳＥＱ  -->
                     <input type="hidden" name="five_back_Syori_SEQ" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['five_back_Syori_SEQ'] ?? $syori_SEQ_value); ?>">
@@ -2623,8 +2493,6 @@ if (empty($session_id)) {
                     <input type="hidden" name="Dennpyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_num'] : $IN_Dennpyou_num; ?>">
                     <input type="hidden" name="Dennpyou_Gyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num'] : $IN_Dennpyou_Gyou_num; ?>">
                     <input type="hidden" name="count_num_val" id="count_num_val" value="<?php echo isset($_SESSION['kakutei_btn_params']['count_num_val']) ? $_SESSION['kakutei_btn_params']['count_num_val'] : $count_num; ?>">
-                    <!-- 24/07/03 -->
-                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
 
                     <?php if (isset($_SESSION['Syuka_Yotei_SUM']) && !empty($_SESSION['Syuka_Yotei_SUM'])) : ?>
                         <input type="hidden" name="Syuka_Yotei_SUM" id="Syuka_Yotei_SUM" value="<?php echo $_SESSION['Syuka_Yotei_SUM']; ?>">
@@ -2719,8 +2587,6 @@ if (empty($session_id)) {
                     <!-- 商品コード -->
                     <input type="hidden" name="one_op_shouhin_code" value="<?php print $strs_Shouhin_Code; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う END ============= -->
-                    <!-- 24/07/03 -->
-                    <input type="hidden" name="sort_key" value="<?php print $sortKey; ?>">
 
                     <!-- 備考・特記 , & 複数処理 -->
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
@@ -2755,11 +2621,6 @@ if (empty($session_id)) {
     <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./js//popper.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
-
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.all.min.js"></script>
-    -->
-    <script src="./js/sweetalert2.min.js"></script>
 
     <script type="text/javascript">
         // F5キーのリロードを防止
@@ -2829,23 +2690,13 @@ if (empty($session_id)) {
                     $("#count_num").val(current_count + 1);
                     $("#scan_val").focus();
                     $("#scan_val").val("");
-                    //$("#result_val").text("OK:::" + convertedValue_JAN + "Jan_Val::" + Jan_Val);
-                    $("#result_val").text("スキャンＯＫ");
+                    $("#result_val").text("OK:::" + convertedValue_JAN + "Jan_Val::" + Jan_Val);
                 } else {
 
                     // ======= JAN読み込み 値が違った場合
-                    //$("#result_val").text("NG:::" + convertedValue_JAN + "Jan_Val::" + Jan_Val);
-                    //  $("#result_val").text("商品が違います！！！  読込JAN:" + convertedValue_JAN);
+                    $("#result_val").text("NG:::" + convertedValue_JAN + "Jan_Val::" + Jan_Val);
                     $("#scan_val").focus();
                     $("#scan_val").val("");
-
-                    // === ********* 後で CDN をローカルへ *********
-                    Swal.fire({
-                        position: "center",
-                        title: "商品が違います！",
-                        text: "読込JAN:" + convertedValue_JAN,
-                    });
-
                 }
 
             });
