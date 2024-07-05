@@ -1876,21 +1876,23 @@ if (empty($session_id)) {
                 } else if (Jan_Flg === 1) {
                     //$('#err_JAN').html("対象の商品へ遷移します。");
                     //alert("対象の商品へ遷移します。");
-                    Swal.fire({
-                        position: "center",
-                        title: "対象の商品へ遷移します。",
-                        text: "JAN：" + $('#get_JAN').val()
-                    });
+                    //Swal.fire({
+                    //    position: "center",
+                    //    title: "対象の商品へ遷移します。",
+                    //    text: "JAN：" + $('#get_JAN').val()
+                    //});
                     $('#get_JAN').val("");
                     // 2024/07/04 追加
-					var position = $(window).scrollTop();
+                    var position = $(window).scrollTop();
                     localStorage.setItem('scrollPosition', position);
                     //$('#get_JAN').focus();
+//              } else if (Jan_Flg === 2) {
                 } else if (Jan_Flg === 2) {
                     Swal.fire({
                         position: "center",
                         title: "対象の商品は作業完了しています。",
                         text: "JAN：" + $('#get_JAN').val()
+                        //return false;
                     });
                     $('#get_JAN').val("");
 

@@ -72,7 +72,7 @@ if (empty($session_id)) {
         $_SESSION['selected_index'] = $_GET['index'];
         $_SESSION['selected_jan'] = $_GET['shouhin_jan'];
     }
-	// 2024/07/04 追加
+    // 2024/07/04 追加
     if (isset($_GET['sort_key'])) {
         $sortKey = $_GET['sort_key'];
     }
@@ -1732,7 +1732,7 @@ if (empty($session_id)) {
             //以下重複処理 End
             //**********************************************************
 
-        } else if (isset($_GET['now_sql']) || $_GET['four_status'] == 'one_bikou_tokki') {
+        } else if (isset($_GET['now_sql']) || (isset($_GET['four_status']) && $_GET['four_status'] == 'one_bikou_tokki')) {
 
             // ===============================================================================
             //                　　　　【運送便（単数）,備考・特記あり】 処理
@@ -2534,12 +2534,19 @@ if (empty($session_id)) {
                 <!-- ===================================================== -->
 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" name="five_back_btn_form_get" id="five_back_btn_form_get">
-                    <input type="hidden" name="unsou_code" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['unsou_code'] ?? $unsou_code); ?>">
+
+                    <!--
+                   削除 運送コード 24_0704
+            -->
+                    <!-- 2024/07/04 変更 -->
+                    <input type="hidden" name="unsou_code" value="<?php echo $unsou_code; ?>">
+
                     <!-- 2024/06/19 変更 -->
                     <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
                     <!-- <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['unsou_name']) ?>"> -->
-					<!-- 2024/07/04 変更 -->
-					<input type="hidden" name="day" value="<?php echo $select_day; ?>">
+                    <!-- 2024/07/04 変更 -->
+                    <input type="hidden" name="day" value="<?php echo $select_day; ?>">
+                    
                     <!-- <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>"> -->
 
                     <input type="hidden" name="souko" value="<?php echo htmlspecialchars($souko_code); ?>">
@@ -2570,7 +2577,7 @@ if (empty($session_id)) {
                     <!-- 備考 -->
                     <input type="hidden" name="one_op_bikou" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['one_op_bikou'] ?? $Shouhin_Detail_DATA[10]); ?>">
 
-					<!-- 並替 2024/07/04 追加 -->
+                    <!-- 並替 2024/07/04 追加 -->
                     <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う ============= -->
                     <!-- 処理ＳＥＱ  -->
