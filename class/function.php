@@ -195,3 +195,22 @@ function split_string_by_byte($str, $byte_limit)
 
     return $result;
 }
+
+
+// ========================================== 追加  2024 07_11
+// ============ 確定ボタン　セッション調査用
+function log_session_to_file($filename, $msg)
+{
+    $directory = 'log';
+
+    // ディレクトリが存在しない場合に作成
+    if (!is_dir($directory)) {
+        mkdir($directory, 0755, true);
+    }
+
+    $filepath = $directory . '/' . $filename;
+    // ファイルは w => 上書き　、追記にしたい場合は w を a（エー）にする
+    $file = fopen($filepath, 'w');
+    fwrite($file, date('Y-m-d H:i:s') . " - " . $msg . "\n" . print_r($_SESSION, true) . "\n\n");
+    fclose($file);
+}

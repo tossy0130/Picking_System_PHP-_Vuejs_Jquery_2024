@@ -87,33 +87,6 @@ if (empty($session_id)) {
     dprintBR($_SESSION['fukusuu_select']);
 
 
-    // *********************************************** 連続処理 対応 **********************************
-    // =====================================
-    // === 追加 「連続処理」処理 （確定、通常　用）　削除
-    // =====================================
-
-    // 単数
-    if (isset($_SESSION['four_five_default_SQL'])) {
-        unset($_SESSION['four_five_default_SQL']);
-        dprintBR("session four_five_default_SQL 削除 OK");
-    }
-
-    // 単数、備考・特記
-    if (isset($_SESSION['sql_one_option'])) {
-        unset($_SESSION['sql_one_option']);
-        dprintBR("session sql_one_option 削除 OK");
-    }
-
-    // 複数
-    if (isset($_SESSION['multiple_sql'])) {
-        unset($_SESSION['multiple_sql']);
-        unset($_SESSION['multiple_sql_cut']);
-
-        dprintBR("session multiple_sql 削除 OK");
-        dprintBR("session multiple_sql_cut 削除 OK");
-    }
-
-
     // **********************************************
     // === 追加 24_0703  ブラウザバック削除処理
     // **********************************************
@@ -2036,60 +2009,6 @@ if (empty($session_id)) {
 
             localStorage.setItem('scrollPosition', position);
 
-            // ==================================================
-            // ************************** 連続処理　ロジック  追加 24_0705
-            // ==================================================
-            // クリックされた、JANコード
-            var clickedJAN = $(this).find('.shouhin_JAN').val();
-
-            // *** 商品コード or 商品名 ※ ***
-            var clicked_Shouhin_Name = $(this).find('.shouhin_name').text().trim();
-            //  console.log("clicked_Shouhin_Name:::値:::" + clicked_Shouhin_Name);
-
-            // 商品コード　押されたもの
-            var Shouhin_code_val = $(this).find('.Shouhin_code_val').val();
-            console.log("Shouhin_code_val:::タップ値:::" + Shouhin_code_val);
-
-            var dataHrefs = [];
-            // クリックした値 0番目に追加
-            dataHrefs.push(href);
-
-            $('.shouhin_name').each(function() {
-                var $span = $(this);
-
-                // === 商品コード or 商品名取得
-                var shouhin_Name = $span.text().trim();
-                console.log("shouhin_Name:::値:::" + shouhin_Name);
-
-                var shouhin_JAN = $span.closest('td').find('.shouhin_JAN').val();
-                var shouhin_code = $span.closest('td').find('.Shouhin_code_val').val();
-                console.log("shouhin_code:::値:::" + shouhin_code);
-
-                // ＊＊＊　商品JAN と、商品コードでの比較 if 文　＊＊＊
-                if (Shouhin_code_val === shouhin_code) {
-                    // if (shouhin_JAN === clickedJAN && shouhin_Name === clicked_Shouhin_Name) {
-                    // if (shouhin_JAN === clickedJAN) {
-                    // if (shouhin_Name === clicked_Shouhin_Name) {
-                    var trHref = $(this).closest('tr').data('href');
-
-                    // 重複削除
-                    if (trHref && !dataHrefs.includes(trHref)) {
-                        dataHrefs.push(trHref);
-                    }
-                }
-            });
-
-            console.log("dataHrefs:::" + dataHrefs);
-
-            // === data-hrer をセッションストレージへ保存
-            sessionStorage.setItem('dataHrefs', dataHrefs.join(','));
-            console.log("保存されたdata-hrefs: " + sessionStorage.getItem('dataHrefs'));
-
-            // ==================================================
-            // ************************** 追加  連続処理　ロジック 24_0705  END
-            // ==================================================
-
-            //   return false;
             // hrefの値をURLとしてページを遷移
             window.location.href = href;
         });

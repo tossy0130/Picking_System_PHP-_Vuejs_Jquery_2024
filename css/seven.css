@@ -32,10 +32,12 @@
 
 #next_btn {
     text-align: center;
+    /*
     position: fixed;
     z-index: 999999;
     bottom: 70px;
     left: 42%;
+    */
 }
 
 #next_btn > button{

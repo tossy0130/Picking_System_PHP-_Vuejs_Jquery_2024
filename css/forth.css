@@ -147,6 +147,14 @@
         font-size: 10px;
     }
 
+    /* キャンセル 2024/07/08追加 */
+    #sagyou_cancel_text {
+        color: #fff;
+        background: #233D4D;
+        padding: 5px 1px;
+        border-radius: 2px;
+        font-size: 10px;
+    }
 
 
     /*　特記 一覧 */
@@ -340,8 +348,5 @@
             letter-spacing: 0.2em;
         }
     }
-
-
-}
 
 /* ================= END ================== */

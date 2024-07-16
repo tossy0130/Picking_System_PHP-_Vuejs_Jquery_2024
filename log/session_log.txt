@@ -1,0 +1,103 @@
+2024-07-11 17:59:49 - 単数_処理開始時のセッション
+Array
+(
+    [sid] => 2b7bplag50c3p2se9l8odfjokc
+    [input_login_id] => 7777
+    [soko_name] => Ｐ２倉１階
+    [unsou_name] => ■トナミ運輸
+    [selected_index] => 2
+    [selected_jan] => 4971715341664
+    [forth_pattern] => one
+    [s_syori_SEQ_value] => 29388363
+    [back_four_five_default_SQL] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
+                      ,RZ.棚番
+                      ,SH.梱包入数
+                      ,SUM(SL.数量) AS 数量    
+                      ,SUM(PK.ピッキング数量) AS ピッキング数量
+                      ,PK.処理Ｆ
+                      ,SH.ＪＡＮ
+                      ,SK.特記事項
+                 FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+                      ,RZMF RZ
+                      ,HTPK PK
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                   AND SL.伝票番号   = PK.伝票番号(+)
+                   AND SL.伝票行番号 = PK.伝票行番号(+)
+                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SL.出荷元 = SM.出荷元Ｃ(+)
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND SL.商品Ｃ = SH.商品Ｃ
+                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
+                   AND SL.商品Ｃ = RZ.商品Ｃ
+                   AND SK.出荷日 = :SELECT_DATE  
+                   AND SL.倉庫Ｃ = :SELECT_SOUKO
+                   AND SK.運送Ｃ = :SELECT_UNSOU
+                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+    [four_five_default_SQL] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
+                      ,RZ.棚番
+                      ,SH.梱包入数
+                      ,SUM(SL.数量) AS 数量    
+                      ,SUM(PK.ピッキング数量) AS ピッキング数量
+                      ,PK.処理Ｆ
+                      ,SH.ＪＡＮ
+                      ,SK.特記事項
+                 FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+                      ,RZMF RZ
+                      ,HTPK PK
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                   AND SL.伝票番号   = PK.伝票番号(+)
+                   AND SL.伝票行番号 = PK.伝票行番号(+)
+                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SL.出荷元 = SM.出荷元Ｃ(+)
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND SL.商品Ｃ = SH.商品Ｃ
+                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
+                   AND SL.商品Ｃ = RZ.商品Ｃ
+                   AND SK.出荷日 = :SELECT_DATE  
+                   AND SL.倉庫Ｃ = :SELECT_SOUKO
+                   AND SK.運送Ｃ = :SELECT_UNSOU
+                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+    [five_back_Syori_SEQ] => 29388363
+    [kakutei_btn_params] => Array
+        (
+            [day] => 2022-07-11
+            [souko_code] => P
+            [unsou_code] => 2
+            [unsou_name] => ■トナミ運輸
+            [souko_name] => Ｐ２倉１階
+            [shouhin_jan] => 4971715341732
+            [shouhin_code] => 3417400
+            [shouhin_name] => 家庭用収納庫                            ＨＳ－１２９２（２－１）
+            [kakutei_tokki] => 
+            [kakutei_bikou] => ケース
+            [Dennpyou_num] => 37902
+            [Dennpyou_Gyou_num] => 1
+            [count_num_val] => 3
+            [sort_key] => 
+            [kakutei_Syori_SEQ] => 29388363
+            [kakutei_Denpyou_SEQ] => 27446348,27450698
+            [kakutei_Syukka_Yotei_Num] => 2,1
+            [kakutei_shouhin_code] => 3417400,3417400
+            [default_root_sql_zensuu] => 1
+            [kakutei_btn] => 
+        )
+
+    [kakutei_Syori_SEQ] => 29388363
+    [kakutei_Denpyou_SEQ] => 27446348,27450698
+    [kakutei_Syukka_Yotei_Num] => 2,1
+    [kakutei_shouhin_code] => 3417400,3417400
+    [count_num_val] => 3
+    [Syuka_Yotei_SUM] => 3
+)
+
+

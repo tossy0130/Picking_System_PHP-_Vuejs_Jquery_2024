@@ -40,7 +40,7 @@ if (empty($session_id)) {
     if (!$conn) {
         $e = oci_error();
     }
-/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
+    /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
     $sql = "SELECT SJ.出荷日,SJ.運送Ｃ,US.運送略称
             FROM SJTR SJ,SKTR SK,USMF US, HTPK PK, SLTR SL
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -69,7 +69,7 @@ if (empty($session_id)) {
     if (!$stid) {
         $e = oci_error($stid);
     }
-    
+
     oci_bind_by_name($stid, ":POST_DATE", $selected_day);
 
     oci_execute($stid);
@@ -84,9 +84,9 @@ if (empty($session_id)) {
 
         // 取得した値を配列に追加
         $arr_unsou_data[] = array(
-        'syuka_day' => $syuka_day,
-        'unsou_code' => $unsou_code,
-        'unsou_name' => $unsou_name
+            'syuka_day' => $syuka_day,
+            'unsou_code' => $unsou_code,
+            'unsou_name' => $unsou_name
         );
     }
 
@@ -131,7 +131,7 @@ if (empty($session_id)) {
             </span>
 
             <span class="App_name">
-            グリーンライフ ピッキング
+                グリーンライフ ピッキング
             </span>
         </div>
     </div>
@@ -140,7 +140,7 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-            <a href="#"><img src="./img/page_img.png"></a>
+                <a href="#"><img src="./img/page_img.png"></a>
             </span>
 
             <span class="page_title">
@@ -158,12 +158,12 @@ if (empty($session_id)) {
                 <?php
                 $idx = 1;
                 foreach ($arr_unsou_data as $unsou) {
-                    echo '<div><button type="button" value="' . $unsou["unsou_name"] . '" @click="handleButtonClick(\'' . $unsou["unsou_name"] . '\', \'' .$unsou["unsou_code"] . '\')" :class="{\'selected_unsou\' : selectedValue === \'' . $unsou["unsou_name"] . '\'}">' . $unsou["unsou_name"] . '</button></div>';
+                    echo '<div><button type="button" value="' . $unsou["unsou_name"] . '" @click="handleButtonClick(\'' . $unsou["unsou_name"] . '\', \'' . $unsou["unsou_code"] . '\')" :class="{\'selected_unsou\' : selectedValue === \'' . $unsou["unsou_name"] . '\'}">' . $unsou["unsou_name"] . '</button></div>';
                 }
                 $idx++;
                 ?>
             </div>
-        
+
             <div class="error_message" v-show="error">
                 運送便を選択してください。
             </div>
@@ -178,12 +178,12 @@ if (empty($session_id)) {
             </div>
 
             <!-- フッターメニュー -->
-            <footer class="footer-menu_fixed">
+            <footer class="footer-menu_fixed_02">
                 <ul>
                     <?php $back_flg = 1; ?>
                     <?php $url = "./six.php?back_six=ok&day=" . $selected_day; ?>
                     <li><a href="<?php print h($url); ?>">戻る</a></li>
-                    <?php $url = "./seven.php?selected_day=" . UrlEncode_Val_Check($selected_day);?>
+                    <?php $url = "./seven.php?selected_day=" . UrlEncode_Val_Check($selected_day); ?>
                     <li><a href="<?php print $url; ?>">更新</a></li>
                 </ul>
             </footer>

@@ -72,6 +72,7 @@ body {
     border-top: 3px solid #4b4b4b;
 }
 
+
 /* メニューアイテムのスタイル */
 .footer-menu_fixed ul {
     list-style-type: none;
@@ -86,6 +87,39 @@ body {
 }
 
 .footer-menu_fixed ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    background: #4b4b4b;
+    padding: 0.6em 1.2em;
+    border-radius: 4px;
+
+}
+
+.footer-menu_fixed_02 {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px 0;
+    border-top: 3px solid #4b4b4b;
+}
+
+/* メニューアイテムのスタイル */
+.footer-menu_fixed_02 ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.footer-menu_fixed_02 ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.footer-menu_fixed_02 ul li a {
     color: #fff;
     text-decoration: none;
     font-size: 16px;

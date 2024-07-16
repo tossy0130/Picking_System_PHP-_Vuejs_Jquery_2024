@@ -1,14 +1,13 @@
 @media only screen and (max-width: 1500px) {
 
     .content_detail {
-            /* width: 85%; */
-            width: 100%;
+            width: 85%;
             border: 2px solid #5CBCE0;
             margin: 2em 0;
             padding: 0.5em 1em;
             position: relative;
             top: 0;
-            /* left: 7.5%; */
+            left: 2.5%;
             border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
     }

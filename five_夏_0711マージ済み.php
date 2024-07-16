@@ -67,12 +67,14 @@ if (empty($session_id)) {
         dprintBR($_SESSION['fukusuu_select']);
     }
 
-    /*
     if (isset($_GET['index'])) {
         $_SESSION['selected_index'] = $_GET['index'];
         $_SESSION['selected_jan'] = $_GET['shouhin_jan'];
     }
-        */
+
+    if (isset($_GET['sort_key'])) {
+        $sortKey = $_GET['sort_key'];
+    }
 
     /* if (isset($_SESSION['unsou_name'])) {
         $get_unsou_name = $_SESSION['unsou_name'];
@@ -183,7 +185,6 @@ if (empty($session_id)) {
         });
     </script>';
 
-
         echo '
     <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -269,6 +270,8 @@ if (empty($session_id)) {
 
             // 複数便
         } else if (isset($_GET['multiple_sql_four_sql_zensuu']) && $_GET['multiple_sql_four_sql_zensuu'] != "") {
+
+
             $get_now_sql = $_SESSION['multiple_sql'];
             $_SESSION['back_multiple_sql'] = $get_now_sql;
             dprint("ここ:back_multiple_sql");
@@ -465,12 +468,22 @@ if (empty($session_id)) {
             } // =============== END foreach
 
 
-            // 単数（特記・備考あり）
+            // =============================================================================
+            //============================== // 単数（特記・備考あり） =========================================
+            // =============================================================================
             if (isset($_GET['one_now_sql_zensuu']) && $_GET['one_now_sql_zensuu'] != "") {
+
+                // ***　連続処理　追加済み 24_0711 ***
 
                 if ($commit_success) {
                     oci_commit($conn);
                     // コミットが成功した場合
+
+                    // === ******** four.php からの 状態判別用 パラメーター
+                    if (isset($_SESSION['forth_pattern'])) {
+                        $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                    }
+
 
                     // セッション削除
                     foreach ($_SESSION as $key => $value) {
@@ -478,14 +491,81 @@ if (empty($session_id)) {
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'selectedToki_Code'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            //   && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'kakutei_btn' && $key != 'sql_one_option'
                         ) {
                             unset($_SESSION[$key]);
                         }
                     }
 
+
                     echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+    var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+    if (dataHrefs) {
+        var dataHrefsArray = dataHrefs.split(",");
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+        if (dataHrefsArray.length != 1) {
+            var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+            console.log("リダイレクト URL: " + redirectUrl);
+
+            console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+            console.log("redirectUrl if 内 値: ", redirectUrl);
+            console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+            // リダイレクト後に最後の要素を削除する
+            dataHrefsArray.pop();
+            sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+            console.log("dataHrefsArray.length 削除後: ", dataHrefsArray.length);
+            console.log("dataHrefs 削除後: ", dataHrefs);
+
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            setTimeout(function() {
+                window.location.href = redirectUrl;
+            }, 2000);
+
+            return;
+
+        } else {
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            console.log("else ******* ここ *******");
+            // モーダル表示
+            $("#confirmationModal").modal({
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+
+        console.log("#kakuteiSuccessModal ******* 開始 *******");
+
+        // ここでsuccessModalを表示する前にsessionStorageのdataHrefsを空にする
+        console.log("#sessionStorage ******* 削除 *******");
+        sessionStorage.setItem("dataHrefs", "");
+
+        var dataHrefs = sessionStorage.getItem("dataHrefs");
+        var dataHrefsArray = dataHrefs.split(",");
+
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+      //  return false;
+
+        if (dataHrefsArray.length == 1) {
+
             $("#kakuteiSuccessModal").modal("show");
             setTimeout(function() {
                 $("#kakuteiSuccessModal").modal("hide");
@@ -498,14 +578,21 @@ if (empty($session_id)) {
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
                         '&souko_c=' . UrlEncode_Val_Check($get_souko) .
-                        '&one_now_sql_zensuu=' .
-                        UrlEncode_Val_Check($get_now_sql) .
+                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
+                        '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) .
                         '";
                 }, 1100);
 
 
             }, 2000);
-        });
+
+        } else {
+            console.log("*********** dataHrefs 空 null *************");
+            return false;
+        }
+    }      
+
+    });
     </script>';
                 } else {
                     // コミットが失敗した場合
@@ -519,72 +606,167 @@ if (empty($session_id)) {
     </script>';
                 }
 
-                // 単数便
+                // =============================================================================
+                //============================== 単数便 =========================================
+                // =============================================================================
             } else if (isset($_GET['default_root_sql_zensuu']) && $_GET['default_root_sql_zensuu'] != "") {
+
+                // ***　連続処理　追加済み 24_0711 ***
+
+                // === /log/session_log.txt へ　セッション情報の流れ ログ作成
+                log_session_to_file('session_log.txt', "単数_処理開始時のセッション");
+                dprint("単数 01");
+                $idx = 0;
 
                 if ($commit_success) {
                     oci_commit($conn);
                     // コミットが成功した場合
 
+                    dprint("単数 02 commit_success");
+                    $idx += 1;
+                    print("処理回数:::" . $idx);
+
                     // === ******** four.php から受け取ったセッションを、そのまま、 four.php へ 状態判別パラメーターとして返す 
-                    //   $_SESSION['third_default_sql'] = $_SESSION['third_default_sql'];
+                    // $_SESSION['third_default_sql'] = $_SESSION['third_default_sql'];
 
                     // === ******** four.php からの 状態判別用 パラメーター
-                    //$_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                    if (isset($_SESSION['forth_pattern'])) {
+                        $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                    }
 
-                    // セッション削除
+
+                    // セッション削除   ※　four_five_default_SQL　は foru.php に戻った時に消す
                     foreach ($_SESSION as $key => $value) {
                         if (
                             // ===  $key != 'forth_pattern' で four.php の判別セッションは削除しない
                             $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
                             && $key != 'forth_pattern' && $key != 'souko_code'
-                            && $key != 'unsou_name'
-                            //  && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'unsou_name' && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'four_five_default_SQL'
+
                         ) {
                             unset($_SESSION[$key]);
                         }
                     }
+
                     //24/06/13 SQLからフラグに変更 設定値 $get_now_sql > $pFlg
                     $pFlg = "";
                     if ($get_now_sql != "") {
                         $pFlg = "1";
                     }
+
+
                     echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+    var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+    if (dataHrefs) {
+        var dataHrefsArray = dataHrefs.split(",");
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+        if (dataHrefsArray.length != 1) {
+            var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+            console.log("リダイレクト URL: " + redirectUrl);
+
+            console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+            console.log("redirectUrl if 内 値: ", redirectUrl);
+            console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+            // リダイレクト後に最後の要素を削除する
+            dataHrefsArray.pop();
+            sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+            console.log("dataHrefsArray.length 削除後: ", dataHrefsArray.length);
+            console.log("dataHrefs 削除後: ", dataHrefs);
+
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            setTimeout(function() {
+                window.location.href = redirectUrl;
+            }, 2000);
+
+            return;
+
+        } else {
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            console.log("else ******* ここ *******");
+            // モーダル表示
+            $("#confirmationModal").modal({
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+
+        console.log("#kakuteiSuccessModal ******* 開始 *******");
+
+        // ここでsuccessModalを表示する前にsessionStorageのdataHrefsを空にする
+        console.log("#sessionStorage ******* 削除 *******");
+        sessionStorage.setItem("dataHrefs", "");
+
+        var dataHrefs = sessionStorage.getItem("dataHrefs");
+        var dataHrefsArray = dataHrefs.split(",");
+
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+      //  return false;
+
+        if (dataHrefsArray.length == 1) {
+
             $("#kakuteiSuccessModal").modal("show");
             setTimeout(function() {
                 $("#kakuteiSuccessModal").modal("hide");
                 $("#kakuteiButton").prop("disabled", true);
 
                 setTimeout(function() {
-                    window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                        .
-                        '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
-                        '&day=' . UrlEncode_Val_Check($get_day) .
-                        '&souko=' . UrlEncode_Val_Check($get_souko) .
-                        '&default_root_sql_zensuu=' .
-                        UrlEncode_Val_Check($pFlg) .
-                        '";
+                    window.location.href = "./four.php?kakutei_btn=&unsou_code=' .
+                        urlencode($get_unsou_code) . '&unsou_name=' .
+                        urlencode($get_unsou_name) . '&day=' .
+                        urlencode($get_day) . '&souko=' .
+                        urlencode($get_souko) . '&sort_key=' .
+                        urlencode($sortKey) . '&default_root_sql_zensuu=' . urlencode($pFlg) . '";
                 }, 1100);
+            }, 3000);
 
-
-            }, 2000);
-        });
-    </script>';
+        } else {
+            console.log("*********** dataHrefs 空 null *************");
+            return false;
+        }
+    }
+});
+</script>';
                 } else {
+                    dprint("コミット失敗:::");
                     // コミットが失敗した場合
                     echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
-            $("#kakuteiErrorModal").modal("show");
-            setTimeout(function() {
-                $("#kakuteiErrorModal").modal("hide");
-            }, 2000);
-        });
-    </script>';
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#kakuteiErrorModal").modal("show");
+        setTimeout(function() {
+            $("#kakuteiErrorModal").modal("hide");
+        }, 2000);
+    });
+</script>';
                 }
 
-                // 複数便
+                // 
+                // =============================================================================
+                //============================== **** 複数便 ***  =========================================
+                // =============================================================================
             } else if (isset($_GET['multiple_sql_four_sql_zensuu']) && $_GET['multiple_sql_four_sql_zensuu'] != "") {
+
+                // === /log/session_log_02.txt へ　セッション情報の流れ ログ作成
+                log_session_to_file('session_log_02.txt', "複数_処理開始時のセッション");
+
 
                 if ($commit_success) {
                     oci_commit($conn);
@@ -592,16 +774,22 @@ if (empty($session_id)) {
                     // === ******** four.php からの 状態判別用 パラメーター
                     //$_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
 
+                    // === ******** four.php からの 状態判別用 パラメーター
+                    if (isset($_SESSION['four_status'])) {
+                        $_SESSION['four_status'] = $_SESSION['four_status'];
+                    }
+
                     // セッション削除
                     // ========== four.php での SQL再構築の為に　特記・備考の値
                     // ===  && $key != 'fukusuu_unsouo_num' && $key != 'fukusuu_select_val' && $key != 'fukusuu_select'
                     foreach ($_SESSION as $key => $value) {
                         if (
-                            $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id' &&
-                            $key != 'back_multiple_sql' && $key != 'fukusuu_select'
+                            $key != 'sid' && $key != 'soko_name' && $key != 'input_login_id'
+                            && $key != 'back_multiple_sql' && $key != 'fukusuu_select'
                             && $key != 'fukusuu_unsouo_num' && $key != 'fukusuu_select_val'
                             && $key != 'souko_code' && $key != 'unsou_name'
-                            //    && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'selected_index' && $key != 'selected_jan'
+                            && $key != 'multiple_sql' && $key != 'four_status' && $key != 'multiple_sql_cut'
                         ) {
                             unset($_SESSION[$key]);
                         }
@@ -611,7 +799,72 @@ if (empty($session_id)) {
                     //unset($_SESSION['five_back_Syori_SEQ']);
 
                     echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+    var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+    if (dataHrefs) {
+        var dataHrefsArray = dataHrefs.split(",");
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+        if (dataHrefsArray.length != 1) {
+            var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+            console.log("リダイレクト URL: " + redirectUrl);
+
+            console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+            console.log("redirectUrl if 内 値: ", redirectUrl);
+            console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+            // リダイレクト後に最後の要素を削除する
+            dataHrefsArray.pop();
+            sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+            console.log("dataHrefsArray.length 削除後: ", dataHrefsArray.length);
+            console.log("dataHrefs 削除後: ", dataHrefs);
+
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            setTimeout(function() {
+                window.location.href = redirectUrl;
+            }, 2000);
+
+            return;
+
+        } else {
+            Swal.fire({
+                position: "center",
+                title: "データ挿入 完了",
+                text: "確定処理 OK",
+            });
+
+            console.log("else ******* ここ *******");
+            // モーダル表示
+            $("#confirmationModal").modal({
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+
+        console.log("#kakuteiSuccessModal ******* 開始 *******");
+
+        // ここでsuccessModalを表示する前にsessionStorageのdataHrefsを空にする
+        console.log("#sessionStorage ******* 削除 *******");
+        sessionStorage.setItem("dataHrefs", "");
+
+        var dataHrefs = sessionStorage.getItem("dataHrefs");
+        var dataHrefsArray = dataHrefs.split(",");
+
+        console.log("dataHrefsArray 値: ", dataHrefsArray);
+        console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+      //  return false;
+
+        if (dataHrefsArray.length == 1) {
+
             $("#kakuteiSuccessModal").modal("show");
             setTimeout(function() {
                 $("#kakuteiSuccessModal").modal("hide");
@@ -619,16 +872,22 @@ if (empty($session_id)) {
 
                 setTimeout(function() {
                     window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                        .
-                        '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
+                        . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
                         '&day=' . UrlEncode_Val_Check($get_day) .
                         '&souko=' . UrlEncode_Val_Check($get_souko) .
+                        '&sort_key=' . UrlEncode_Val_Check($sortKey) .
+                        '&multiple_sql_four_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) .
                         '";
                 }, 1100);
+            }, 3000);
+                
+            } else {
+            console.log("*********** dataHrefs 空 null *************");
+            return false;
+        }
+    }
 
-
-            }, 2000);
-        });
+});
     </script>';
                 } else {
                     // コミットが失敗した場合
@@ -639,7 +898,7 @@ if (empty($session_id)) {
                 $("#kakuteiErrorModal").modal("hide");
             }, 2000);
         });
-    </script>';
+    </scrip>';
                 }
             }
         }
@@ -767,29 +1026,75 @@ if (empty($session_id)) {
                 // **********************************
                 // === four.php からもってきた、状態判別
                 // **********************************
-                $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                if (isset($_SESSION['forth_pattern'])) {
+                    $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                }
 
                 // === 処理 SEQ 削除
                 unset($_SESSION['five_back_Syori_SEQ']);
 
+                // === ここ
                 echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
+
+            var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+                    var dataHrefsArray = dataHrefs.split(",");
+                    console.log("dataHrefsArray 値: ", dataHrefsArray);
+                    console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+                    if (dataHrefsArray.length != 1) {
+                        var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+                        console.log("リダイレクト URL: " + redirectUrl);
+
+                        console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+                        console.log("redirectUrl if 内 値: ", redirectUrl);
+                        console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+                         // リダイレクト後に最後の要素を削除する
+                        dataHrefsArray.pop();
+                        sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+                  //      return false;
+                         Swal.fire({
+                            position: "center",
+                            title: "データ挿入 完了",
+                            text: "全数完了 OK",
+                        });
+
+                        setTimeout(function() {
+                            window.location.href = redirectUrl;                         
+                        }, 2000); 
+
+                         return;
+
+                    } else {
+
+                        // モーダル表示
+                        $("#confirmationModal").modal({
+                            backdrop: "static",
+                            keyboard: false
+                        });
+
+                    }
+
+                console.log("#successModal ******* 開始 *******");
+
                 $("#successModal").modal("show");
                 setTimeout(function() {
                     $("#successModal").modal("hide");
                     $("#all_completed_button").prop("disabled", true);
 
-                   setTimeout(function() {
-                          window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . urldecode($get_unsou_code)
+                    setTimeout(function() {
+                        window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . urldecode($get_unsou_code)
                     . '&unsou_name=' . urldecode($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) .
-                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) . '&one_now_sql_zensuu=' .
-                    UrlEncode_Val_Check($get_now_sql) . '";
+                    '&souko=' . urldecode($get_souko) . '&souko_c=' .  urldecode($get_souko) .
+                    '&sort_key=' . UrlEncode_Val_Check($sortKey) .  '&one_now_sql_zensuu=' . UrlEncode_Val_Check($get_now_sql) . '";
                     }, 500);
-                   
 
                 }, 2000);
             });
-        </script>';
+        </scrip>';
             } else {
                 // コミットが失敗した場合
                 echo '<script>
@@ -802,7 +1107,9 @@ if (empty($session_id)) {
         </script>';
             }
 
-            // 単数便
+            // =============================================================================
+            //============================== 単数便 =========================================
+            // =============================================================================
         } else if (isset($_GET['default_root_sql_zensuu']) && $_GET['default_root_sql_zensuu'] != "") {
 
             if ($commit_success) {
@@ -812,7 +1119,9 @@ if (empty($session_id)) {
                 // **********************************
                 // === four.php からもってきた、状態判別
                 // **********************************
-                $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                if (isset($_SESSION['forth_pattern'])) {
+                    $_SESSION['forth_pattern'] = $_SESSION['forth_pattern'];
+                }
 
                 // === 処理 SEQ 削除
                 unset($_SESSION['five_back_Syori_SEQ']);
@@ -825,6 +1134,53 @@ if (empty($session_id)) {
 
                 echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
+
+            var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+                    var dataHrefsArray = dataHrefs.split(",");
+                    console.log("dataHrefsArray 値: ", dataHrefsArray);
+                    console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+                    if (dataHrefsArray.length != 1) {
+                        var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+                        console.log("リダイレクト URL: " + redirectUrl);
+
+                        console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+                        console.log("redirectUrl if 内 値: ", redirectUrl);
+                        console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+                         // リダイレクト後に最後の要素を削除する
+                        dataHrefsArray.pop();
+                        sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+                  //      return false;
+                         Swal.fire({
+                            position: "center",
+                            title: "データ挿入 完了",
+                            text: "全数完了 OK",
+                        });
+
+                        setTimeout(function() {
+                            window.location.href = redirectUrl;                         
+                        }, 2000); 
+
+                         return;
+
+                    } else {
+
+                        // モーダル表示
+                        $("#confirmationModal").modal({
+                            backdrop: "static",
+                            keyboard: false
+                        });
+
+                    }
+                
+                console.log("#successModal ******* 開始 *******");
+
+                // sessionStorage dataHrefs 空にする
+                sessionStorage.setItem("dataHrefs", "");
+
                 $("#successModal").modal("show");
                 setTimeout(function() {
                     $("#successModal").modal("hide");
@@ -832,8 +1188,8 @@ if (empty($session_id)) {
 
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
-                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) . '&default_root_sql_zensuu=' .
-                    UrlEncode_Val_Check($pFlg) . '";
+                    . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
+                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '&default_root_sql_zensuu=' . UrlEncode_Val_Check($pFlg) . '";
                     }, 500);
                    
 
@@ -852,7 +1208,9 @@ if (empty($session_id)) {
         </script>';
             }
 
-            // 複数便
+            // =============================================================================
+            //============================== **** 複数便 ***  =========================================
+            // =============================================================================
         } else if (isset($_GET['multiple_sql_four_sql_zensuu']) && $_GET['multiple_sql_four_sql_zensuu'] != "") {
 
             if ($commit_success) {
@@ -862,13 +1220,61 @@ if (empty($session_id)) {
                 // **********************************
                 // === four.php からもってきた、状態判別
                 // **********************************
-                $_SESSION['fukusuu_select'] = $_SESSION['fukusuu_select'];
+
+                if (isset($_SESSION['fukusuu_select'])) {
+                    $_SESSION['fukusuu_select'] = $_SESSION['fukusuu_select'];
+                }
 
                 // === 処理 SEQ 削除
                 unset($_SESSION['five_back_Syori_SEQ']);
 
+                // === ここ
                 echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
+
+            var dataHrefs = sessionStorage.getItem("dataHrefs");
+
+                    var dataHrefsArray = dataHrefs.split(",");
+                    console.log("dataHrefsArray 値: ", dataHrefsArray);
+                    console.log("dataHrefsArray.length 値: ", dataHrefsArray.length);
+
+                    if (dataHrefsArray.length != 1) {
+                        var redirectUrl = dataHrefsArray[dataHrefsArray.length - 1];
+                        console.log("リダイレクト URL: " + redirectUrl);
+
+                        console.log("dataHrefsArray if 内 値: ", dataHrefsArray);
+                        console.log("redirectUrl if 内 値: ", redirectUrl);
+                        console.log("dataHrefsArray.length if 値: ", dataHrefsArray.length);
+
+                         // リダイレクト後に最後の要素を削除する
+                        dataHrefsArray.pop();
+                        sessionStorage.setItem("dataHrefs", dataHrefsArray.join(","));
+
+                  //      return false;
+                         Swal.fire({
+                            position: "center",
+                            title: "データ挿入 完了",
+                            text: "全数完了 OK",
+                        });
+
+                        setTimeout(function() {
+                            window.location.href = redirectUrl;                         
+                        }, 2000); 
+
+                         return;
+
+                    } else {
+
+                        // モーダル表示
+                        $("#confirmationModal").modal({
+                            backdrop: "static",
+                            keyboard: false
+                        });
+
+                    }
+
+                console.log("#successModal ******* 開始 *******");
+          
                 $("#successModal").modal("show");
                 setTimeout(function() {
                     $("#successModal").modal("hide");
@@ -877,7 +1283,7 @@ if (empty($session_id)) {
                    setTimeout(function() {
                           window.location.href = "./four.php?kakutei_btn=' . '&unsou_code=' . UrlEncode_Val_Check($get_unsou_code)
                     . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&day=' . UrlEncode_Val_Check($get_day) . '&souko=' . urldecode($get_souko) .
-                    '";
+                    '&sort_key=' . UrlEncode_Val_Check($sortKey) . '";
                     }, 500);
                    
 
@@ -893,7 +1299,7 @@ if (empty($session_id)) {
                     $("#errorModal").modal("hide");
                 }, 2000);
             });
-        </script>';
+        </scrip>';
             }
         }
     }
@@ -2226,10 +2632,9 @@ if (empty($session_id)) {
 
     <link rel="stylesheet" href="./css/sweetalert2.css">
 
+    <!--
     <link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.min.css">
-
-
-
+-->
     <title>ピッキング</title>
 
     <style>
@@ -2541,9 +2946,8 @@ if (empty($session_id)) {
                     <!-- 2024/06/19 変更 -->
                     <input type="hidden" name="unsou_name" value="<?php echo $unsou_name; ?>">
                     <!-- <input type="hidden" name="unsou_name" value="<?php echo htmlspecialchars($_SESSION['unsou_name']) ?>"> -->
-
-                    <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>">
-
+                    <input type="hidden" name="day" value="<?php echo $select_day; ?>">
+                    <!-- <input type="hidden" name="day" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['day'] ?? $select_day); ?>">-->
                     <input type="hidden" name="souko" value="<?php echo htmlspecialchars($souko_code); ?>">
 
                     <input type="hidden" name="shouhin_code" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['shouhin_code'] ?? $Shouhin_code); ?>">
@@ -2571,6 +2975,9 @@ if (empty($session_id)) {
                     <input type="hidden" name="one_op_tokki" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['one_op_tokki'] ?? $Shouhin_Detail_DATA[12]); ?>">
                     <!-- 備考 -->
                     <input type="hidden" name="one_op_bikou" value="<?php echo htmlspecialchars($_SESSION['five_back_params']['one_op_bikou'] ?? $Shouhin_Detail_DATA[10]); ?>">
+
+                    <!-- 並替 2024/07/04 -->
+                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
 
                     <!-- ============== 全数選択で、配列に戻して使う ============= -->
                     <!-- 処理ＳＥＱ  -->
@@ -2623,6 +3030,8 @@ if (empty($session_id)) {
                     <input type="hidden" name="Dennpyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_num'] : $IN_Dennpyou_num; ?>">
                     <input type="hidden" name="Dennpyou_Gyou_num" value="<?php echo isset($_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num']) ? $_SESSION['kakutei_btn_params']['Dennpyou_Gyou_num'] : $IN_Dennpyou_Gyou_num; ?>">
                     <input type="hidden" name="count_num_val" id="count_num_val" value="<?php echo isset($_SESSION['kakutei_btn_params']['count_num_val']) ? $_SESSION['kakutei_btn_params']['count_num_val'] : $count_num; ?>">
+
+                    <input type="hidden" name="sort_key" value="<?php echo $sortKey; ?>">
 
                     <?php if (isset($_SESSION['Syuka_Yotei_SUM']) && !empty($_SESSION['Syuka_Yotei_SUM'])) : ?>
                         <input type="hidden" name="Syuka_Yotei_SUM" id="Syuka_Yotei_SUM" value="<?php echo $_SESSION['Syuka_Yotei_SUM']; ?>">
@@ -2717,6 +3126,7 @@ if (empty($session_id)) {
                     <!-- 商品コード -->
                     <input type="hidden" name="one_op_shouhin_code" value="<?php print $strs_Shouhin_Code; ?>">
                     <!-- ============== 全数選択で、配列に戻して使う END ============= -->
+                    <input type="hidden" name="sort_key" value="<?php print $sortKey; ?>">
 
                     <!-- 備考・特記 , & 複数処理 -->
                     <?php if (isset($_GET['now_sql']) && $_GET['now_sql'] != "") : ?>
@@ -2752,7 +3162,9 @@ if (empty($session_id)) {
     <script src="./js//popper.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.all.min.js"></script>
+    <!--
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.all.min.js"></script>
+    -->
     <script src="./js/sweetalert2.min.js"></script>
 
     <script type="text/javascript">
@@ -2832,14 +3244,12 @@ if (empty($session_id)) {
                     //  $("#result_val").text("商品が違います！！！  読込JAN:" + convertedValue_JAN);
                     $("#scan_val").focus();
                     $("#scan_val").val("");
-
                     // === ********* 後で CDN をローカルへ *********
                     Swal.fire({
                         position: "center",
                         title: "商品が違います！",
                         text: "読込JAN:" + convertedValue_JAN,
                     });
-
                 }
 
             });
