@@ -36,6 +36,11 @@ if (empty($session_id)) {
         // === 運送便
         $selected_shippingname = $_GET['selected_shippingname'];
         $selected_shippingcode = $_GET['selected_shippingcode'];
+
+        // === ログイン ID  追加 24_0801
+        if (isset($_SESSION['input_login_id'])) {
+            $input_login_id = $_SESSION['input_login_id'];
+        }
     } else {
         // === トークンが無い場合
         header("Location: $err_url");
@@ -49,7 +54,7 @@ if (empty($session_id)) {
     if (!$conn) {
         $e = oci_error();
     }
-/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
+    /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/21
     $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
             FROM SJTR SJ, SLTR SL, SKTR SK, SOMF SO, USMF US, HTPK PK
             WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -153,11 +158,11 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
+                <a href="<?php echo HOME_URL .  $input_login_id; ?>"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
-            グリーンライフ ピッキング
+                グリーンライフ ピッキング
             </span>
         </div>
     </div>
@@ -166,7 +171,7 @@ if (empty($session_id)) {
     <div class="head_box_02">
         <div class="head_content_02">
             <span class="home_sub_icon_span">
-            <a href="#"><img src="./img/page_img.png"></a>
+                <a href="#"><img src="./img/page_img.png"></a>
             </span>
 
             <span class="page_title">
@@ -215,7 +220,7 @@ if (empty($session_id)) {
     </div> <!-- END app -->
 
     <script src="./js/vue@2.js"></script>
-    
+
 
     <script>
         new Vue({
@@ -229,7 +234,7 @@ if (empty($session_id)) {
                 // ボタンがクリックされたら
                 handleButtonClick(value, code_val) {
                     this.selectedValue = value; // 選択した値を格納
-                    this.selectedCode =code_val;
+                    this.selectedCode = code_val;
                 },
                 // フォームを送信する
                 submitForm() {

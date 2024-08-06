@@ -80,104 +80,6 @@ if (empty($session_id)) {
         $selected_index = $_SESSION['selected_index'];
         $selected_jan = $_SESSION['selected_jan'];
     }
-
-
-    // ===================================================
-    // ==== test　作業中 入れる処理　24_0723  作業解除処理
-    // ===================================================
-
-    $arr_tmp = [];
-
-    $arr_response_sagyou_now = [];
-
-    $test_flg = 0;
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['arr_Sagyou_Tyuu_data'])) {
-        header('Content-Type: application/json; charset=UTF-8');
-
-        if (isset($_POST['arr_Sagyou_Tyuu_data'])) {
-            $data = $_POST['arr_Sagyou_Tyuu_data'];
-            $arr_response_sagyou_now = [];
-            $arr_response_sagyou_now['items'] = []; // 
-
-            foreach ($data as $item) {
-
-                $arr_response_sagyou_now['items'][] = [
-                    'shouhin_name_sagyou_now' => trim($item['shouhin_name_aj']),
-                    'shouhin_code_val_sagyou_now' => trim($item['shouhin_code_val_aj'])
-                ];
-            }
-
-            // 正常なレスポンス
-            $arr_response_sagyou_now['status'] = 'success';
-        } else {
-            // エラー時のレスポンス
-            $arr_response_sagyou_now['status'] = 'error';
-            $arr_response_sagyou_now['message'] = 'データが送信されていません';
-        }
-
-        // エンコード
-        $tmp = json_encode($arr_response_sagyou_now);
-        // デコード
-        $arr_response_sagyou_now_val = json_decode($tmp, true);
-
-        // === 配列の個数を取得
-        $loop_num = count($arr_response_sagyou_now_val['items']);
-
-        $Sagyou_now_Shouhin_Code = "";
-
-        $test_flg = 1;
-
-        // === 商品コード取得
-        for ($i = 0; $i < $loop_num; $i++) {
-            if (
-                $i == $loop_num - 1
-            ) {
-                $Sagyou_now_Shouhin_Code .= $arr_response_sagyou_now_val['items'][$i]['shouhin_code_val_sagyou_now'];
-            } else {
-                $Sagyou_now_Shouhin_Code .= $arr_response_sagyou_now_val['items'][$i]['shouhin_code_val_sagyou_now'] . ",";
-            }
-
-            // print($arr_response_sagyou_now_val['items'][$i]['shouhin_code_val_sagyou_now'] . ",");
-        }
-
-        $_SESSION['Sagyou_now_Shouhin_Code'] = $Sagyou_now_Shouhin_Code;
-
-        // echo json_encode($arr_response_sagyou_now); // JSONレスポンスを返す
-        echo json_encode(['status' => 'success', 'message' => 'first ajax OK']);
-
-        exit;
-    }
-
-    // =========================================
-    // === 追加　作業中 解除  24_0801
-    // =========================================
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['syori_seq_val_post'])) {
-        header('Content-Type: application/json; charset=UTF-8');
-
-        if (isset($_POST['syori_seq_val_post'])) {
-            $data = $_POST['syori_seq_val_post'];
-        }
-
-        // エンコード
-        $syori_seq_val_post = json_encode($data);
-        // デコード
-        $syori_seq_val_post_val = json_decode($syori_seq_val_post, true);
-
-        $_SESSION['syori_seq_val_post_val'] = $syori_seq_val_post_val;
-
-        echo json_encode(['status' => 'success', 'message' => 'Session updated']);
-
-        exit;
-    }
-
-
-    // ====== ログイン ID ======
-    if (isset($_SESSION['input_login_id'])) {
-        $session_login_id = $_SESSION['input_login_id'];
-        dprintBR("ログインID:::" . $session_login_id);
-    }
-
     $sql_multiple_cut = "";
 
     dprintBR("現在のパターン数:::");
@@ -1296,146 +1198,6 @@ if (empty($session_id)) {
         $sortKey = 'location_note';
         //    print($_GET['scan_b'] . "ここ");
     }
-
-
-    // ======================================================================
-    // ==============================作業中解除　判別処理   24_0729
-    // =======================================================================
-
-    // print("出力:::" . $_SESSION['Sagyou_now_Shouhin_Code'] . "\n");
-
-    // ================ バインドへ入れる変数 
-    $souko_code = $_SESSION['selectedSouko_sagyou']; // 倉庫コード
-    $syukka_day = $_SESSION['selected_day_sagyou']; // 出荷日
-    $nyuuryoku_tantou = $_SESSION['input_login_id']; // 担当者コード
-
-    // print($Sagyou_now_Shouhin_Code);
-
-    if (isset($_SESSION['Sagyou_now_Shouhin_Code'])) {
-        $arr_tmp = explode(",", $_SESSION['Sagyou_now_Shouhin_Code']);
-
-        //    var_dump($arr_tmp);
-
-        // =========  作業コード分の ループを行う
-        foreach ($arr_tmp as $arr_val) {
-            //  print($arr_val);
-
-            $syouhin_code = $arr_val; // 商品コード
-
-
-            //  select 処理
-            $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
-
-            if (!$conn) {
-                $e = oci_error();
-                echo htmlentities($e['message'], ENT_QUOTES, 'UTF-8');
-                exit;
-            }
-
-
-            /*
-               倉庫Ｃ => パラメーターから取得 , 出荷日 => パラメーターから取得
-               処理Ｆ => 固定 , 商品Ｃ => ループの値から取得 , 入力担当 => パラメーターから取得
-            */
-
-            $sql = "SELECT * FROM HTPK WHERE 倉庫Ｃ = :souko_code AND 出荷日 = :syukka_day
-            AND 処理Ｆ = 2 
-            AND 商品Ｃ = :syouhin_code AND 入力担当 = :nyuuryoku_tantou";
-
-            $stid = oci_parse($conn, $sql);
-
-            if (!$stid) {
-                $e = oci_error($conn);
-                echo htmlentities(
-                    $e['message'],
-                    ENT_QUOTES,
-                    'UTF-8'
-                );
-            }
-
-            // バインド変数
-            oci_bind_by_name($stid, ':souko_code', $souko_code);
-            oci_bind_by_name($stid, ':syukka_day', $syukka_day);
-            oci_bind_by_name($stid, ':syouhin_code', $syouhin_code);
-            oci_bind_by_name($stid, ':nyuuryoku_tantou', $nyuuryoku_tantou);
-
-            // クエリの実行
-            oci_execute($stid);
-
-            while ($row = oci_fetch_assoc($stid)) {
-
-                $arr_Sagyou_Now_Data[] = array(
-                    's_now_syori_seq' => $row['処理ＳＥＱ'],
-                    's_now_denpyou_seq' => $row['伝票ＳＥＱ'],
-                    's_now_denpyou_num' => $row['伝票番号'],
-                    's_now_denpyou_gyou_num' => $row['伝票行番号'],
-                    's_now_denpyou_eda_num' => $row['伝票行枝番'],
-                    's_now_nyuuryou_tantou' => $row['入力担当'],
-                    's_now_shouhinn_code' => $row['商品Ｃ'],
-                    's_now_souko_code' => $row['倉庫Ｃ'],
-                    's_now_unsou_code' => $row['運送Ｃ'],
-                    's_now_syukka_moto' => $row['出荷元'],
-                    's_now_tokki_zikou' => $row['特記事項'],
-                    's_now_syukka_yotei_num' => $row['出荷予定数量'],
-                    's_now_picking_num' => $row['ピッキング数量'],
-                    's_now_shori_Flg' => $row['処理Ｆ'],
-                );
-            }
-
-            // print_r($arr_Sagyou_Now_Data);
-            $_SESSION['arr_Sagyou_Now_Data'] = $arr_Sagyou_Now_Data;
-
-            oci_free_statement($stid);
-            oci_close($conn);
-        }
-    } // ===================== END if
-
-    //   var_dump($arr_Sagyou_Now_Data);
-    $psition_flg = 0;
-    // ========================================= 作業中　解除　削除処理 24_0801 追加
-    if (isset($_SESSION['syori_seq_val_post_val'])) {
-        $session_syori_seq_val_post_val = $_SESSION['syori_seq_val_post_val'];
-
-        // print("セッション取得:::" . $session_syori_seq_val_post_val);
-
-        $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
-
-        //    $sql = "DELETE FROM HTPK WHERE 処理ＳＥＱ = :Syori_SEQ AND 入力担当 = :NyuuRyoku_Tantou AND 商品Ｃ = :Shouhin_Code";
-        $sql = "DELETE FROM HTPK WHERE 処理ＳＥＱ = :Syori_SEQ AND 処理Ｆ = 2";
-
-
-        $stid = oci_parse($conn, $sql);
-
-        if (!$stid) {
-            $e = oci_error($conn);
-            echo htmlentities($e['message'], ENT_QUOTES, 'UTF-8');
-            exit;
-        }
-
-        oci_bind_by_name($stid, ":Syori_SEQ", $session_syori_seq_val_post_val);               // 処理 SEQ
-        //    oci_bind_by_name($stid, ":NyuuRyoku_Tantou", $Parame_nyuuryou_tantou);  // 入力担当
-        //    oci_bind_by_name($stid, ":Shouhin_Code", $Parame_shouhinn_code);        // 商品コード
-
-        $result = oci_execute($stid);
-
-        if (!$result) {
-            $e = oci_error($stid);
-            echo json_encode(['status' => 'error', 'message' => htmlentities($e['message'], ENT_QUOTES, 'UTF-8')], JSON_UNESCAPED_UNICODE);
-            exit;
-        } else {
-            unset($_SESSION['Sagyou_now_Shouhin_Code']);
-            unset($_SESSION['syori_seq_val_post_val']);
-
-            // リロード
-            echo '<script type="text/javascript">location.reload();</script>';
-
-            exit;
-        }
-
-        oci_free_statement($stid);
-        oci_close($conn);
-    } // ========================== END if
-
 }
 
 ?>
@@ -1541,15 +1303,15 @@ if (empty($session_id)) {
             <table border="1">
                 <thead>
                     <tr>
-                        <th class="location_title">ロケ</th>
-                        <th class="btn_suuryou">数量</th>
-                        <th class="btn_case">ケース</th>
-                        <th class="btn_bara">バラ</th>
+                        <th>ロケ</th>
+                        <th>数量</th>
+                        <th>ケース</th>
+                        <th>バラ</th>
                         <!--
                         <th>品名・品番</th>
         -->
                         <th>品名・品番 <span style="display:block"><button id="toggle_all_button">JAN</button></span></th>
-                        <th class="btn_tokki_bikou">特記・備考</th>
+                        <th>特記・備考</th>
                     </tr>
 
                     <?php
@@ -1561,10 +1323,6 @@ if (empty($session_id)) {
 
                     foreach ($arr_Picking_DATA as $Picking_VAL) {
                         $Sagyou_NOW_Flg = 0;
-
-                        // === 追加 24_0723 作業中 解除フラグ
-                        $Sagyou_Kaizyo_Flg = 0;
-
                         $shouhin_name_part1 = mb_substr($Picking_VAL['Shouhin_name'], 0, 20);
                         $shouhin_name_part2 = mb_substr($Picking_VAL['Shouhin_name'], 20, null);
 
@@ -1585,37 +1343,6 @@ if (empty($session_id)) {
                         }
 
 
-                        // =============================================
-                        // === 24_0729 追加　作業中解除
-                        foreach ($arr_Sagyou_Now_Data as $arr_Sagyou_Now_Val) {
-                            //    print($_SESSION['input_login_id'] . "\n");
-
-                            $login_id = $_SESSION['input_login_id'];
-
-                            $sagyou_login_id = Zero_Padding($arr_Sagyou_Now_Val['s_now_nyuuryou_tantou']);
-                            //   dprintBR($sagyou_login_id . "\n");
-
-                            if (
-                                $login_id == $sagyou_login_id
-                                && $Picking_VAL['Shouhin_code'] == $arr_Sagyou_Now_Val['s_now_shouhinn_code']
-                            ) {
-
-                                // === 追加 24_0723 作業中 解除フラグ  0:解除 NG , 1:解除 OK
-                                $Sagyou_Kaizyo_Flg = 1;
-                                //  dprintBR("一致OK:::" . "\n");
-
-                                // 処理ＳＥＱ
-                                $Parame_syori_seq = $arr_Sagyou_Now_Val['s_now_syori_seq'];
-                                // 伝票ＳＥＱ
-                                $Parame_denpyou_seq = $arr_Sagyou_Now_Val['s_now_denpyou_seq'];
-                                // 伝票番号
-                                $Parame_denpyou_num = $arr_Sagyou_Now_Val['s_now_denpyou_num'];
-                                // 商品コード
-                                $Parame_shouhinn_code = $arr_Sagyou_Now_Val['s_now_shouhinn_code'];
-                                // 入力担当
-                                $Parame_nyuuryou_tantou = $arr_Sagyou_Now_Val['s_now_nyuuryou_tantou'];
-                            }
-                        }
 
 
                         // === 処理フラグ
@@ -1691,7 +1418,7 @@ if (empty($session_id)) {
                             }
 
 
-                            echo '<td class="location_val"><span class=tana_num>' . $Picking_VAL['Tana_num'] . '</span></td>';
+                            echo '<td><span class=tana_num>' . $Picking_VAL['Tana_num'] . '</span></td>';
                             echo '<td id="shouhin_num_box" class="shouhin_num_box">' .
                                 '<span class="Font_Bold_default_root">' . $Picking_VAL['Shouhin_num'] . '</span>' . "</td>";
                             echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
@@ -1741,9 +1468,9 @@ if (empty($session_id)) {
                             // ===================================
                             //============== 作業中 ==============
                             // ===================================
-                        } else if ($Sagyou_NOW_Flg == 1 && $Sagyou_Kaizyo_Flg == 0) {
+                        } else if ($Sagyou_NOW_Flg == 1) {
                             echo '<tr style="background: yellow;" id="sagyou_now" class="sagyou_now">';
-                            echo '<td class="location_val"><span id="sagyou_now_text">作業中</span>' .
+                            echo '<td><span id="sagyou_now_text">作業中</span>' .
                                 //'<span class="sagyou_img_box" style="display: block;margin: 10px 0 0 0;">' . $Picking_VAL['Tana_num'] . '</span></td>';
                                 '<span class="sagyou_img_box" style="margin: 10px 0 0 0; font-weight: 600">' . $Picking_VAL['Tana_num'] . '</span></td>';
 
@@ -1785,130 +1512,6 @@ if (empty($session_id)) {
                             /* } else {
                                     echo '<td><span class="bikou_list">' . $Picking_VAL['shipping_moto_name'] . '</span></td>';
                                 } */
-
-                            echo '</tr>';
-
-
-                            // ==========================================================
-                            // =======================  24_0729 追加 作業中 解除
-                            // ==========================================================
-                        } else if ($Sagyou_NOW_Flg == 1 && $Sagyou_Kaizyo_Flg == 1) {
-
-                            // === 運送便（単数）, 備考・特記あり
-                            if (isset($Picking_VAL['sql_one_tokki']) && $Picking_VAL['sql_one_tokki'] != "" && $Picking_VAL['four_status'] == 'one_bikou_tokki') {
-                                $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
-
-                                if (isset($Picking_VAL['tokki_zikou'])) {
-                                    echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                        '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey . '&now_sql=' . $encoded_sql_one_tokki .
-                                        '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
-                                        . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-                                } else {
-                                    $Picking_VAL['tokki_zikou'] = "";
-                                    echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                        '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .  '&now_sql=' . $encoded_sql_one_tokki .
-                                        '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
-                                        . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-                                }
-
-
-                                // === 運送便（複数） , 備考・特記あり,　※備考・特記ありも複数　=> five.php から戻ってきた
-                            } else if (isset($Picking_VAL['sql_multiple_tokki']) && $Picking_VAL['sql_multiple_tokki'] != "") {
-
-                                dprint("ここ:複数");
-                                $Multiple_Sql_Url = UrlEncode_Val_Check($Picking_VAL['sql_multiple_tokki']);
-                                echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
-                                    '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou'])
-                                    . '&sort_key=' . $sortKey .
-                                    UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .
-                                    '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
-                                    . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-
-                                // *** 複数が最初に通る ルート ***
-                                // four.php => five.php へ　運送便（複数） , 備考・特記あり,　※備考・特記ありも複数
-                            } else if (isset($Picking_VAL['four_status']) && $Picking_VAL['four_status'] == "multiple_sql_four") {
-
-                                dprint("ここ:複数 最初のルート third.php => four.php => five.php");
-
-                                echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' .
-                                    //UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&shipping_moto='
-                                    UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name)
-                                    . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name'])
-                                    . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
-                                    . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num'])
-                                    . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' .
-                                    UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .
-                                    '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
-                                    . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-                            } else {
-
-                                // === 通常処理　特記事項 あり
-                                if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] != "" || $Picking_VAL['shipping_moto'] != "") {
-                                    //    dprint("koko,// === 通常処理　特記事項 あり");
-                                    echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
-                                        . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root'
-                                        .  '&sort_key=' . $sortKey . '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-                                } else if ($Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] == "" && $Picking_VAL['shipping_moto'] == "") {
-                                    // dprint("koko,// === 通常処理　特記事項 あり else");
-                                    // === 通常処理　特記事項 あり
-                                    echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
-                                        . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root'
-                                        . '&status_sub=default' . '&sort_key=' . $sortKey . '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
-                                }
-                            }
-
-
-                            echo '<td class="location_val"><span id="sagyou_now_text_no">解除可</span>' .
-                                //'<span class="sagyou_img_box" style="display: block;margin: 10px 0 0 0;">' . $Picking_VAL['Tana_num'] . '</span></td>';
-                                '<span class="sagyou_img_box" style="margin: 10px 0 0 0; font-weight: 600">' . $Picking_VAL['Tana_num'] . '</span></td>';
-                            echo '<td id="shouhin_num_box" class="shouhin_num_box">' .
-                                '<span class="Font_Bold_default_root">' . $Picking_VAL['Shouhin_num'] . '</span>' . "</td>";
-                            echo '<td>' . '<span class="Font_Bold_default_root">' . $Case_num_View . '</span>' . '</td>';
-                            echo '<td>' . '<span class="Font_Bold_default_root">' . $Bara_num_View . '</span>' . '</td>';
-
-                            if (!$shouhin_name_part2 == null) {
-                                //echo $Picking_VAL['Shouhin_name'] . "<br>";
-                                echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part2 . '</span>' .
-                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
-                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    '<input type="hidden" class="syori_seq_val" value="' . $Parame_syori_seq . '">' .
-                                    "</td>";
-                            } else {
-                                echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part1 . '</span>' .
-                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
-                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    '<input type="hidden" class="syori_seq_val" value="' . $Parame_syori_seq . '">' .
-                                    "</td>";
-                            }
-
-                            // === 特記がある
-                            if ((isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") && (isset($Picking_VAL['shipping_moto']) && $Picking_VAL['shipping_moto'] != "")) {
-
-                                echo '<td class="tokkibikou_cell"><span class="toki_list">' . $Picking_VAL['tokki_zikou'] . '</span>' .
-                                    '<span class="bikou_list">' . $Picking_VAL['shipping_moto_name'] . '</span></td>';
-
-                                // dprintBR("**ワン**");
-                            } else if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['tokki_zikou'] != "") {
-                                echo '<td class="tokkibikou_cell">' . $Picking_VAL['tokki_zikou'] . '</td>';
-
-                                // dprintBR("**ツー**");
-                            } else if (isset($Picking_VAL['shipping_moto']) && $Picking_VAL['shipping_moto'] != "") {
-
-                                echo '<td class="tokkibikou_cell">' . $Picking_VAL['shipping_moto_name'] . '</td>';
-                                // dprintBR("**スリー**");
-                            } else {
-                                echo '<td class="tokkibikou_cell"><span class="toki_list">' . $Picking_VAL['tokki_zikou'] . '</span>' .
-                                    '<span class="bikou_list">' . $Picking_VAL['shipping_moto_name'] . '</span></td>';
-
-                                // dprintBR("**フォー**");
-                            }
-
 
                             echo '</tr>';
                         } else if ($Sagyou_NOW_Flg == 2) {
@@ -2288,16 +1891,6 @@ if (empty($session_id)) {
     <script>
         $(document).ready(function() {
 
-            // === 追加 24_0726 作業中　解除用 ajax処理用 リロード処理 
-            if (!window.location.search.includes('reloaded=true')) {
-                window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
-            }
-
-
-            $('.location_title').hide();
-            $('.location_val').hide();
-
-
             // 全角を半角に変換
             function convertToHalfWidth(input) {
                 return input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
@@ -2584,71 +2177,21 @@ if (empty($session_id)) {
                 }
             });
 
+            console.log("dataHrefs:::" + dataHrefs);
+
             // === data-hrer をセッションストレージへ保存
             sessionStorage.setItem('dataHrefs', dataHrefs.join(','));
+            console.log("保存されたdata-hrefs: " + sessionStorage.getItem('dataHrefs'));
 
             // ==================================================
             // ************************** 追加  連続処理　ロジック 24_0705  END
             // ==================================================
 
-            // ====================================================
-            // === 作業中　解除　ロジック  24_0801 追加
-            // ====================================================
-            if ($(this).hasClass('sagyou_now_text_no_c')) {
-
-                var syori_seq_val = $(this).find('.syori_seq_val').val();
-
-                $.ajax({
-                    url: '<?php echo $_SERVER["PHP_SELF"]; ?>',
-                    type: 'POST',
-                    data: {
-                        syori_seq_val_post: syori_seq_val
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-
-                        console.log('ajax OK 02:', response);
-
-                        if (response.status === 'success') {
-                            Swal.fire({
-                                position: "center",
-                                title: "作業中 解除完了",
-                                text: "",
-                                icon: "success",
-                                confirmButtonText: "OK"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-
-                                    // OKボタンが押されたときにページをリロードする
-                                    location.reload();
-
-                                }
-                            });
-
-
-                        } else {
-                            // エラーメッセージを表示
-                            alert('エラーが発生しました 02: ' + response.message);
-                        }
-
-                        handleAjaxResponse(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('エラー ここ 02:', error);
-                        console.log('レスポンス 02:', xhr.responseText);
-                    }
-                });
-
-                return false;
-            }
             //   return false;
             // hrefの値をURLとしてページを遷移
             window.location.href = href;
         });
 
-
-        // === 変更前 24_0802 fiveから戻ってきた時の、カーソル位置 移動
-        /*
         // HTMLドキュメントのすべてのコンテンツが読み込まれた後に発生するイベント	2024/07/01
         document.addEventListener('DOMContentLoaded', function() {
             var selectedIndexElement = document.getElementById('selected_index');
@@ -2660,39 +2203,8 @@ if (empty($session_id)) {
 
                 window.scrollTo(0, parseInt(scrollPosition, 10));
                 localStorage.clear();
-
             }
         });
-        */
-
-        // ======================================== 変更後 24_0802 fiveから戻ってきた時の、カーソル位置 移動
-        function restoreScrollPosition() {
-            var selectedIndexElement = document.getElementById('selected_index');
-            var selectedIndexValue = selectedIndexElement ? selectedIndexElement.value : null;
-            var scrollPosition = localStorage.getItem('scrollPosition');
-
-            /*
-            if (selectedIndexValue != null && scrollPosition != null) {
-                window.scrollTo(0, parseInt(scrollPosition, 10));
-                localStorage.clear();
-            }
-            */
-
-            console.log("function:::実行 OK restoreScrollPosition ****** 01");
-
-            if (selectedIndexValue != null && scrollPosition != null) {
-                console.log("function:::実行 OK restoreScrollPosition ****** 02");
-                setTimeout(function() {
-                    window.scrollTo(0, parseInt(scrollPosition, 10));
-                    localStorage.clear();
-                }, 500);
-            } else {
-                console.log("function:::実行 OK restoreScrollPosition ****** 9999");
-            }
-
-        }
-
-        restoreScrollPosition();
 
 
         // ===================== 24_0724 追加 JAN表記で five.php へいって戻ってきたら、JAN表記にする ===================
@@ -2749,8 +2261,8 @@ if (empty($session_id)) {
 
                     // フォーカスを合わせる
                     $('#get_JAN').focus();
-
-                    $("#get_JAN").attr('readonly', true);
+		    
+		    $("#get_JAN").attr('readonly', true);
 
                     setTimeout(function() {
                         $("#get_JAN").removeAttr('readonly'); // readonlyを削除
@@ -2774,86 +2286,32 @@ if (empty($session_id)) {
             });
         });
 
+        /*
+        // === 追加 24_0704  JANコード　下四桁　切り替え
+        var isOriginal = true; // 初期状態を元の名前に設定
 
-        // ============================================================================
-        // =============================================== 追加 24_0723 作業中 解除 処理
-        // ============================================================================
+        $('#toggle_all_button').on('click', function() {
 
-        var arr_Sagyou_Tyuu = [];
-        // ======================== 追加 テスト 24_0723
-        $('tr').each(function() {
-            if ($(this).hasClass('sagyou_now')) {
-                var shouhin_name_aj = $(this).find('.shouhin_name').text();
-                var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
+            isOriginal = !isOriginal; // 状態を反転
 
-                shouhin_name_aj = shouhin_name_aj.trim();
-                shouhin_code_val_aj = shouhin_code_val_aj.trim();
+            $('.shouhin_name').each(function() {
+                var $span = $(this);
+                var shouhin_JAN = $span.closest('td').find('.shouhin_JAN').val();
+                var last_four = shouhin_JAN.slice(-4);
 
-                console.log('作業中:::商品名: ' + shouhin_name_aj);
-                console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
+                if ($span.data('original-name') === undefined) {
+                    $span.data('original-name', $span.text());
+                }
 
-                // 配列へ格納
-                arr_Sagyou_Tyuu.push({
-                    shouhin_name_aj: shouhin_name_aj,
-                    shouhin_code_val_aj: shouhin_code_val_aj
-                });
-
-                // ======================================================
-                // ===================== 追加 24_0805 「更新」ボタン 対策
-                // ======================================================
-            } else if ($(this).hasClass('sagyou_now_text_no_c')) {
-
-                var shouhin_name_aj = $(this).find('.shouhin_name').text();
-                var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
-
-                shouhin_name_aj = shouhin_name_aj.trim();
-                shouhin_code_val_aj = shouhin_code_val_aj.trim();
-
-                console.log('作業中:::商品名: ' + shouhin_name_aj);
-                console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
-
-                // 配列へ格納
-                arr_Sagyou_Tyuu.push({
-                    shouhin_name_aj: shouhin_name_aj,
-                    shouhin_code_val_aj: shouhin_code_val_aj
-                });
-            }
-
+                if (isOriginal) {
+                    // 元の名前に戻す
+                    $span.text($span.data('original-name'));
+                } else {
+                    $span.text(last_four);
+                }
+            });
         });
-
-        $.ajax({
-            url: '<?php echo $_SERVER["PHP_SELF"]; ?>',
-            type: 'POST',
-            data: {
-                arr_Sagyou_Tyuu_data: arr_Sagyou_Tyuu
-            },
-            dataType: 'json',
-            success: function(response) {
-                console.log('ajax OK:', response);
-
-                handleAjaxResponse(response);
-            },
-            error: function(xhr, status, error) {
-                console.log('エラー ここ:', error);
-                console.log('レスポンス:', xhr.responseText);
-            }
-        });
-
-
-        function handleAjaxResponse(data) {
-            console.log('Handling AJAX response:', data);
-            // response を外で使う
-        }
-
-        // ==============================================
-        // === 追加 24_0801 ロケーションを非表示にする
-        // ==============================================
-        $('.btn_suuryou,.btn_case,.btn_bara,.btn_tokki_bikou,.location_title').on('click', function() {
-
-            $('.location_title').toggle();
-            $('.location_val').toggle();
-
-        });
+        */
     </script>
 
 

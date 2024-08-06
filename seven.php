@@ -33,6 +33,12 @@ if (empty($session_id)) {
         header("Location: $err_url");
     }
 
+    // === ログイン ID  追加 24_0801
+    if (isset($_SESSION['input_login_id'])) {
+        $input_login_id = $_SESSION['input_login_id'];
+    }
+
+
     // ============================= DB 処理 =============================
     // === 接続準備
     $conn = oci_connect(DB_USER, DB_PASSWORD, DB_CONNECTION_STRING, DB_CHARSET);
@@ -127,7 +133,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
+                <a href="<?php echo HOME_URL .  $input_login_id; ?>"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">

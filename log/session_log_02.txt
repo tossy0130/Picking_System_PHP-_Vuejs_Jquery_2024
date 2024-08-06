@@ -1,44 +1,15 @@
-2024-07-11 18:36:40 - 複数_処理開始時のセッション
+2024-08-06 11:59:41 - 複数_処理開始時のセッション
 Array
 (
-    [sid] => 2b7bplag50c3p2se9l8odfjokc
-    [input_login_id] => 7777
-    [soko_name] => Ｐ２倉１階
-    [unsou_name] => ■トナミ運輸,■西濃運輸,■甲信越福山,■佐川急便,■中越運送,近物レックス,”産業便,コメリ高崎,ＤＩＫ新居浜,ＤＩＫ広島
-    [selected_index] => 1
-    [selected_jan] => 4971715341985
-    [fukusuu_unsouo_num] => 1,2,4,6,10,14,24,62,72,77,
+    [sid] => fhqa6afe3dtd9oeu6boqf5igo6
+    [input_login_id] => 0002
+    [soko_name] => Ｎ２倉２階
+    [unsou_name] => ＫＡ小矢部★,■トナミ運輸★,■西濃運輸★,■新潟運輸★,■甲信越福山★,■佐川急便★,■ヤマト運輸,ﾔﾏﾄふるさと,■中越運送★,近物レックス★
+    [fukusuu_unsouo_num] => 0,1,2,3,4,6,7,9,10,14,
     [fukusuu_select_val] => 
     [fukusuu_select] => 200
-    [back_multiple_sql] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
-                      ,RZ.棚番
-                      ,SH.梱包入数
-                      ,SUM(SL.数量) AS 数量
-                      ,SUM(PK.ピッキング数量) AS ピッキング数量
-                      ,PK.処理Ｆ
-                      ,SH.ＪＡＮ
-                      ,SK.特記事項
-                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-                      ,RZMF RZ
-                      ,HTPK PK
-                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                   AND SK.伝票行番号 = SL.伝票行番号
-                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                   AND SL.伝票番号   = PK.伝票番号(+)
-                   AND SL.伝票行番号 = PK.伝票行番号(+)
-                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                   AND SK.運送Ｃ = US.運送Ｃ
-                   AND SL.商品Ｃ = SH.商品Ｃ
-                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
-                   AND SL.商品Ｃ = RZ.商品Ｃ
-                   AND SK.出荷日 = :SELECT_DATE     
-                   AND SL.倉庫Ｃ = :SELECT_SOUKO
-                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')) OR ((SK.運送Ｃ = '24')) OR ((SK.運送Ｃ = '62')) OR ((SK.運送Ｃ = '72')) OR ((SK.運送Ｃ = '77')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
-        SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ORDER BY RZ.棚番,SL.商品Ｃ,SL.出荷元,SK.特記事項,数量
-    [s_syori_SEQ_value] => 29388468
+    [selected_index] => 82
+    [selected_jan] => 4971715231644
     [multiple_sql] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
                       ,RZ.棚番
                       ,SH.梱包入数
@@ -65,30 +36,59 @@ Array
                    AND SL.商品Ｃ = RZ.商品Ｃ
                    AND SK.出荷日 = :SELECT_DATE     
                    AND SL.倉庫Ｃ = :SELECT_SOUKO
-                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')) OR ((SK.運送Ｃ = '24')) OR ((SK.運送Ｃ = '62')) OR ((SK.運送Ｃ = '72')) OR ((SK.運送Ｃ = '77')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
+                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '0')) OR ((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '3')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '7')) OR ((SK.運送Ｃ = '9')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
         SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ORDER BY RZ.棚番,SL.商品Ｃ,SL.出荷元,SK.特記事項,数量
-    [multiple_sql_cut] => AND (((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')) OR ((SK.運送Ｃ = '24')) OR ((SK.運送Ｃ = '62')) OR ((SK.運送Ｃ = '72')) OR ((SK.運送Ｃ = '77')))AND NVL(PK.処理Ｆ,0) <> 8
-    [five_back_Syori_SEQ] => 29388468
+    [multiple_sql_cut] => AND (((SK.運送Ｃ = '0')) OR ((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '3')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '7')) OR ((SK.運送Ｃ = '9')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')))AND NVL(PK.処理Ｆ,0) <> 8
+    [back_multiple_sql] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
+                      ,RZ.棚番
+                      ,SH.梱包入数
+                      ,SUM(SL.数量) AS 数量
+                      ,SUM(PK.ピッキング数量) AS ピッキング数量
+                      ,PK.処理Ｆ
+                      ,SH.ＪＡＮ
+                      ,SK.特記事項
+                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
+                      ,RZMF RZ
+                      ,HTPK PK
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                   AND SL.伝票番号   = PK.伝票番号(+)
+                   AND SL.伝票行番号 = PK.伝票行番号(+)
+                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SL.出荷元 = SM.出荷元Ｃ(+)
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND SL.商品Ｃ = SH.商品Ｃ
+                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
+                   AND SL.商品Ｃ = RZ.商品Ｃ
+                   AND SK.出荷日 = :SELECT_DATE     
+                   AND SL.倉庫Ｃ = :SELECT_SOUKO
+                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '0')) OR ((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '3')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '7')) OR ((SK.運送Ｃ = '9')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
+        SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ORDER BY RZ.棚番,SL.商品Ｃ,SL.出荷元,SK.特記事項,数量
+    [s_syori_SEQ_value] => 29391612
+    [five_back_Syori_SEQ] => 29391612
     [kakutei_btn_params] => Array
         (
-            [day] => 2022-07-11
-            [souko_code] => P
-            [unsou_code] => 77
-            [unsou_name] => ■トナミ運輸,■西濃運輸,■甲信越福山,■佐川急便,■中越運送,近物レックス,”産業便,コメリ高崎,ＤＩＫ新居浜,ＤＩＫ広島
-            [souko_name] => Ｐ２倉１階
-            [shouhin_jan] => 4971715341985
-            [shouhin_code] => 3420000
-            [shouhin_name] => 扉式タイヤ収納庫　２－２                ＴＢＴ－１３２（ＭＢＲ）２－２
+            [day] => 2022-07-04
+            [souko_code] => N
+            [unsou_code] => 14
+            [unsou_name] => ＫＡ小矢部★,■トナミ運輸★,■西濃運輸★,■新潟運輸★,■甲信越福山★,■佐川急便★,■ヤマト運輸,ﾔﾏﾄふるさと,■中越運送★,近物レックス★
+            [souko_name] => Ｎ２倉２階
+            [shouhin_jan] => 4971715231644
+            [shouhin_code] => 2316400
+            [shouhin_name] => カラーポストダイヤル錠付ＭＢＫ          ＦＨ－６１４Ｄ（ＭＢＫ）
             [kakutei_tokki] => 
             [kakutei_bikou] => 
-            [Dennpyou_num] => 37886
+            [Dennpyou_num] => 37801
             [Dennpyou_Gyou_num] => 1
-            [count_num_val] => 1
+            [count_num_val] => 7
             [sort_key] => 
-            [kakutei_Syori_SEQ] => 29388468
-            [kakutei_Denpyou_SEQ] => 27435322
-            [kakutei_Syukka_Yotei_Num] => 1
-            [kakutei_shouhin_code] => 3420000
+            [kakutei_Syori_SEQ] => 29391612
+            [kakutei_Denpyou_SEQ] => 27375443,27374865,27374973,27374421
+            [kakutei_Syukka_Yotei_Num] => 2,2,2,1
+            [kakutei_shouhin_code] => 2316400,2316400,2316400,2316400
             [multiple_sql_four_sql_zensuu] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名	
                       ,RZ.棚番
                       ,SH.梱包入数
@@ -115,17 +115,17 @@ Array
                    AND SL.商品Ｃ = RZ.商品Ｃ
                    AND SK.出荷日 = :SELECT_DATE     
                    AND SL.倉庫Ｃ = :SELECT_SOUKO
-                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')) OR ((SK.運送Ｃ = '24')) OR ((SK.運送Ｃ = '62')) OR ((SK.運送Ｃ = '72')) OR ((SK.運送Ｃ = '77')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
+                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND (((SK.運送Ｃ = '0')) OR ((SK.運送Ｃ = '1')) OR ((SK.運送Ｃ = '2')) OR ((SK.運送Ｃ = '3')) OR ((SK.運送Ｃ = '4')) OR ((SK.運送Ｃ = '6')) OR ((SK.運送Ｃ = '7')) OR ((SK.運送Ｃ = '9')) OR ((SK.運送Ｃ = '10')) OR ((SK.運送Ｃ = '14')))AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
         SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ORDER BY RZ.棚番,SL.商品Ｃ,SL.出荷元,SK.特記事項,数量
             [kakutei_btn] => 
         )
 
-    [kakutei_Syori_SEQ] => 29388468
-    [kakutei_Denpyou_SEQ] => 27435322
-    [kakutei_Syukka_Yotei_Num] => 1
-    [kakutei_shouhin_code] => 3420000
-    [count_num_val] => 1
-    [Syuka_Yotei_SUM] => 1
+    [kakutei_Syori_SEQ] => 29391612
+    [kakutei_Denpyou_SEQ] => 27375443,27374865,27374973,27374421
+    [kakutei_Syukka_Yotei_Num] => 2,2,2,1
+    [kakutei_shouhin_code] => 2316400,2316400,2316400,2316400
+    [count_num_val] => 7
+    [Syuka_Yotei_SUM] => 7
 )
 
 

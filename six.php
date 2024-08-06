@@ -2,6 +2,8 @@
 
 ini_set('display_errors', 1);
 
+require __DIR__ . "/conf.php"; // 追記 24_0801
+
 require(dirname(__FILE__) . "/class/function.php");
 
 // セッションスタート
@@ -41,7 +43,7 @@ $_SESSION['token_jim'] = $token_jim;
 $selected_day = '';
 if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
     $selected_day = $_GET['day'];
-} 
+}
 
 ?>
 
@@ -65,7 +67,7 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
 
     <!-- jQuery cdn -->
     <script src="./js/jquery.min.js"></script>
-    
+
     <title>ピッキング実績照会出荷日指定</title>
 </head>
 
@@ -74,7 +76,7 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="./top_menu.php"><img src="./img/home_img.png"></a>
+                <a href="<?php echo HOME_URL .  $input_login_id; ?>"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
@@ -115,8 +117,8 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
 
         </div>
 
-        
-    </div> <!-- ================ END container =============== -->    
+
+    </div> <!-- ================ END container =============== -->
 
     <div>
         <!-- フッターメニュー -->
@@ -202,7 +204,7 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
                 $("#datepicker").val(formattedDate);
             }
 
-            var error_day = "<?php echo isset($error_day)? $error_day : ''; ?>";
+            var error_day = "<?php echo isset($error_day) ? $error_day : ''; ?>";
             if (error_day != "") {
                 // 日付文字列をDateオブジェクトに変換
                 var date = new Date(error_day);
@@ -218,7 +220,7 @@ if (isset($_GET['back_six']) && $_GET['back_six'] === 'ok') {
 
             }
 
-            
+
 
 
             $("#day_search_submit").click(function() {

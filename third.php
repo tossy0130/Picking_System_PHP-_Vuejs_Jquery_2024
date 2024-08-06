@@ -32,9 +32,16 @@ if (empty($session_id)) {
         $selected_day = $_GET['selected_day'];
         $get_souko_name = $_GET['souko_name'];
 
+        // === ログイン ID  追加 0731
+        if (isset($_SESSION['input_login_id'])) {
+            $input_login_id = $_SESSION['input_login_id'];
+        }
+
         //  dprintBR($get_souko_name . ":" . "get_souko_name");
 
         $_SESSION['soko_name'] = $get_souko_name;
+        $_SESSION['selectedSouko_sagyou'] = $selectedSouko; // === 24_0726 追加
+        $_SESSION['selected_day_sagyou'] = $selected_day; // === 24_0726 追加
 
         // === ********* four.php での　状態判別用　セッション削除 *********
         // セッション変数を削除する
@@ -73,7 +80,7 @@ if (empty($session_id)) {
                  GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                  ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 */
-/* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
+        /* ピッキングに合わせる SJ.出荷日とSJ.運送Ｃ 24/06/28
         $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SJ.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
@@ -93,6 +100,7 @@ if (empty($session_id)) {
                  GROUP BY SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SJ.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                  ORDER BY SL.倉庫Ｃ,SJ.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
 */
+        /* 24/07/12
         $sql = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
                        SM.出荷元名,SK.特記事項
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK
@@ -111,6 +119,46 @@ if (empty($session_id)) {
                    AND SL.倉庫Ｃ = :GET_SOUKO
                  GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項
                  ORDER BY SL.倉庫Ｃ,SK.運送Ｃ,SL.出荷元,SM.出荷元名 ,SK.特記事項";
+*/
+        $sql = "SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,
+                       SM.出荷元名,SK.特記事項
+                      ,SUMI.処理中
+                      ,CONCAT(US.運送略称,SUMI.処理中) AS 運送略称Ｆ付
+                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US, HTPK PK,
+                (
+                SELECT SK.運送Ｃ, '★' AS 処理中
+                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, USMF US, HTPK PK
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                   AND SL.伝票番号   = PK.伝票番号(+)
+                   AND SL.伝票行番号 = PK.伝票行番号(+)
+                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND NVL(PK.処理Ｆ,0) <> 0
+                   AND SK.出荷日 = :GET_DATE
+                   AND SL.倉庫Ｃ = :GET_SOUKO
+                 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SK.運送Ｃ,US.運送略称
+                ) SUMI
+                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
+                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
+                   AND SK.伝票行番号 = SL.伝票行番号
+                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
+                   AND SL.伝票番号   = PK.伝票番号(+)
+                   AND SL.伝票行番号 = PK.伝票行番号(+)
+                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
+                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
+                   AND SL.出荷元 = SM.出荷元Ｃ(+)
+                   AND SK.運送Ｃ = US.運送Ｃ
+                   AND NVL(PK.処理Ｆ,0) <> 9
+                   AND SK.出荷日 = :GET_DATE
+                   AND SL.倉庫Ｃ = :GET_SOUKO
+                   AND SK.運送Ｃ = SUMI.運送Ｃ(+)
+                 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫略称,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SK.特記事項,SUMI.処理中
+                 ORDER BY 倉庫Ｃ,運送Ｃ,出荷元,出荷元名 ,特記事項
+                ";
         $stid = oci_parse($conn, $sql);
         if (!$stid) {
             $e = oci_error($stid);
@@ -129,7 +177,8 @@ if (empty($session_id)) {
             $souko_code = $row['倉庫Ｃ'];
             $souko_name = $row['倉庫名'];
             $Unsou_code = $row['運送Ｃ'];
-            $Unsou_name = $row['運送略称'];
+            //24/07/12  $Unsou_name = $row['運送略称'];
+            $Unsou_name = $row['運送略称Ｆ付'];
             $shipping_moto = $row['出荷元'];
             $shipping_moto_name = $row['出荷元名'];
             $tokki_zikou = $row['特記事項'];
@@ -204,7 +253,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="<?php echo HOME_URL .  $input_login_id; ?>"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">
@@ -688,10 +737,16 @@ if (empty($session_id)) {
                     var arr_fukusu_cut_hantei_val = [];
                     $("#selectedValues_set_next_val .set_next_val").each(function() {
                         var currentText = $(this).text().trim();
-                        var startIndex = currentText.indexOf(':');
+
+                        //  var startIndex = currentText.indexOf(':');
+                        var startIndex = currentText.indexOf('\t');
+
                         if (startIndex !== -1) {
                             startIndex++; // :の次の文字の位置
-                            var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+
+                            //    var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+                            var endIndex = currentText.indexOf('\t', startIndex); // 次の:の位置
+
                             if (endIndex !== -1) {
                                 var extractedString = currentText.substring(startIndex, endIndex);
                                 arr_fukusu_cut_hantei_val.push(extractedString);
@@ -709,7 +764,9 @@ if (empty($session_id)) {
                     $("#selectedValues_set_next_val .set_next_val").each(function() {
                         var currentText = $(this).text().trim();
 
-                        var endIndex = currentText.indexOf(':'); // 最初の :
+                        //    var endIndex = currentText.indexOf(':'); // 最初の :
+                        var endIndex = currentText.indexOf('\t'); // 最初の :
+
                         if (endIndex !== -1) {
                             var extractedString = currentText.substring(0, endIndex);
                             arr_fukusu_cut_hantei_unsou_name.push(extractedString);
@@ -731,8 +788,11 @@ if (empty($session_id)) {
 
                     // === 複数用　、備考・特記
                     var fukusuu_bikou_tokki_Text = $("#selectedValues_set_next_val").text().trim();
+
                     // === 備考・特記　データ形式
-                    var newValue = unsouName + ':' + unsouCode + ':' + Bikou_code + ':' + Tokki_code + ',';
+                    //     var newValue = unsouName + ':' + unsouCode + ':' + Bikou_code + ':' + Tokki_code + ',';
+                    var newValue = unsouName + '\t' + unsouCode + '\t' + Bikou_code + '\t' + Tokki_code + ',';
+
                     var valueFound = false;
                     // === 24, 33, 56, データ形式 
                     var fukusuu_values = $('#fukusuu_select').text().trim().split(',').filter(Boolean);
@@ -1015,10 +1075,16 @@ if (empty($session_id)) {
                     // *************** 「備考・特記」の 値　削除 ***************
                     $("#selectedValues_set_next_val .set_next_val").each(function() {
                         var currentText = $(this).text().trim();
-                        var startIndex = currentText.indexOf(':');
+
+                        //    var startIndex = currentText.indexOf(':');
+                        var startIndex = currentText.indexOf('\t');
+
                         if (startIndex !== -1) {
                             startIndex++; // :の次の文字の位置
-                            var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+
+                            //     var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+                            var endIndex = currentText.indexOf('\t', startIndex); // 次の:の位置
+
                             if (endIndex !== -1) {
                                 var extractedString = currentText.substring(startIndex, endIndex).trim();
 
@@ -1122,10 +1188,16 @@ if (empty($session_id)) {
                     // ======= 単数　備考・特記　コード　取得
                     var Tokki_Unsou_Code = "";
                     var currentText = $('#selectedToki_Code').text().trim();
-                    var startIndex = currentText.indexOf(':');
+
+                    //   var startIndex = currentText.indexOf(':');
+                    var startIndex = currentText.indexOf('\t');
+
                     if (startIndex !== -1) {
                         startIndex++; // :の次の文字の位置
-                        var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+
+                        //    var endIndex = currentText.indexOf(':', startIndex); // 次の:の位置
+                        var endIndex = currentText.indexOf('\t', startIndex); // 次の:の位置
+
                         if (endIndex !== -1) {
                             var extractedString = currentText.substring(startIndex, endIndex);
                             Tokki_Unsou_Code = extractedString;
@@ -1136,7 +1208,11 @@ if (empty($session_id)) {
                     // ======= 単数　備考・特記　名　取得
                     var Tokki_Unsou_Name = "";
                     var currentText = $('#selectedToki_Code').text().trim();
-                    var endIndex = currentText.indexOf(':'); // 次の:の位置
+
+                    //    var endIndex = currentText.indexOf(':'); // 次の:の位置
+                    var endIndex = currentText.indexOf('\t'); // 次の:の位置
+
+
                     if (endIndex !== -1) {
                         var extractedString = currentText.substring(0, endIndex);
                         Tokki_Unsou_Name = extractedString;
@@ -1235,7 +1311,10 @@ if (empty($session_id)) {
                     $('#selectedValues_set_next_val .set_next_val').each(function() {
                         // 各divのテキストを取得
                         var text = $(this).text();
-                        var value = text.split(':')[1];
+
+                        //    var value = text.split(':')[1];
+                        var value = text.split('\t')[1];
+
                         valuesArray.push(value);
                     });
 

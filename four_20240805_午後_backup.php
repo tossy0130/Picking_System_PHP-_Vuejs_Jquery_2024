@@ -2293,11 +2293,6 @@ if (empty($session_id)) {
                 window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
             }
 
-
-            $('.location_title').hide();
-            $('.location_val').hide();
-
-
             // 全角を半角に変換
             function convertToHalfWidth(input) {
                 return input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
@@ -2779,6 +2774,8 @@ if (empty($session_id)) {
         // =============================================== 追加 24_0723 作業中 解除 処理
         // ============================================================================
 
+
+
         var arr_Sagyou_Tyuu = [];
         // ======================== 追加 テスト 24_0723
         $('tr').each(function() {
@@ -2786,28 +2783,19 @@ if (empty($session_id)) {
                 var shouhin_name_aj = $(this).find('.shouhin_name').text();
                 var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
 
+                // ====== test01
+                // === 追加 24_0726 作業中　解除用 ajax処理用 リロード処理 
+                /*
+                if (!window.location.search.includes('reloaded=true')) {
+                    window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
+                }
+                */
+
+
+                /*
                 shouhin_name_aj = shouhin_name_aj.trim();
                 shouhin_code_val_aj = shouhin_code_val_aj.trim();
-
-                console.log('作業中:::商品名: ' + shouhin_name_aj);
-                console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
-
-                // 配列へ格納
-                arr_Sagyou_Tyuu.push({
-                    shouhin_name_aj: shouhin_name_aj,
-                    shouhin_code_val_aj: shouhin_code_val_aj
-                });
-
-                // ======================================================
-                // ===================== 追加 24_0805 「更新」ボタン 対策
-                // ======================================================
-            } else if ($(this).hasClass('sagyou_now_text_no_c')) {
-
-                var shouhin_name_aj = $(this).find('.shouhin_name').text();
-                var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
-
-                shouhin_name_aj = shouhin_name_aj.trim();
-                shouhin_code_val_aj = shouhin_code_val_aj.trim();
+                */
 
                 console.log('作業中:::商品名: ' + shouhin_name_aj);
                 console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
@@ -2818,7 +2806,6 @@ if (empty($session_id)) {
                     shouhin_code_val_aj: shouhin_code_val_aj
                 });
             }
-
         });
 
         $.ajax({

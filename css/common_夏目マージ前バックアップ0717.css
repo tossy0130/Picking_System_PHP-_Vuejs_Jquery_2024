@@ -26,20 +26,6 @@ body {
         Segoe UI Emoji
 }
 
-/* === 24_0717 追加 === */
-/* input type number のデフォルト矢印を非表示にする */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-/* === 24_0717 追加 END === */
-
 /*=================== フッターメニュー 01  「戻る」、「更新」 ===================*/
 
     .footer-menu {
@@ -315,8 +301,6 @@ input[type="number"] {
     
          .souko_icon_box {
              display: block;
-             position: relative;
-             top: 8px;
          }
          
          .unsou_icon_box {

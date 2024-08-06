@@ -35,7 +35,11 @@ if (empty($session_id)) {
 
         // === 日付
         $selected_day = $_GET['selected_day'];
-        //echo $selected_day;
+
+        // === ログイン ID  追加 0731
+        if (isset($_SESSION['input_login_id'])) {
+            $input_login_id = $_SESSION['input_login_id'];
+        }
     } else {
         // === トークンが無い場合
         header("Location: $err_url");
@@ -60,7 +64,7 @@ if (empty($session_id)) {
     //	               AND SK.倉庫Ｃ = SO.倉庫Ｃ
     //	               AND SJ.出荷日 = :POST_DATE
     //	            GROUP BY SK.出荷日,SK.倉庫Ｃ,SO.倉庫名";
-/* 24/07/01
+    /* 24/07/01
     $sql = "SELECT SJ.出荷日,SL.倉庫Ｃ,SO.倉庫略称 AS 倉庫名
               FROM SJTR SJ,SKTR SK,SLTR SL,SOMF SO
              WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
@@ -169,7 +173,7 @@ if (empty($session_id)) {
     <div class="head_box">
         <div class="head_content">
             <span class="home_icon_span">
-                <a href="#"><img src="./img/home_img.png"></a>
+                <a href="<?php echo HOME_URL .  $input_login_id; ?>"><img src="./img/home_img.png"></a>
             </span>
 
             <span class="App_name">

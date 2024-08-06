@@ -143,9 +143,7 @@ if (empty($session_id)) {
 
         $_SESSION['Sagyou_now_Shouhin_Code'] = $Sagyou_now_Shouhin_Code;
 
-        // echo json_encode($arr_response_sagyou_now); // JSONレスポンスを返す
-        echo json_encode(['status' => 'success', 'message' => 'first ajax OK']);
-
+        echo json_encode($arr_response_sagyou_now); // JSONレスポンスを返す
         exit;
     }
 
@@ -1314,6 +1312,8 @@ if (empty($session_id)) {
     if (isset($_SESSION['Sagyou_now_Shouhin_Code'])) {
         $arr_tmp = explode(",", $_SESSION['Sagyou_now_Shouhin_Code']);
 
+
+
         //    var_dump($arr_tmp);
 
         // =========  作業コード分の ループを行う
@@ -1391,7 +1391,7 @@ if (empty($session_id)) {
     } // ===================== END if
 
     //   var_dump($arr_Sagyou_Now_Data);
-    $psition_flg = 0;
+
     // ========================================= 作業中　解除　削除処理 24_0801 追加
     if (isset($_SESSION['syori_seq_val_post_val'])) {
         $session_syori_seq_val_post_val = $_SESSION['syori_seq_val_post_val'];
@@ -1426,7 +1426,9 @@ if (empty($session_id)) {
             unset($_SESSION['Sagyou_now_Shouhin_Code']);
             unset($_SESSION['syori_seq_val_post_val']);
 
-            // リロード
+
+            // ==================== 松岡君へ 24_0802 ソーリー02
+            echo '<script type="text/javascript">location.reload();</script>';
             echo '<script type="text/javascript">location.reload();</script>';
 
             exit;
@@ -2294,8 +2296,20 @@ if (empty($session_id)) {
             }
 
 
-            $('.location_title').hide();
-            $('.location_val').hide();
+            /*
+            $('tr').each(function() {
+                if ($(this).hasClass('sagyou_now')) {
+
+                    // === 追加 24_0726 作業中　解除用 ajax処理用 リロード処理 
+                    if (!window.location.search.includes('reloaded=true')) {
+                        window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
+
+                        return false;
+                    }
+
+                }
+            });
+            */
 
 
             // 全角を半角に変換
@@ -2619,9 +2633,9 @@ if (empty($session_id)) {
                             }).then((result) => {
                                 if (result.isConfirmed) {
 
+                                    // ==================== 松岡君へ 24_0802　ソーリー01
                                     // OKボタンが押されたときにページをリロードする
                                     location.reload();
-
                                 }
                             });
 
@@ -2647,8 +2661,7 @@ if (empty($session_id)) {
         });
 
 
-        // === 変更前 24_0802 fiveから戻ってきた時の、カーソル位置 移動
-        /*
+
         // HTMLドキュメントのすべてのコンテンツが読み込まれた後に発生するイベント	2024/07/01
         document.addEventListener('DOMContentLoaded', function() {
             var selectedIndexElement = document.getElementById('selected_index');
@@ -2663,36 +2676,8 @@ if (empty($session_id)) {
 
             }
         });
-        */
 
-        // ======================================== 変更後 24_0802 fiveから戻ってきた時の、カーソル位置 移動
-        function restoreScrollPosition() {
-            var selectedIndexElement = document.getElementById('selected_index');
-            var selectedIndexValue = selectedIndexElement ? selectedIndexElement.value : null;
-            var scrollPosition = localStorage.getItem('scrollPosition');
 
-            /*
-            if (selectedIndexValue != null && scrollPosition != null) {
-                window.scrollTo(0, parseInt(scrollPosition, 10));
-                localStorage.clear();
-            }
-            */
-
-            console.log("function:::実行 OK restoreScrollPosition ****** 01");
-
-            if (selectedIndexValue != null && scrollPosition != null) {
-                console.log("function:::実行 OK restoreScrollPosition ****** 02");
-                setTimeout(function() {
-                    window.scrollTo(0, parseInt(scrollPosition, 10));
-                    localStorage.clear();
-                }, 500);
-            } else {
-                console.log("function:::実行 OK restoreScrollPosition ****** 9999");
-            }
-
-        }
-
-        restoreScrollPosition();
 
 
         // ===================== 24_0724 追加 JAN表記で five.php へいって戻ってきたら、JAN表記にする ===================
@@ -2779,6 +2764,8 @@ if (empty($session_id)) {
         // =============================================== 追加 24_0723 作業中 解除 処理
         // ============================================================================
 
+
+
         var arr_Sagyou_Tyuu = [];
         // ======================== 追加 テスト 24_0723
         $('tr').each(function() {
@@ -2786,28 +2773,17 @@ if (empty($session_id)) {
                 var shouhin_name_aj = $(this).find('.shouhin_name').text();
                 var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
 
+
+                // === 追加 24_0726 作業中　解除用 ajax処理用 リロード処理 
+                if (!window.location.search.includes('reloaded=true')) {
+                    window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
+                }
+
+
+                /*
                 shouhin_name_aj = shouhin_name_aj.trim();
                 shouhin_code_val_aj = shouhin_code_val_aj.trim();
-
-                console.log('作業中:::商品名: ' + shouhin_name_aj);
-                console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
-
-                // 配列へ格納
-                arr_Sagyou_Tyuu.push({
-                    shouhin_name_aj: shouhin_name_aj,
-                    shouhin_code_val_aj: shouhin_code_val_aj
-                });
-
-                // ======================================================
-                // ===================== 追加 24_0805 「更新」ボタン 対策
-                // ======================================================
-            } else if ($(this).hasClass('sagyou_now_text_no_c')) {
-
-                var shouhin_name_aj = $(this).find('.shouhin_name').text();
-                var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
-
-                shouhin_name_aj = shouhin_name_aj.trim();
-                shouhin_code_val_aj = shouhin_code_val_aj.trim();
+                */
 
                 console.log('作業中:::商品名: ' + shouhin_name_aj);
                 console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
@@ -2818,7 +2794,6 @@ if (empty($session_id)) {
                     shouhin_code_val_aj: shouhin_code_val_aj
                 });
             }
-
         });
 
         $.ajax({

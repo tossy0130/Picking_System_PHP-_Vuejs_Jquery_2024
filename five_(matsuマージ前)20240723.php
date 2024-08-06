@@ -1951,17 +1951,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 dprintBR("shipping_moto            :" . $_GET['shipping_moto']);
                 dprintBR("tokki_zikou              :" . $_GET['tokki_zikou']);
                 $sql_tmp = "";
- dprintBR("XOXOXOXOOXOXOXOXOOXOXOXO");
-                //24/07/26
-                //if ($_GET['shipping_moto'] == '') {
-                //    $sql_tmp =  " AND SL.出荷元 IS NULL";
-                //} else {
-                //    $sql_tmp =  " AND SL.出荷元 = '" . $_GET['shipping_moto'] . "' ";
-                //}
                 if ($_GET['shipping_moto'] == '') {
                     $sql_tmp =  " AND SL.出荷元 IS NULL";
-                } else if ($_GET['shipping_moto'] == "'") {
-                    $sql_tmp =  " AND SL.出荷元 = ''''";
                 } else {
                     $sql_tmp =  " AND SL.出荷元 = '" . $_GET['shipping_moto'] . "' ";
                 }
@@ -2057,11 +2048,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 $conditionSet[0] = "SK.運送Ｃ = '{$unsou_code}'";
                 //24/06/07 出荷元の抽出ミス
                 //              if ($shipping_moto !== '-' || $shipping_moto != "") {
-                //24/07/26 出荷元'対応
-                //if ($shipping_moto != "" && $shipping_moto != "-") {
-                if ($shipping_moto == "'") {
-                    $conditionSet[1] = "SL.出荷元 = ''''";
-                } else if ($shipping_moto != "" && $shipping_moto != "-") {
+                if ($shipping_moto != "" && $shipping_moto != "-") {
                     $conditionSet[1] = "SL.出荷元 = '{$shipping_moto}'";
                 } else {
                     $conditionSet[1] = "SL.出荷元 IS NULL";
@@ -2146,7 +2133,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 $sql_Sel_TkNm .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SL.出荷元,SK.特記事項,SL.商品Ｃ ,PK.処理Ｆ
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
                 // 出力 OK
-                dprintBR($four_five_default_SQL);
+                //  dprint($four_five_default_SQL);
 
             }
         }
@@ -2722,19 +2709,12 @@ document.addEventListener("DOMContentLoaded", function() {
         //+++++++++++++++++++++++++
         // 運送便名取得・設定
         //+++++++++++++++++++++++++
-        /* $sql_UsNm = "SELECT COUNT(US.運送名) AS CNT,US.運送名,PK.処理ＳＥＱ
+        $sql_UsNm = "SELECT COUNT(US.運送名) AS CNT,US.運送名,PK.処理ＳＥＱ
                        FROM USMF US, HTPK PK
                       WHERE PK.運送Ｃ = US.運送Ｃ
                         AND PK.処理ＳＥＱ = :pSEQ
                       GROUP BY US.運送名,PK.処理ＳＥＱ
-                      ORDER BY CNT DESC"; */
-        // 2024/07/23 修正
-        $sql_UsNm = "SELECT COUNT(US.運送名) AS CNT,US.運送名,PK.処理ＳＥＱ
-                    , SUM(PK.出荷予定数量) AS 合計出荷予定数量
-                    FROM USMF US, HTPK PK
-                    WHERE PK.運送Ｃ = US.運送Ｃ
-                    AND PK.処理ＳＥＱ = :pSEQ
-                    GROUP BY US.運送名,PK.処理ＳＥＱ";
+                      ORDER BY CNT DESC";
         $stid_UsNm = oci_parse($conn, $sql_UsNm);
         if (!$stid_UsNm) {
             $e = oci_error($conn);
@@ -2755,20 +2735,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
         $unsofukuF = "0";
         $unsoSP = "";
-        // 2024/07/23 修正
         while ($row = oci_fetch_assoc($stid_UsNm)) {
             // カラム名を指定して値を取得
             $unsomei .= $unsoSP;
-            $unsomei .= $row['運送名'] . " × " . $row['合計出荷予定数量'] . '<br>';
-            $unsoSP  = "　　　　 ";
-            
-            /* $unsomei .= $row['運送名'];
+            $unsomei .= $row['運送名'];
             if ($row['CNT'] > 1) {
                 $unsomei .= " × ";
                 $unsomei .= $row['CNT'];
             }
             $unsomei .= "<br>";
-            $unsoSP  = "　　　　 "; */
+            $unsoSP  = "　　　　 ";
         }
 
         oci_free_statement($stid_UsNm);
@@ -3259,9 +3235,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <!-- ============  「確定」ボタンが押された処理  ============ -->
                 <!-- ===================================================== -->
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" name="kakutei_btn_post" id="kakutei_btn_post">
-                    <!-- 2024/07/17 変更 -->
-                    <!-- <input type="hidden" name="day" value="<?php echo isset($_SESSION['kakutei_btn_params']['day']) ? $_SESSION['kakutei_btn_params']['day'] : $select_day; ?>"> -->
-                    <input type="hidden" name="day" value="<?php echo $select_day; ?>">
+                    <input type="hidden" name="day" value="<?php echo isset($_SESSION['kakutei_btn_params']['day']) ? $_SESSION['kakutei_btn_params']['day'] : $select_day; ?>">
+
                     <input type="hidden" name="souko_code" value="<?php echo $souko_code; ?>">
                     <input type="hidden" name="unsou_code" value="<?php echo $unsou_code; ?>">
                     <!-- <input type="hidden" name="unsou_code" value="<?php echo isset($_SESSION['kakutei_btn_params']['unsou_code']) ? $_SESSION['kakutei_btn_params']['unsou_code'] : $unsou_code; ?>"> -->

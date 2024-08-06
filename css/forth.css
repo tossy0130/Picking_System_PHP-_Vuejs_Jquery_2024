@@ -110,7 +110,7 @@
     }
 
     #login_id_view {
-        border-bottom: 3px solid #ccc;
+        border-bottom: 3px solid #ccc;  
         font-weight: 600;
         font-size: 1.02em;
         width: 80%;
@@ -137,6 +137,15 @@
         padding: 5px 1px;
         border-radius: 2px;
     }
+
+    /* 作業中 解除 */
+    #sagyou_now_text_no {
+        color: #fff;
+        background: #3454D1;
+        padding: 5px 1px;
+        border-radius: 2px;
+    }
+
 
     /* 作業完了 */
     #sagyou_now_text_ok {
@@ -348,5 +357,8 @@
             letter-spacing: 0.2em;
         }
     }
+
+
+}
 
 /* ================= END ================== */

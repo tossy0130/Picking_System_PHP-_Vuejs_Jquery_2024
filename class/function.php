@@ -126,13 +126,13 @@ function getCondition_Multiple_zen($data)
 // === デバッグ用プリント
 function dprint($data)
 {
-    // print($data);
+    //  print($data);
 }
 
 // === デバッグ用プリント改行付
 function dprintBR($data)
 {
-    // print($data . "<br>");
+    //   print($data . "<br>");
 }
 
 // === PHP 8 対応 urlencode
@@ -213,4 +213,40 @@ function log_session_to_file($filename, $msg)
     $file = fopen($filepath, 'w');
     fwrite($file, date('Y-m-d H:i:s') . " - " . $msg . "\n" . print_r($_SESSION, true) . "\n\n");
     fclose($file);
+}
+
+
+/**
+ *   0 パディング
+ */
+function Zero_Padding($str)
+{
+    $str_tmp = (string)($str);
+    $str_len = strlen($str_tmp);
+    $result_str = "";
+    switch ($str_len) {
+        case 1:
+            if ($str[0] != 0) {
+                $result_str .= "000" . $str_tmp;
+            }
+
+            break;
+        case 2:
+            if ($str[0] != 0) {
+                $result_str .= "00" . $str_tmp;
+            }
+
+            break;
+        case 3:
+            if ($str[0] != 0) {
+                $result_str .= "0" . $str_tmp;
+            }
+
+            break;
+        case 4:
+            $result_str .= $str_tmp;
+            break;
+    }
+
+    return $result_str;
 }
