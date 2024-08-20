@@ -40,6 +40,13 @@ input[type="number"] {
 
 /* === 24_0717 追加 END === */
 
+/* 24_0808 商品コード　検索用 style 追加 */ 
+#get_JAN {
+    border: none;
+    border-bottom: 1px solid #999;
+    width: 95%;
+}
+
 /*=================== フッターメニュー 01  「戻る」、「更新」 ===================*/
 
     .footer-menu {

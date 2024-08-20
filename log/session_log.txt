@@ -1,43 +1,43 @@
-2024-07-30 10:38:36 - 単数_処理開始時のセッション
+2024-08-20 16:24:35 - 単数_処理開始時のセッション
 Array
 (
-    [sid] => 1ta4hrp53sp744up8r9h3hapke
-    [input_login_id] => 7777
-    [soko_name] => Ｋ１倉小物
-    [unsou_name] => コメリ三重
-    [selected_index] => 4
-    [selected_jan] => 4994421150252
-    [s_syori_SEQ_value] => 29390646
-    [back_four_five_default_SQL] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
-                      ,RZ.棚番
-                      ,SH.梱包入数
-                      ,SUM(SL.数量) AS 数量    
-                      ,SUM(PK.ピッキング数量) AS ピッキング数量
-                      ,PK.処理Ｆ
-                      ,SH.ＪＡＮ
-                      ,SK.特記事項
-                 FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
-                      ,RZMF RZ
-                      ,HTPK PK
-                 WHERE SJ.伝票ＳＥＱ = SK.出荷ＳＥＱ
-                   AND SK.伝票行番号 = SL.伝票行番号
-                   AND SK.伝票ＳＥＱ = SL.伝票ＳＥＱ
-                   AND SL.伝票ＳＥＱ = PK.伝票ＳＥＱ(+)
-                   AND SL.伝票番号   = PK.伝票番号(+)
-                   AND SL.伝票行番号 = PK.伝票行番号(+)
-                   AND SL.伝票行枝番 = PK.伝票行枝番(+)
-                   AND SL.倉庫Ｃ = SO.倉庫Ｃ
-                   AND SL.出荷元 = SM.出荷元Ｃ(+)
-                   AND SK.運送Ｃ = US.運送Ｃ
-                   AND SL.商品Ｃ = SH.商品Ｃ
-                   AND SL.倉庫Ｃ = RZ.倉庫Ｃ
-                   AND SL.商品Ｃ = RZ.商品Ｃ
-                   AND SK.出荷日 = :SELECT_DATE  
-                   AND SL.倉庫Ｃ = :SELECT_SOUKO
-                   AND SK.運送Ｃ = :SELECT_UNSOU
-                   AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+    [sid] => 95ek2n5qk9cool0h36kin5eb60
+    [input_login_id] => 0001
+    [token_jim] => 66c4445d925fe1.49616637
+    [soko_name] => Ｗ３倉２階
+    [selectedSouko_sagyou] => W
+    [selected_day_sagyou] => 2022-08-19
+    [unsou_name] => ランド便
     [forth_pattern] => one
+    [s_syori_SEQ_value] => 29392443
+    [five_back_params] => Array
+        (
+            [unsou_code] => 56
+            [unsou_name] => ランド便
+            [day] => 2022-08-19
+            [souko] => W
+            [shouhin_code] => 3671700
+            [shouhin_name] => 炭足し簡単バーベキューコンロ            ＣＢＮ－６５０ＳＴ1ＴＮ（ＢＬ）
+            [shouhin_num] => 8
+            [shipping_moto_name] => 
+            [get_souko_name] => Ｗ３倉２階
+            [one_op_hinban] =>       ＣＢＮ－６５０ＳＴ1ＴＮ（ＢＬ）
+            [one_op_count_num] => 1
+            [one_op_suuryou_num] => 8
+            [one_op_tana_num] => W13-01
+            [one_op_case_num] => 8
+            [one_op_bara_num] => 0
+            [shouhin_jan] => 4971715367176
+            [one_op_tokki] => 
+            [one_op_bikou] => 
+            [sort_key] => 
+            [five_back_Syori_SEQ] => 29392441
+            [five_back_Denpyou_SEQ] => 27847117
+            [five_back_Syukka_Yotei_Num] => 8
+            [five_back_shouhin_code] => 3671700
+            [five_back_button] => 
+        )
+
     [four_five_default_SQL] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
                       ,RZ.棚番
                       ,SH.梱包入数
@@ -46,6 +46,7 @@ Array
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
+                      ,SH.品番
                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -66,29 +67,28 @@ Array
                    AND SL.倉庫Ｃ = :SELECT_SOUKO
                    AND SK.運送Ｃ = :SELECT_UNSOU
                    AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
-    [five_back_Syori_SEQ] => 29390645
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項,SH.品番 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+    [five_back_Syori_SEQ] => 29392443
     [kakutei_btn_params] => Array
         (
-            [day] => 2022-07-29
-            [souko_code] => K
-            [unsou_code] => 64
-            [unsou_name] => コメリ三重
-            [souko_name] => Ｋ１倉小物
-            [shouhin_jan] => 4920501895386
-            [shouhin_code] => 1132900
-            [shouhin_name] => さすだけ蛇口コネクター                  ＪＣ－０１－Ｋ
+            [day] => 2022-08-19
+            [souko_code] => W
+            [unsou_code] => 56
+            [unsou_name] => ランド便
+            [souko_name] => Ｗ３倉２階
+            [shouhin_jan] => 4971715367176
+            [shouhin_code] => 3671700
+            [shouhin_name] => 炭足し簡単バーベキューコンロ            ＣＢＮ－６５０ＳＴ1ＴＮ（ＢＬ）
             [kakutei_tokki] => 
             [kakutei_bikou] => 
-            [Dennpyou_num] => 38136
-            [Dennpyou_Gyou_num] => 3
-            [count_num_val] => 30
+            [Dennpyou_num] => 38415
+            [Dennpyou_Gyou_num] => 1
+            [count_num_val] => 8
             [sort_key] => 
-            [Syuka_Yotei_SUM] => 30
-            [kakutei_Syori_SEQ] => 29390645
-            [kakutei_Denpyou_SEQ] => 27642499
-            [kakutei_Syukka_Yotei_Num] => 30
-            [kakutei_shouhin_code] => 1132900
+            [kakutei_Syori_SEQ] => 29392443
+            [kakutei_Denpyou_SEQ] => 27847117
+            [kakutei_Syukka_Yotei_Num] => 8
+            [kakutei_shouhin_code] => 3671700
             [default_root_sql_zensuu] => SELECT SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名,SL.商品Ｃ,SH.品名
                       ,RZ.棚番
                       ,SH.梱包入数
@@ -97,6 +97,7 @@ Array
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
+                      ,SH.品番
                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -117,7 +118,7 @@ Array
                    AND SL.倉庫Ｃ = :SELECT_SOUKO
                    AND SK.運送Ｃ = :SELECT_UNSOU
                    AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項,SH.品番 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
             [kakutei_btn] => 
         )
 
@@ -129,6 +130,7 @@ Array
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
+                      ,SH.品番
                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -149,13 +151,13 @@ Array
                    AND SL.倉庫Ｃ = :SELECT_SOUKO
                    AND SK.運送Ｃ = :SELECT_UNSOU
                    AND RZ.倉庫Ｃ = :SELECT_SOUKO_02 AND NVL(PK.処理Ｆ,0) <> 8 AND NVL(PK.処理Ｆ,0) <> 9 GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
-    [kakutei_Syori_SEQ] => 29390645
-    [kakutei_Denpyou_SEQ] => 27642499
-    [kakutei_Syukka_Yotei_Num] => 30
-    [kakutei_shouhin_code] => 1132900
-    [count_num_val] => 30
-    [Syuka_Yotei_SUM] => 30
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項,SH.品番 ORDER BY RZ.棚番, 数量, SL.倉庫Ｃ,SK.運送Ｃ,SM.出荷元名,SL.商品Ｃ,SL.出荷元,SK.特記事項 
+    [kakutei_Syori_SEQ] => 29392443
+    [kakutei_Denpyou_SEQ] => 27847117
+    [kakutei_Syukka_Yotei_Num] => 8
+    [kakutei_shouhin_code] => 3671700
+    [count_num_val] => 8
+    [Syuka_Yotei_SUM] => 8
 )
 
 

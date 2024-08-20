@@ -401,7 +401,6 @@ if (empty($session_id)) {
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
-                      ,SH.品番
                  FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -435,7 +434,7 @@ if (empty($session_id)) {
                 ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ";
 */
         $sql .= "GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項,SH.品番 ";
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ";
 
         // 2024/06/05
         switch ($sortKey) {
@@ -511,7 +510,6 @@ if (empty($session_id)) {
             $Shori_Flg = $row['処理Ｆ'];
             $shouhin_JAN    = $row['ＪＡＮ'];
             $tokki_zikou    = $row['特記事項'];
-            $SH_Hinban    = $row['品番']; // === 24_0807 追加  SH.品番
 
 
             // 取得した値を配列に追加
@@ -533,14 +531,15 @@ if (empty($session_id)) {
                 'shouhin_JAN' => $shouhin_JAN,              // JANコード
                 'tokki_zikou' => $tokki_zikou,              // 特記事項
                 'four_status' => 'default_root',             // five.php への遷移状態
-                'item_index' => $item_index,                   // インデックス番号
-                'SH_Hinban' => $SH_Hinban  // === 24_0807 追加 SH.品番
+                'item_index' => $item_index                    // インデックス番号
+
             );
             $item_index++;
         }
 
         oci_free_statement($stid);
         oci_close($conn);
+
 
         // === 倉庫名
         if (isset($_SESSION['soko_name'])) {
@@ -716,7 +715,6 @@ if (empty($session_id)) {
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
-                      ,SH.品番
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -755,7 +753,7 @@ if (empty($session_id)) {
                 ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ";
 */
         $sql .= " GROUP BY SK.出荷日,SL.倉庫Ｃ,SO.倉庫名,SK.運送Ｃ,US.運送略称,SL.出荷元,SM.出荷元名
-                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項,SH.品番 ";
+                ,SL.商品Ｃ,SH.品名,PK.処理Ｆ,RZ.棚番,SH.梱包入数,SH.ＪＡＮ,SK.特記事項 ";
 
         // 2024/06/05
         switch ($sortKey) {
@@ -834,7 +832,6 @@ if (empty($session_id)) {
             $Shori_Flg = $row['処理Ｆ'];
             $shouhin_JAN    = $row['ＪＡＮ'];
             $tokki_zikou     = $row['特記事項'];
-            $SH_Hinban    = $row['品番']; // === 24_0807 追加  SH.品番
 
             // 取得した値を配列に追加
             $arr_Picking_DATA[] = array(
@@ -856,8 +853,7 @@ if (empty($session_id)) {
                 'tokki_zikou' => $tokki_zikou,
                 'sql_one_tokki' => $sql_one_tokki,
                 'four_status' => 'one_bikou_tokki',
-                'item_index' => $item_index,                   // インデックス番号
-                'SH_Hinban' => $SH_Hinban  // === 24_0807 追加 SH.品番
+                'item_index' => $item_index                    // インデックス番号
             );
             $item_index++;
         }
@@ -1103,7 +1099,6 @@ if (empty($session_id)) {
                       ,PK.処理Ｆ
                       ,SH.ＪＡＮ
                       ,SK.特記事項
-                      ,SH.品番
                   FROM SJTR SJ, SKTR SK, SOMF SO, SLTR SL, SMMF SM, USMF US,SHMF SH
                       ,RZMF RZ
                       ,HTPK PK
@@ -1154,7 +1149,7 @@ if (empty($session_id)) {
         SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ";
 */
         $sql .= "GROUP BY SK.出荷日, SL.倉庫Ｃ, SO.倉庫名, 
-        SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項,SH.品番 ";
+        SL.出荷元, SM.出荷元名, SL.商品Ｃ, SH.品名, PK.処理Ｆ, RZ.棚番, SH.梱包入数, SH.ＪＡＮ, SK.特記事項 ";
         // 2024/06/05
         switch ($sortKey) {
             case 'location_note':  //ロケ順
@@ -1243,7 +1238,6 @@ if (empty($session_id)) {
             //          $Tokuisaki_name = $row['得意先名'];
             $shouhin_JAN    = $row['ＪＡＮ'];
             $tokki_zikou    = $row['特記事項'];
-            $SH_Hinban     = $row['品番']; // === 追加 24_0807 SH.品番
 
             // 取得した値を配列に追加
             $arr_Picking_DATA[] = array(
@@ -1267,8 +1261,7 @@ if (empty($session_id)) {
                 'tokki_zikou' => $tokki_zikou,
                 'four_status' => 'multiple_sql_four',
                 //          'Multiple_Sql' => $Multiple_Sql
-                'item_index' => $item_index,                   // インデックス番号
-                'SH_Hinban' => $SH_Hinban                   // === 追加 24_0807 SH.品番
+                'item_index' => $item_index                    // インデックス番号
             );
             $item_index++;
         }
@@ -1655,22 +1648,10 @@ if (empty($session_id)) {
                                 $encoded_sql_one_tokki = UrlEncode_Val_Check($sql_one_tokki);
 
                                 if (isset($Picking_VAL['tokki_zikou'])) {
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code)
-                                        . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
-                                        '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                        '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .
-                                        '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                        '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                        '&sort_key=' . $sortKey . '&now_sql=' . $encoded_sql_one_tokki . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey . '&now_sql=' . $encoded_sql_one_tokki . '">';
                                 } else {
                                     $Picking_VAL['tokki_zikou'] = "";
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code)
-                                        . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) .
-                                        '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
-                                        '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .
-                                        '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                        '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                        '&sort_key=' . $sortKey .  '&now_sql=' . $encoded_sql_one_tokki . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .  '&now_sql=' . $encoded_sql_one_tokki . '">';
                                 }
 
 
@@ -1679,14 +1660,7 @@ if (empty($session_id)) {
 
                                 dprint("ここ:複数");
                                 $Multiple_Sql_Url = UrlEncode_Val_Check($Picking_VAL['sql_multiple_tokki']);
-                                echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
-                                    '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' .
-                                    UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
-                                    '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) .
-                                    '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) .
-                                    '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                    '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                    '&sort_key=' . $sortKey . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) .  '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey . '">';
 
                                 // *** 複数が最初に通る ルート ***
                                 // four.php => five.php へ　運送便（複数） , 備考・特記あり,　※備考・特記ありも複数
@@ -1702,32 +1676,17 @@ if (empty($session_id)) {
                                     . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num'])
                                     . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' .
                                     UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .
-                                    '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) .
-                                    '&four_status=multiple_sql_four' . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four' . '">';
                             } else {
 
                                 // === 通常処理　特記事項 あり
                                 if (isset($Picking_VAL['tokki_zikou']) && $Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] != "" || $Picking_VAL['shipping_moto'] != "") {
                                     //    dprint("koko,// === 通常処理　特記事項 あり");
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
-                                        '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
-                                        '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
-                                        '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) .
-                                        '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) .
-                                        '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                        '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                        '&four_status=default_root' .  '&sort_key=' . $sortKey . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' .  '&sort_key=' . $sortKey . '">';
                                 } else if ($Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] == "" && $Picking_VAL['shipping_moto'] == "") {
                                     // dprint("koko,// === 通常処理　特記事項 あり else");
                                     // === 通常処理　特記事項 あり
-                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) .
-                                        '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) .
-                                        '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) .
-                                        '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) .
-                                        '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) .
-                                        '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) .
-                                        '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) .
-                                        '&four_status=default_root' . '&status_sub=default' . '&sort_key=' . $sortKey . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    echo '<tr data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root' . '&status_sub=default' . '&sort_key=' . $sortKey . '">';
                                 }
                             }
 
@@ -1740,34 +1699,14 @@ if (empty($session_id)) {
 
                             if (!$shouhin_name_part2 == null) {
                                 //echo $Picking_VAL['Shouhin_name'] . "<br>";
-                                /*
                                 echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part2 . '</span>' .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    "</td>";
-                                */
-
-                                // === 24_0808 品番検索　追加  ===
-                                // class="sh_hinban_val"  $Picking_VAL['SH_Hinban']
-                                echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part2 . '</span>' .
-                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
-                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    '<input type="hidden" class="sh_hinban_val" value="' . $Picking_VAL['SH_Hinban'] . '">' .
                                     "</td>";
                             } else {
-                                /*
                                 echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part1 . '</span>' .
                                     '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
                                     '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    "</td>";
-                                */
-
-                                // === 24_0808 品番検索　追加  ===
-                                // class="sh_hinban_val"  $Picking_VAL['SH_Hinban']
-                                echo '<td>' . '<span class="shouhin_name">' . $shouhin_name_part1 . '</span>' .
-                                    '<input type="hidden" class="shouhin_JAN" value="' . $Picking_VAL['shouhin_JAN'] . '">' .
-                                    '<input type="hidden" class="Shouhin_code_val" value="' . $Picking_VAL['Shouhin_code'] . '">' .
-                                    '<input type="hidden" class="sh_hinban_val" value="' . $Picking_VAL['SH_Hinban'] . '">' .
                                     "</td>";
                             }
 
@@ -1864,16 +1803,14 @@ if (empty($session_id)) {
                                         '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey . '&now_sql=' . $encoded_sql_one_tokki .
                                         '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
                                         . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                        . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
                                 } else {
                                     $Picking_VAL['tokki_zikou'] = "";
                                     echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) .
                                         '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .  '&now_sql=' . $encoded_sql_one_tokki .
                                         '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
                                         . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                        . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
                                 }
 
 
@@ -1888,8 +1825,7 @@ if (empty($session_id)) {
                                     UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .
                                     '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
                                     . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                    . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
 
                                 // *** 複数が最初に通る ルート ***
                                 // four.php => five.php へ　運送便（複数） , 備考・特記あり,　※備考・特記ありも複数
@@ -1907,8 +1843,7 @@ if (empty($session_id)) {
                                     UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' . UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&sort_key=' . $sortKey .
                                     '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&four_five_multiple_sql=' . UrlEncode_Val_Check($sql_multiple_cut) . '&four_status=multiple_sql_four'
                                     . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                    . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                    . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
                             } else {
 
                                 // === 通常処理　特記事項 あり
@@ -1917,16 +1852,14 @@ if (empty($session_id)) {
                                     echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
                                         . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root'
                                         .  '&sort_key=' . $sortKey . '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                        . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
                                 } else if ($Picking_VAL['four_status'] == 'default_root' && $Picking_VAL['tokki_zikou'] == "" && $Picking_VAL['shipping_moto'] == "") {
                                     // dprint("koko,// === 通常処理　特記事項 あり else");
                                     // === 通常処理　特記事項 あり
                                     echo '<tr style="background: yellow;" class="sagyou_now_text_no_c" data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($Picking_VAL['Unsou_code']) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name'])
                                         . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($Picking_VAL['shouhin_JAN']) . '&tokki_zikou=' .  UrlEncode_Val_Check($Picking_VAL['tokki_zikou']) . '&four_status=default_root'
                                         . '&status_sub=default' . '&sort_key=' . $sortKey . '&index=' . UrlEncode_Val_Check($Picking_VAL['item_index']) . '&s_now_syori_seq=' . UrlEncode_Val_Check($Parame_syori_seq) . '&s_now_denpyou_seq=' . UrlEncode_Val_Check($Parame_denpyou_seq) . '&s_now_denpyou_num=' . UrlEncode_Val_Check($Parame_denpyou_num)
-                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou)
-                                        . '&scan_shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['SH_Hinban']) . '">';
+                                        . '&s_now_shouhinn_code=' . UrlEncode_Val_Check($Parame_shouhinn_code) . '&s_now_nyuuryou_tantou=' . UrlEncode_Val_Check($Parame_nyuuryou_tantou) . '">';
                                 }
                             }
 
@@ -2027,7 +1960,7 @@ if (empty($session_id)) {
                                 echo '<tr style="background: green"; data-href="./five.php?select_day=' . UrlEncode_Val_Check($select_day) . '&souko_code=' . UrlEncode_Val_Check($select_souko_code) . '&unsou_code=' . UrlEncode_Val_Check($select_unsou_code) . '&unsou_name=' . UrlEncode_Val_Check($get_unsou_name) . '&shipping_moto=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto']) . '&shipping_moto_name=' . UrlEncode_Val_Check($Picking_VAL['shipping_moto_name']) . '&Shouhin_code=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_code']) . '&Shouhin_name=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_name']) . '&Shouhin_num=' . UrlEncode_Val_Check($Picking_VAL['Shouhin_num']) . '&Tokuisaki=' . UrlEncode_Val_Check($Tokuisaki_name) . '&tana_num=' . UrlEncode_Val_Check($Picking_VAL['Tana_num']) . '&case_num=' . UrlEncode_Val_Check($Case_num_View) . '&bara_num=' . UrlEncode_Val_Check($Bara_num_View) . '&shouhin_jan=' . UrlEncode_Val_Check($shouhin_JAN) . '&sort_key=' . UrlEncode_Val_Check($sortKey) . '">';
                             }
 
-                            echo '<td class="location_val"><span id="sagyou_now_text">残<i class="fa-regular fa-circle-stop"></i></span>' . $Picking_VAL['Tana_num'] . '</td>';
+                            echo '<td><span id="sagyou_now_text">残<i class="fa-regular fa-circle-stop"></i></span>' . $Picking_VAL['Tana_num'] . '</td>';
 
                             echo '<td id="shouhin_num_box" class="shouhin_num_box">' .
                                 '<span class="Font_Bold_default_root">' . $Picking_VAL['Shouhin_num'] . '</span>' . "</td>";
@@ -2082,7 +2015,7 @@ if (empty($session_id)) {
 
                             //echo '<tr style="background: #99CCFF;">';
                             echo '<tr style="background: #99CCFF;" id="sagyou_ok" class="sagyou_ok">';
-                            echo '<td class="location_val"><span id="sagyou_now_text_ok" style="font-weight:bold;">作業完了</span>' .
+                            echo '<td><span id="sagyou_now_text_ok" style="font-weight:bold;">作業完了</span>' .
                                 '<span class="tana_num">' . $Picking_VAL['Tana_num'] . '</span>' . '</td>';
                             //echo '<td><span id="sagyou_now_text_ok" style="display:block;font-weight:bold;">作業完了</span>' . $Picking_VAL['Tana_num'] . '</td>';
 
@@ -2129,7 +2062,7 @@ if (empty($session_id)) {
                             // 「確定」
                             $row_class = 'picking-row2';
                             echo '<tr class="' . $row_class . '" data-href="./five.php?select_day=' . $select_day . '&souko_code=' . $select_souko_code . '&unsou_code=' . $select_unsou_code . '&unsou_name=' . $get_unsou_name . '&shipping_moto=' . $Picking_VAL['shipping_moto'] . '&shipping_moto_name=' . $Picking_VAL['shipping_moto_name'] . '&Shouhin_code=' . $Picking_VAL['Shouhin_code'] . '&Shouhin_name=' . $Picking_VAL['Shouhin_name'] . '&Shouhin_num=' . $Picking_VAL['Shouhin_num'] . '&tana_num=' . $Picking_VAL['Tana_num'] . '&case_num=' . $Case_num_View . '&bara_num=' . $Bara_num_View . '&shouhin_jan=' . $shouhin_JAN . '&sort_key=' . $sortKey . '">';
-                            echo '<td class="location_val"><span id="sagyou_now_text_ok">作業完了<i class="fa-regular fa-circle-stop"></i><br></span>' . $Picking_VAL['Tana_num'] . '</td>';
+                            echo '<td><span id="sagyou_now_text_ok">作業完了<i class="fa-regular fa-circle-stop"></i><br></span>' . $Picking_VAL['Tana_num'] . '</td>';
                             echo '<td id="shouhin_num_box" class="shouhin_num_box">' . $Picking_VAL['Shouhin_num'] . "</td>";
                             echo '<td>' .  $Case_num_View . '</td>';
                             echo '<td>' . $Bara_num_View . '</td>';
@@ -2185,7 +2118,7 @@ if (empty($session_id)) {
 
                             //echo '<tr style="background: #99CCFF;">';
                             echo '<tr style="background: #FE7F2D;" id="sagyou_cancel" class="sagyou_cancel">';
-                            echo '<td class="location_val"><span id="sagyou_cancel_text" style="font-weight:bold;">キャンセル</span>' .
+                            echo '<td><span id="sagyou_cancel_text" style="font-weight:bold;">キャンセル</span>' .
                                 '<span class="tana_num">' . $Picking_VAL['Tana_num'] . '</span>' . '</td>';
                             //echo '<td><span id="sagyou_now_text_ok" style="display:block;font-weight:bold;">作業完了</span>' . $Picking_VAL['Tana_num'] . '</td>';
 
@@ -2263,13 +2196,7 @@ if (empty($session_id)) {
 
         <div class="cp_iptxt_03">
             <label class="ef_03">
-
-                <!--
                 <input type="number" id="get_JAN" name="get_JAN" placeholder="Scan JAN">
-                -->
-
-                <!--　========= 追加 ========= 商品コード　検索用に変更 -->
-                <input type="text" id="get_JAN" name="get_JAN" placeholder="Scan JAN">
             </label>
         </div>
 
@@ -2365,9 +2292,11 @@ if (empty($session_id)) {
             if (!window.location.search.includes('reloaded=true')) {
                 window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
             }
-            //初期状態でロケを消す 24_0805
+
+
             $('.location_title').hide();
             $('.location_val').hide();
+
 
             // 全角を半角に変換
             function convertToHalfWidth(input) {
@@ -2404,29 +2333,11 @@ if (empty($session_id)) {
 
                 // ==================== JAN コード照合 ループ =======================
                 $(".shouhin_JAN").each(function() {
-
                     console.log("item:::" + $(this).val() + "\n");
                     var shouhin_JAN = $(this).val();
 
-                    // ========================== 24_0808 追加
-                    // shouhin_JAN 数値 変換
-                    var shouhin_JAN = parseInt($(this).val(), 10);
-                    // #get_JANの値 数値 変換
-
-                    var get_JAN_val = parseInt($('#get_JAN').val(), 10);
-                    var get_JAN_val_shouhin = $('#get_JAN').val().trim().replace(/[\s\u3000]/g, '');
-
-                    console.log("get_JAN_val 値:::" + get_JAN_val);
-
-                    // === SH.品番 取得 24_-0808
-                    var sh_hinban_val = $(this).closest('tr').find('.sh_hinban_val').val().trim();
-                    console.log("sh_hinban_val 値:::" + sh_hinban_val);
-
                     // ===  ******** JAN 照合  ********* 
-                    // if (shouhin_JAN === $('#get_JAN').val()) {
-
-                    // 追加 24_0808
-                    if (shouhin_JAN === get_JAN_val || sh_hinban_val === get_JAN_val_shouhin) {
+                    if (shouhin_JAN === $('#get_JAN').val()) {
                         parentElement = $(this).closest('tr');
 
                         console.log("JAM照合 OK:::");
@@ -2510,8 +2421,6 @@ if (empty($session_id)) {
                     Jan_Flg = 2;
                 }
 
-                // デバッグ用
-                return false;
 
                 // ================================================
                 // ===========================　フラグ判定チェック
@@ -2661,38 +2570,22 @@ if (empty($session_id)) {
                 var shouhin_code = $span.closest('td').find('.Shouhin_code_val').val();
                 console.log("shouhin_code:::値:::" + shouhin_code);
 
-                // ========== 24_0806 連続読み取り用
-                var $tr = $span.closest('tr');
-                if ($tr.hasClass('sagyou_now_text_no_c')) {
-
-                    console.log("解除クラスあり");
-                    return;
-                }
-
                 // ＊＊＊　商品JAN と、商品コードでの比較 if 文　＊＊＊
                 if (Shouhin_code_val === shouhin_code) {
                     // if (shouhin_JAN === clickedJAN && shouhin_Name === clicked_Shouhin_Name) {
                     // if (shouhin_JAN === clickedJAN) {
                     // if (shouhin_Name === clicked_Shouhin_Name) {
-
-                    // === 連続読み取りの、値を格納
                     var trHref = $(this).closest('tr').data('href');
 
                     // 重複削除
                     if (trHref && !dataHrefs.includes(trHref)) {
                         dataHrefs.push(trHref);
                     }
-
-                    console.log("解除クラスなし");
                 }
-
             });
 
             // === data-hrer をセッションストレージへ保存
             sessionStorage.setItem('dataHrefs', dataHrefs.join(','));
-
-            // console.log 確認用 下記の return false
-            //  return false;
 
             // ==================================================
             // ************************** 追加  連続処理　ロジック 24_0705  END
@@ -2889,9 +2782,27 @@ if (empty($session_id)) {
         var arr_Sagyou_Tyuu = [];
         // ======================== 追加 テスト 24_0723
         $('tr').each(function() {
-            //24_0806 更新時にラベルが変更しない問題対応
-            //if ($(this).hasClass('sagyou_now')) {
-            if (($(this).hasClass('sagyou_now')) || ($(this).hasClass('sagyou_now_text_no_c'))) {
+            if ($(this).hasClass('sagyou_now')) {
+                var shouhin_name_aj = $(this).find('.shouhin_name').text();
+                var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
+
+                shouhin_name_aj = shouhin_name_aj.trim();
+                shouhin_code_val_aj = shouhin_code_val_aj.trim();
+
+                console.log('作業中:::商品名: ' + shouhin_name_aj);
+                console.log('作業中:::商品コード: ' + shouhin_code_val_aj);
+
+                // 配列へ格納
+                arr_Sagyou_Tyuu.push({
+                    shouhin_name_aj: shouhin_name_aj,
+                    shouhin_code_val_aj: shouhin_code_val_aj
+                });
+
+                // ======================================================
+                // ===================== 追加 24_0805 「更新」ボタン 対策
+                // ======================================================
+            } else if ($(this).hasClass('sagyou_now_text_no_c')) {
+
                 var shouhin_name_aj = $(this).find('.shouhin_name').text();
                 var shouhin_code_val_aj = $(this).find('.Shouhin_code_val').val();
 
@@ -2907,6 +2818,7 @@ if (empty($session_id)) {
                     shouhin_code_val_aj: shouhin_code_val_aj
                 });
             }
+
         });
 
         $.ajax({

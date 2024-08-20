@@ -126,13 +126,13 @@ function getCondition_Multiple_zen($data)
 // === デバッグ用プリント
 function dprint($data)
 {
-    //  print($data);
+    // print($data);
 }
 
 // === デバッグ用プリント改行付
 function dprintBR($data)
 {
-    //   print($data . "<br>");
+    // print($data . "<br>");
 }
 
 // === PHP 8 対応 urlencode

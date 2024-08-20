@@ -618,7 +618,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     dprint("単数 02 commit_success");
                     $idx += 1;
-                    print("処理回数:::" . $idx);
+                    dprintBR("処理回数:::" . $idx);
 
                     // === ******** four.php から受け取ったセッションを、そのまま、 four.php へ 状態判別パラメーターとして返す 
                     // $_SESSION['third_default_sql'] = $_SESSION['third_default_sql'];
@@ -1544,6 +1544,9 @@ document.addEventListener("DOMContentLoaded", function() {
         $bara_num = $_GET['bara_num'];
         $shouhin_jan = $_GET['shouhin_jan'];
 
+        // === 追加 24_0820 スキャン時の商品コード
+        $scan_shouhin_code = $_GET['scan_shouhin_code'];
+
         // 特記
         if (isset($_GET['tokki_zikou'])) {
             $tokki_zikou = $_GET['tokki_zikou'];
@@ -1951,7 +1954,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 dprintBR("shipping_moto            :" . $_GET['shipping_moto']);
                 dprintBR("tokki_zikou              :" . $_GET['tokki_zikou']);
                 $sql_tmp = "";
- dprintBR("XOXOXOXOOXOXOXOXOOXOXOXO");
+                dprintBR("XOXOXOXOOXOXOXOXOOXOXOXO");
                 //24/07/26
                 //if ($_GET['shipping_moto'] == '') {
                 //    $sql_tmp =  " AND SL.出荷元 IS NULL";
@@ -2147,7 +2150,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                           ,CM.集計得意先Ｃ,CM2.得意先Ｃ, CM2.得意先名";
                 // 出力 OK
                 dprintBR($four_five_default_SQL);
-
             }
         }
 
@@ -2761,7 +2763,7 @@ document.addEventListener("DOMContentLoaded", function() {
             $unsomei .= $unsoSP;
             $unsomei .= $row['運送名'] . " × " . $row['合計出荷予定数量'] . '<br>';
             $unsoSP  = "　　　　 ";
-            
+
             /* $unsomei .= $row['運送名'];
             if ($row['CNT'] > 1) {
                 $unsomei .= " × ";
@@ -2974,7 +2976,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 </span>
             <div class="cp_iptxt_02">
                 <label class="ef_02">
+                    <!--
                     <input type="number" id="scan_val" name="scan_val" placeholder="Scan JAN">
+                    -->
+
+                    <!-- 追加 24_0820 商品検索 対応 -->
+                    <input type="text" id="scan_val" name="scan_val" placeholder="Scan JAN">
                 </label>
             </div>
 
@@ -3438,9 +3445,13 @@ document.addEventListener("DOMContentLoaded", function() {
         $(document).ready(function() {
 
             function convertToHalfWidth(input) {
-                return input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
-                    return String.fromCharCode(s.charCodeAt(0) - 65248); // 全角文字のUnicode値から半角文字に変換
-                });
+                return input.replace(/[！-～]/g, function(s) {
+                        return String.fromCharCode(s.charCodeAt(0) - 65248); // 全角文字のUnicode値から半角文字に変換
+                    }).replace(/”/g, '"') // 特殊ケースの変換
+                    .replace(/’/g, "'")
+                    .replace(/―/g, "-")
+                    .replace(/〜/g, "~")
+                    .replace(/￥/g, "\\");
             }
 
 
@@ -3483,13 +3494,28 @@ document.addEventListener("DOMContentLoaded", function() {
                 var convertedValue_JAN = convertToHalfWidth(input_JAN);
                 var converte_JAN_Val = convertToHalfWidth(Jan_Val);
 
-                if (convertedValue_JAN == converte_JAN_Val) {
+                // === 追加  24_0820
+                var shouhin_code_val_tmp = '<?php echo $scan_shouhin_code; ?>';
+                var shouhin_code_val = convertToHalfWidth(shouhin_code_val_tmp);
+
+                console.log("shouhin_code_val 値:::" + shouhin_code_val);
+                console.log("convertedValue_JAN 値:::" + convertedValue_JAN);
+
+                if (convertedValue_JAN == converte_JAN_Val || convertedValue_JAN === shouhin_code_val) {
                     var current_count = parseInt($("#count_num").val(), 10); // 数値として取得
                     $("#count_num").val(current_count + 1);
                     $("#scan_val").focus();
                     $("#scan_val").val("");
                     //$("#result_val").text("OK:::" + convertedValue_JAN + "Jan_Val::" + Jan_Val);
                     $("#result_val").text("スキャンＯＫ");
+
+                    // === 24_0820 追加
+                    $("#scan_val").attr('readonly', true);
+
+                    setTimeout(function() {
+                        $("#scan_val").removeAttr('readonly'); // readonlyを削除
+                    }, 100);
+
                 } else {
 
                     // ======= JAN読み込み 値が違った場合
